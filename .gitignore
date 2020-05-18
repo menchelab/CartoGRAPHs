@@ -1,3 +1,9 @@
+# Jupyter notebook files
+.ipynb
+
+# Mac files 
+.DS Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

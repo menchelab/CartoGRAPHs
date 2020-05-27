@@ -1,5 +1,5 @@
-# Jupyter notebook files
-
+# big files 
+*.csv
 
 # Mac files 
 .DS_Store

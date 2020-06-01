@@ -1,5 +1,6 @@
 # big files 
 *.csv
+*.html
 
 # Mac files 
 .DS_Store

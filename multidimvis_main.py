@@ -388,6 +388,7 @@ def color_diseasecategory(G, d_names_do, d_do_genes, disease_category, colour):
     d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}
     
     colours = list(d_allnodes_col_sorted.values())
+    
     return colours
 
 
@@ -476,7 +477,7 @@ Return colour list (where nodes of dict. are assigned a color + adjacent nodes a
 def color_majornodes(G, dict_majorcolor_nodes):
     
     n = len(set(dict_majorcolor_nodes))
-    color = coloring_nodes(n)
+    color = generate_colorlist_nodes(n)
 
     # LIGHTER COLORS FOR NEIGHBOURING NODES
     factor = 1.7 # the higher the lighter
@@ -537,7 +538,7 @@ Return colour list of edges outgoing from major nodes.
 def color_majornodes_outgoingedges(G, dict_majorcolor_nodes):
     
     n = len(set(dict_majorcolor_nodes))
-    color = coloring_nodes(n)
+    color = generate_colorlist_nodes(n)
 
     # LIGHTER COLORS FOR NEIGHBOURING NODES
     factor = 1.7 # the higher the lighter
@@ -628,15 +629,15 @@ def draw_node_degree_3D(G, scalef):
         
     return l_size_n
 
+
 # potentially replace "draw_node_degree_3D" with this function 
-def draw_node_size3D(G, d_node_size, scalef):
+def draw_node_size3D(l_genes, scalef):
     x = 20
     ring_frac = (x-1.)/x
 
-    d_node_size_sorted = {key:d_node_size[key] for key in G.nodes()}
     l_size = []
-    for node,val in d_node_size_sorted.items():
-        R = scalef * (1+val**1.5)
+    for i in l_genes:
+        R = scalef * (1+i**1.5)
         r = ring_frac * R
         l_size.append(r)
         
@@ -906,11 +907,14 @@ def get_trace_edges_landscape(x,y,z0,z):
 Dimensionality reduction from Matrix (t-SNE).
 Return dict (keys: node IDs, values: x,y,z).
 '''
-def embed_tsne_3D(G, Matrix, prplxty, density, l_rate, n_iter, metric = 'precomputed'):
+def embed_tsne_3D(Matrix, prplxty, density, l_rate, n_iter, metric = 'precomputed'):
     tsne3d = TSNE(n_components = 3, random_state = 0, perplexity = prplxty,
                      early_exaggeration = density,  learning_rate = l_rate, n_iter = n_iter, metric = metric)
     embed = tsne3d.fit_transform(Matrix)
 
+    return embed
+
+def get_posG_3D(G, Matrix):
     posG = {}
     cc = 0
     for entz in sorted(G.nodes()):
@@ -918,8 +922,6 @@ def embed_tsne_3D(G, Matrix, prplxty, density, l_rate, n_iter, metric = 'precomp
         cc += 1
     posG_sorted = {key:posG[key] for key in G.nodes()}
     
-    return posG_sorted
-
 
 
 '''

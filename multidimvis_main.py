@@ -5,6 +5,7 @@
 # LIBRARIES
 # -------------------------------------------------------------------------------------
 
+import ast 
 
 #import bezier
 from collections import (defaultdict,Counter)
@@ -15,7 +16,6 @@ import colorsys
 from colormap import rgb2hex, rgb2hls, hls2rgb
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_conversions import convert_color
-from colormath.color_diff import delta_e_cie2000
 from collections import Counter
 
 from dosnes import dosnes
@@ -41,6 +41,7 @@ from networkx.algorithms.flow import shortest_augmenting_path
 from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
 import numpy as np
+import numpy.linalg as la
 import numba
 #@numba.njit(fastmath=True)
 
@@ -100,10 +101,12 @@ import umap
 
 
 
-# -------------------------------------------------------------------------------------
-# FUNCTIONS FOR ANALYSIS + CALCULATIONS
-# -------------------------------------------------------------------------------------
 
+########################################################################################
+#
+# FUNCTIONS FOR ANALYSIS + CALCULATIONS ETC
+#
+########################################################################################
 
 '''
 Random Walk Operator with restart probability.
@@ -173,10 +176,79 @@ def heatmap_from_matrix(Matrix, title = None):
     return plt.show()
 
 
+'''
+Binning based on dict.
+Return binned nodes.
+'''
+def bin_nodes(data_dict): 
+    bins = set(data_dict.values())
 
-# -------------------------------------------------------------------------------------
+    d_binned = {}
+    for n in bins:
+        d_binned[n] = [k for k in data_dict.keys() if data_dict[k] == n]
+        
+    return d_binned
+
+
+
+
+# cluster functions
+def get_node_clusterid(df, X_clusterid, n_clus, n_iterations = 10):
+    n = n_clus
+    cols = generate_colorlist_nodes(n)
+    
+    X_clusterid = clusterid[0]
+    X_id = df.index
+    
+    cols_to_clusters = {}
+    for ix,col in enumerate(cols):
+        for j in X_clusterid:
+            if j == ix:
+                cols_to_clusters[j]=col
+
+    d_node_clusterid = {k:v for k,v in zip(X_id, X_clusterid)}
+
+    return d_node_clusterid
+
+
+def get_clustercenter_xy(centers, n_clus, n_iterations = 10):
+        
+    lx = []
+    ly = []
+    for clu in range(n_clus):
+        for i in centers:
+            lx.append(i[clu][0])
+            ly.append(i[clu][1])
+
+    return lx, ly
+
+
+def get_clustercenter_xyz(df, n_clus, n_iterations = 10):
+
+    iterations = range(1,n_iterations)
+    centers = []
+    kmeans = KMeans(init='random', n_clusters=n_clus, random_state=0, max_iter=n_iterations, n_init=1, verbose=0)
+    ids = kmeans.fit_predict(df) 
+    centers.append(kmeans.cluster_centers_)
+        
+    lx = []
+    ly = []
+    lz = []
+    for clu in range(n_clus):
+        for i in centers:
+            lx.append(i[clu][0])
+            ly.append(i[clu][1])
+            lz.append(i[clu][2])
+
+    return lx, ly, lz
+
+
+
+########################################################################################
+#
 # C O L O R F U N C T I O N S 
-# -------------------------------------------------------------------------------------
+#
+########################################################################################
 
 '''
 Generate color list based on color count (i.e. nodes to be coloured).
@@ -211,9 +283,121 @@ def darken_color(r, g, b, factor=0.9):
     return adjust_color_lightness(r, g, b, 1 - factor)
 
 
+def color_nodes_from_dict(G, dict_color_nodes):
+    
+    n = len(set(dict_color_nodes.values()))
+    color = generate_colorlist_nodes(n)
+
+    d_col = {}
+    for node,val in dict_color_nodes.items():
+        for i,c in enumerate(color):
+            if i == val:
+                d_col[node] = c
+                
+    #d_col_sorted = {key:d_col[key] for key in G.nodes()}
+
+    #colours = list(d_col_sorted.values())
+
+    return d_col#colours
+
+
+def color_nodes_from_dict_same(G, dict_color_nodes, color):
+
+    d_col = {}
+    for node,val in dict_color_nodes.items():
+        for i,c in enumerate(color):
+            if i == val:
+                d_col[node] = color[i]
+                
+    #d_col_sorted = {key:d_col[key] for key in G.nodes()}
+
+    #colours = list(d_col_sorted.values())
+
+    return d_col #colours
+
+
+    
+def color_nodes_from_genelist(G, l_genes, color):
+
+    d_col = {}
+    for node in l_genes:
+        d_col[str(node)] = color
+            
+    d_rest = {}
+    for g in G.nodes():
+        if g not in d_col.keys():
+            d_rest[g] = 'dimgrey' # 'rgba(50,50,50,0.5)'
+                    
+    d_allnodes_col = {**d_col, **d_rest}
+    d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}
+
+    colours = list(d_allnodes_col_sorted.values())
+    
+    return colours
+
+def color_edges_from_genelist(G, l_genes, color):
+
+    edge_lst = []
+    for node in l_genes:
+        for edge in G.edges():
+            if node == edge[0] or node == edge[1]:
+                edge_lst.append(edge)
+
+    d_col_edges = {}
+    for e in set(edge_lst):
+        d_col_edges[e]=color
+
+    return d_col_edges
+
+
+def color_edges_from_genelist(G, l_genes, color):
+
+    edge_lst = [(u,v) for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]
+
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color
+
+    return d_col_edges
+
+
+def get_trace_edges_from_genelist(l_spec_edges, posG, color_list):
+    edge_x = []
+    edge_y = []
+    edge_z = []
+    for edge in l_spec_edges:
+            x0, y0, z0 = posG[edge[0]]
+            x1, y1, z1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            edge_z.append(z0)
+            edge_z.append(z1)
+            edge_z.append(None)
+        
+    trace_edges = pgo.Scatter3d(
+                        x = edge_x, 
+                        y = edge_y, 
+                        z = edge_z,
+                        mode = 'lines', hoverinfo='none',
+                        line = dict(width = 1.5, color = color_list),
+                        opacity = 0.5
+                )
+    
+    return trace_edges
+
+
+
+
+
+
+
 
 # -------------------------------------------------------------------------------------
-# C O L O R : ESSENTIALITY SPECIFIC
+# ESSENTIALITY SPECIFIC
 # -------------------------------------------------------------------------------------
 
 '''
@@ -261,16 +445,6 @@ def color_essentiality_edges(G, essentials, nonessentials, colour1, colour2):
     for node in nonessentials:
         d_no_ess['entrez gene/locuslink:'+str(node)] = colour2
 
-    d_essentiality = {**d_ess, **d_no_ess}
-
-    d_restnodes = {}
-    for i in G.nodes():
-        if i not in d_essentiality.keys():
-            d_restnodes[i] = 'lightgrey'
-
-    d_all_essentiality = {**d_essentiality, **d_restnodes}
-    d_all_nodes_sorted = {key:d_all_essentiality[key] for key in G.nodes()}
-    
     # EDGES ------------------------------
     edge_lst = []
     for edge in G.edges():
@@ -279,7 +453,6 @@ def color_essentiality_edges(G, essentials, nonessentials, colour1, colour2):
                 if e == node:
                     edge_lst.append(edge)
 
-    # Color edges based on hubs
     d_col_edges = {}
     for e in edge_lst:
         for node,col in d_ess.items():
@@ -304,47 +477,13 @@ def color_essentiality_edges(G, essentials, nonessentials, colour1, colour2):
 
 
 
-
-'''
-Essentiality Score function 
-input : list for major and minor nodes to be considered for the score; additionally add major and minor score system (e.g. integer number)
-output : List of scores (length of and order by G.nodes())
-'''
-def node_essentiality_scores(G, l_major_nodes, l_minor_nodes, major_score, minor_score):
-    
-    nodes_major_score = {}
-    for i in G.nodes():
-        for n in l_major_nodes:
-            if i == n:
-                nodes_major_score[i] = major_score
-
-    nodes_minor_score = {}
-    for i in G.nodes():
-        for n in l_minor_nodes:
-            if i == n:
-                nodes_minor_score[i] = minor_score
-
-    d_all_with_score = {**nodes_major_score,**nodes_minor_score}
-
-    d_no_score = {}
-    for j in G.nodes():
-        if j not in d_all_with_score.keys():
-            d_no_score[j] = 0
-
-    d_scores = {**d_all_with_score, **d_no_score}
-    
-    return d_scores
-
-
-
 # -------------------------------------------------------------------------------------
-# C O L O R : DISEASE SPECIFIC
+# DISEASE SPECIFIC
 # -------------------------------------------------------------------------------------
-
 
 def get_disease_genes(G, d_names_do, d_do_genes, disease_category):
     # get all genes from disease category
-    l_disease_genes = []
+    l_disease_genes = [] 
     for d_name in d_names_do.keys():
         if d_name.find(disease_category) != -1:
             try:
@@ -356,7 +495,7 @@ def get_disease_genes(G, d_names_do, d_do_genes, disease_category):
                 
     set_disease_genes = set(l_disease_genes)
     
-    return l_disease_genes
+    return set_disease_genes
 
 
 def color_diseasecategory(G, d_names_do, d_do_genes, disease_category, colour):
@@ -391,11 +530,10 @@ def color_diseasecategory(G, d_names_do, d_do_genes, disease_category, colour):
     
     return colours
 
-
 def color_disease_outgoingedges(G, l_majorcolor_nodes, color):
     
     d_col_major = {}
-    for idx,n in enumerate(l_majorcolor_nodes):
+    for n in l_majorcolor_nodes:
             d_col_major[n] = color
 
     # Node outgoing edges
@@ -430,11 +568,9 @@ def color_disease_outgoingedges(G, l_majorcolor_nodes, color):
     return edge_color
 
 
-
 # -------------------------------------------------------------------------------------
-# C O L O R : HUB SPECIFIC
+# HUB SPECIFIC
 # -------------------------------------------------------------------------------------
-
 
 '''
 Identify hubs based on a chosen cutoff.
@@ -469,7 +605,6 @@ def identify_hubs(degs, closeness, betweens, cutoff):
     return d_node_hubs
 
     
-
 '''
 Input a dictionary with nodes to be coloured. 
 Return colour list (where nodes of dict. are assigned a color + adjacent nodes are assigned the same color (light version))
@@ -518,7 +653,7 @@ def color_majornodes(G, dict_majorcolor_nodes):
     d_grey = {}
     for i in G.nodes():
         if i not in d_col.keys():
-            d_grey[i] = 'lightgrey'
+            d_grey[i] = 'dimgrey'
 
     d_col_all = {**d_col_major, **d_col_neigh, **d_grey}
     d_col_all_sorted = {key:d_col_all[key] for key in G.nodes()}
@@ -528,7 +663,6 @@ def color_majornodes(G, dict_majorcolor_nodes):
     colours = l_col_all
     
     return colours
-
 
 '''
 Input a dictionary with nodes to be coloured. 
@@ -586,68 +720,53 @@ def color_majornodes_outgoingedges(G, dict_majorcolor_nodes):
 
 
 
-'''
-Binning based on dict.
-Return binned nodes.
-'''
-def bin_nodes(data_dict): 
-    bins = set(data_dict.values())
-
-    d_binned = {}
-    for n in bins:
-        d_binned[n] = [k for k in data_dict.keys() if data_dict[k] == n]
-        
-    return d_binned
 
 
-
-# -------------------------------------------------------------------------------------
+########################################################################################
+#
 # N O D E  S I Z E   F U N C T I O N S
-# -------------------------------------------------------------------------------------
+#
+########################################################################################
 
+
+
+def draw_node_size(G, d_node_size, scalef):
+    
+    # sort according to Graph 
+    d_node_size_sorted = {key:d_node_size[key] for key in G.nodes()}    
+    
+    l_size = []
+    for nd,val in d_node_size_sorted.items():
+        R = scalef * (1 + val**1.1)      
+        l_size.append(R)
+        
+    return l_size
+
+
+# -------------------------------------------------------------------------------------
+# DEGREE SPECIFIC
+# -------------------------------------------------------------------------------------
 
 
 '''
 Calculate the node degree from graph positions (dict).
 Return list of sizes for each node (3D). 
 '''
-def draw_node_degree_3D(G, scalef):
+def draw_node_degree_3D(G, l_genes, scalef):
     x = 20
     ring_frac = (x-1.)/x
 
-    l_size = []
-    for node in G.nodes():
-        k = nx.degree(G, node)
-        R = scalef * (1+k**1.5)
-        r = ring_frac * R
-        l_size.append(r)
-        
-    l_size_n = []
-    for i in l_size:
-        j = np.sqrt(np.sqrt(i/max(l_size)))
-        l_size_n.append(j*scalef)
-        
-    return l_size_n
-
-
-# potentially replace "draw_node_degree_3D" with this function 
-def draw_node_size3D(l_genes, scalef):
-    x = 20
-    ring_frac = (x-1.)/x
-
-    l_size = []
+    deg = dict(G.degree())
+    
+    d_size = {}
     for i in l_genes:
-        R = scalef * (1+i**1.5)
-        r = ring_frac * R
-        l_size.append(r)
-        
-    l_size_n = []
-    for i in l_size:
-        j = np.sqrt(np.sqrt(i/max(l_size)))
-        l_size_n.append(j*scalef)
-        
-    return l_size_n
-
+        for k,v in deg.items():
+            if i == k:
+                R = scalef * (1+v**1.5)
+                r = ring_frac * R
+                d_size[i] = r
+    
+    return d_size
 
 '''
 Calculate the node degree from graph positions (dict).
@@ -672,25 +791,16 @@ def draw_node_degree(G, scalef):
     return l_size
 
 
-# POTENTIALLY REPLACE function "draw_node_degree" with this more general function 
-# input = Dict with all nodes and a value for each 
-def draw_node_size(G, d_node_size, scalef):
-    
-    # sort according to Graph 
-    d_node_size_sorted = {key:d_node_size[key] for key in G.nodes()}    
-    
-    l_size = []
-    for nd,val in d_node_size_sorted.items():
-        R = scalef * (1 + val**1.1)      
-        l_size.append(R)
-        
-    return l_size
 
+########################################################################################
+#
+# P L O T T I N G  
+#
+########################################################################################
 
 # -------------------------------------------------------------------------------------
 # FUNCTIONS FOR 2D PORTRAITS
 # -------------------------------------------------------------------------------------
-
 
 '''
 Dimensionality reduction from Matrix (t-SNE).
@@ -784,18 +894,46 @@ def calc_dist_from_layout(posG):
 Generate trace 2D.
 Return trace. 
 '''
-def get_trace_2D(x,y,trace_name,colour, size):
-    trace = pgo.Scatter(name = trace_name,
-    x = x,
-    y = y,
-    mode='markers',
-    marker=dict(
-        size=size,
-        color=colour
-    ),)
+def get_trace_2D(posG, colour, size):
+    
+    l_x=[]
+    l_y=[]
+    for coords in posG.values():
+            l_x.append(coords[0])
+            l_y.append(coords[1])
+    
+    trace = pgo.Scatter(
+        x = l_x,
+        y = l_y,
+        mode='markers',
+        marker=dict(
+            size=size,
+            color=colour
+        ),)
     return trace
 
 
+def get_trace_edges_2D(G, posG, color_list):
+    edge_x = []
+    edge_y = []
+    for edge in G.edges():
+        x0, y0 = posG[edge[0]]
+        x1, y1 = posG[edge[1]]
+        edge_x.append(x0)
+        edge_x.append(x1)
+        edge_x.append(None)
+        edge_y.append(y0)
+        edge_y.append(y1)
+        edge_y.append(None)
+
+    edge_trace = pgo.Scatter(
+        x=edge_x, y=edge_y,
+        line=dict(width=0.3, color=color_list),
+        hoverinfo='none',
+        mode='lines',
+    opacity = 0.3)
+    
+    return edge_trace
 
 # -------------------------------------------------------------------------------------
 # FUNCTIONS FOR 3D GENERAL 
@@ -816,6 +954,36 @@ def export_xyz_to_csv(G, posG, title):
     #coords['Cluster ID'] = cluster_community
     
     return coords.to_csv(title +'.csv')
+
+def get_trace_spec_edges_only(l_spec_edge, posG, color_list):
+    edge_x = []
+    edge_y = []
+    edge_z = []
+    for edge in l_spec_edge:
+            x0, y0, z0 = posG[edge[0]]
+            x1, y1, z1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            edge_z.append(z0)
+            edge_z.append(z1)
+            edge_z.append(None)
+    
+        
+    trace_edges = pgo.Scatter3d(
+                        x = edge_x, 
+                        y = edge_y, 
+                        z = edge_z,
+                        mode = 'lines', hoverinfo='none',
+                        line = dict(width = 0.5, color = color_list),
+                        opacity = 0.3
+                )
+    
+    return trace_edges
+
 
 
 
@@ -914,7 +1082,7 @@ def embed_tsne_3D(Matrix, prplxty, density, l_rate, n_iter, metric = 'precompute
 
     return embed
 
-def get_posG_3D(G, Matrix):
+def get_posG_3D(G, embed):
     posG = {}
     cc = 0
     for entz in sorted(G.nodes()):
@@ -922,6 +1090,16 @@ def get_posG_3D(G, Matrix):
         cc += 1
     posG_sorted = {key:posG[key] for key in G.nodes()}
     
+    return posG_sorted
+
+#def get_posG_3D_(l_genes, embed):
+#    posG = {}
+#    cc = 0
+#    for entz in l_genes:
+#        posG[entz] = (embed[cc,0],embed[cc,1],embed[cc,2])
+#        cc += 1
+#    
+#    return posG
 
 
 '''
@@ -1018,9 +1196,33 @@ def get_node_features(posG, features):
 Generates 3D coordinates from nodes (dict).
 Return trace.
 '''
-def get_trace_nodes(G, posG, info_list, color_list, size):
+# former : "get_trace_nodes"
+def get_trace_nodes_from_graph(G, posG, info_list, color_list, size):
 
     key_list=list(G.nodes())
+    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
+                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
+                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
+                           mode = 'markers',
+                           text = info_list,
+                           hoverinfo = 'text',
+                           #textposition='middle center',
+                           marker = dict(
+                color = color_list,
+                size = size,
+                symbol = 'circle',
+                line = dict(width = 0.8,
+                        color = color_list),
+                               opacity=0.8,
+            ),
+        )
+    
+    return trace
+
+# former : "get_trace_nodes_"
+def get_trace_nodes(posG, info_list, color_list, size):
+
+    key_list=list(posG.keys())
     trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
                            y=[posG[key_list[i]][1] for i in range(len(key_list))],
                            z=[posG[key_list[i]][2] for i in range(len(key_list))],
@@ -1039,10 +1241,34 @@ def get_trace_nodes(G, posG, info_list, color_list, size):
     
     return trace
 
+
+def get_trace_edges_2D(G, posG, color_list):
+    edge_x = []
+    edge_y = []
+    for edge in G.edges():
+        x0, y0 = posG[edge[0]]
+        x1, y1 = posG[edge[1]]
+        edge_x.append(x0)
+        edge_x.append(x1)
+        edge_x.append(None)
+        edge_y.append(y0)
+        edge_y.append(y1)
+        edge_y.append(None)
+
+    edge_trace = pgo.Scatter(
+        x=edge_x, y=edge_y,
+        line=dict(width=0.5, color=color_list),
+        hoverinfo='none',
+        mode='lines')
+    
+    return edge_trace
+
+
 '''
 Generates edges from 3D coordinates.
 Returns a trace of edges.
 '''
+
 def get_trace_edges(G, posG, color_list):
     edge_x = []
     edge_y = []
@@ -1074,7 +1300,7 @@ def get_trace_edges(G, posG, color_list):
 
 
 # -------------------------------------------------------------------------------------
-# FUNCTIONS FOR 3D SPHERES 
+# 3D SPHERES 
 # -------------------------------------------------------------------------------------
 
 '''
@@ -1231,7 +1457,7 @@ def get_trace_umap_sphere(posG, info_list, color_list, size3d):
     x=[]
     y=[]
     z=[]
-    for node,coords in posG.items():
+    for coords in posG.values():
         xx=coords[0]
         yy=coords[1]
         zz=coords[2]
@@ -1258,7 +1484,7 @@ def get_trace_umap_sphere(posG, info_list, color_list, size3d):
 
 
 # -------------------------------------------------------------------------------------
-# FUNCTIONS FOR TORUS
+# 3D TORUS
 # -------------------------------------------------------------------------------------
 
 
@@ -1300,3 +1526,54 @@ def get_trace_umap_torus(torus_embedded, r, R, color_list, size3d):
     return torus_trace
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Scoring 
+
+
+'''
+Essentiality Score function 
+input : list for major and minor nodes to be considered for the score; additionally add major and minor score system (e.g. integer number)
+output : List of scores (length of and order by G.nodes())
+'''
+def node_essentiality_scores(G, l_major_nodes, l_minor_nodes, major_score, minor_score):
+    
+    nodes_major_score = {}
+    for i in G.nodes():
+        for n in l_major_nodes:
+            if i == n:
+                nodes_major_score[i] = major_score
+
+    nodes_minor_score = {}
+    for i in G.nodes():
+        for n in l_minor_nodes:
+            if i == n:
+                nodes_minor_score[i] = minor_score
+
+    d_all_with_score = {**nodes_major_score,**nodes_minor_score}
+
+    d_no_score = {}
+    for j in G.nodes():
+        if j not in d_all_with_score.keys():
+            d_no_score[j] = 0
+
+    d_scores = {**d_all_with_score, **d_no_score}
+    
+    return d_scores

@@ -1,0 +1,5 @@
+import scipy
+import numpy as np 
+from sklearn import KMeans 
+
+random_matrix = [[random.random() for e in range(2)] for e in range(3)]

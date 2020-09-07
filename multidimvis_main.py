@@ -227,9 +227,10 @@ def bin_nodes(data_dict):
     return d_binned
 
 
+# --------------------------------------------
+# CLUSTERING  
+# --------------------------------------------
 
-
-# cluster functions
 def get_node_clusterid_3D(df, clusterid, n_clus, n_iterations = 10):
     n = n_clus
     #cols = generate_colorlist_nodes(n)
@@ -426,9 +427,6 @@ def get_trace_edges_from_genelist(l_spec_edges, posG, color_list):
                 )
     
     return trace_edges
-
-
-
 
 
 
@@ -835,23 +833,6 @@ def draw_node_degree2D(G, scalef):
     return l_size
 
 
-def draw_node_degree2D_(G, scalef):
-    x = 20
-    ring_frac = (x-1.)/x
-
-    deg = dict(G.degree())
-    
-    l_size = []
-    for node in G.nodes():
-        k = nx.degree(G, node)
-        R = scalef * (1 + k**0.5) 
-
-        l_size.append(R)
-        
-    return l_size
-
-    
-
 def draw_node_degree3D(G, scalef):
     #x = 20
     #ring_frac = np.sqrt((x-1.)/x)
@@ -864,7 +845,8 @@ def draw_node_degree3D(G, scalef):
 
         l_size.append(R)
         
-    return l_size
+        return l_size
+
 
 ########################################################################################
 #

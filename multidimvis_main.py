@@ -224,7 +224,7 @@ def bin_nodes(data_dict):
 
     d_binned = {}
     for n in bins:
-        d_binned[n] = [k for k in data_dict.keys() if data_dict[k] == n]
+        d_binned[n]=[k for k in data_dict.keys() if data_dict[k] == n]
         
     return d_binned
 
@@ -784,29 +784,6 @@ def draw_node_size(G, d_node_size, scalef):
 # DEGREE SPECIFIC
 # -------------------------------------------------------------------------------------
 
-
-'''
-Calculate the node degree from graph positions (dict).
-Return list of sizes for each node (3D). 
-'''
-def draw_node_degree_3D(G, scalef):
-    x = 20
-    ring_frac = (x-1.)/x
-
-    deg = dict(G.degree())
-    
-    d_size = {}
-    for i in G.nodes():
-        for k,v in deg.items():
-            if i == k:
-                R = scalef * (1+v**1.5)
-                r = ring_frac * R
-                d_size[i] = r
-    
-    l_size = list(d_size.values())
-    
-    return l_size 
-
 '''
 Calculate the node degree from graph positions (dict).
 Return list of radii for each node (2D). 
@@ -826,31 +803,25 @@ def draw_node_degree(G, scalef):
     return l_size
 
 
-def draw_node_degree2D(G, scalef):
+'''
+Calculate the node degree from graph positions (dict).
+Return list of sizes for each node (3D). 
+'''
+def draw_node_degree_3D(G, scalef):
+    x = 3
+    ring_frac = (x-1.)/x
+
+    deg = dict(G.degree())
     
-    l_size = []
-    for node in G.nodes():
-        k = nx.degree(G, node)
-        R = scalef * (1 + k**1.2) 
-
-        l_size.append(R)
-        
-    return l_size
-
-
-def draw_node_degree3D(G, scalef):
-    #x = 20
-    #ring_frac = np.sqrt((x-1.)/x)
-    #ring_frac = (x-1.)/x
-
-    l_size = []
-    for node in G.nodes():
-        k = nx.degree(G, node)
-        R = scalef * (1 + k**0.4) 
-
-        l_size.append(R)
-        
-        return l_size
+    d_size = {}
+    for i in G.nodes():
+        for k,v in deg.items():
+            if i == k:
+                R = scalef * (1+v**0.9)
+                r = ring_frac * R
+                d_size[i] = R
+    
+    return d_size 
 
 
 ########################################################################################

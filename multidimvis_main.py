@@ -31,12 +31,14 @@ from matplotlib import cm
 import numpy.linalg as la
 from mpl_toolkits.mplot3d import Axes3D
 #%matplotlib inline
+import multiprocessing
 import mygene
 
 import networkx as nx
 from networkx.algorithms.flow import shortest_augmenting_path
 from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
+#from node2vec import Node2Vec
 import numpy as np
 import numpy.linalg as la
 import numba
@@ -225,6 +227,7 @@ def bin_nodes(data_dict):
         d_binned[n] = [k for k in data_dict.keys() if data_dict[k] == n]
         
     return d_binned
+
 
 
 # --------------------------------------------
@@ -800,7 +803,9 @@ def draw_node_degree_3D(G, scalef):
                 r = ring_frac * R
                 d_size[i] = r
     
-    return d_size
+    l_size = list(d_size.values())
+    
+    return l_size 
 
 '''
 Calculate the node degree from graph positions (dict).
@@ -811,12 +816,12 @@ def draw_node_degree(G, scalef):
     #ring_frac = np.sqrt((x-1.)/x)
     #ring_frac = (x-1.)/x
 
-    l_size = []
+    l_size = {}
     for node in G.nodes():
         k = nx.degree(G, node)
-        R = scalef * (1 + k**0.4) 
+        R = scalef * (1 + k**1.1) 
 
-        l_size.append(R)
+        l_size[node] = R
         
     return l_size
 
@@ -1197,7 +1202,7 @@ def get_posG_3D(l_genes, embed):
 Dimensionality reduction from Matrix (UMAP).
 Return dict (keys: node IDs, values: x,y,z).
 '''
-def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine' ):
+def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
     n_components = 3 # for 3D
 
     U_3d = umap.UMAP(

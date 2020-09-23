@@ -38,7 +38,7 @@ import networkx as nx
 from networkx.algorithms.flow import shortest_augmenting_path
 from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
-#from node2vec import Node2Vec
+from node2vec import Node2Vec
 import numpy as np
 import numpy.linalg as la
 import numba

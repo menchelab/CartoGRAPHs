@@ -234,7 +234,7 @@ def bin_nodes(data_dict):
 # CLUSTERING  
 # --------------------------------------------
 
-def get_node_clusterid_3D(df, clusterid, n_clus, n_iterations = 10):
+def get_node_clusterid(df, clusterid, n_clus, n_iterations = 10):
     n = n_clus
     #cols = generate_colorlist_nodes(n)
 

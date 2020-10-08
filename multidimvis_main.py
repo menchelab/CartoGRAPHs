@@ -40,6 +40,7 @@ from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
 from node2vec import Node2Vec
 import numpy as np
+from numpy import pi, cos, sin, arccos, arange
 import numpy.linalg as la
 import numba
 #@numba.njit(fastmath=True)

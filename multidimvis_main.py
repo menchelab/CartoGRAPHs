@@ -225,36 +225,33 @@ def bin_nodes(data_dict):
 
     d_binned = {}
     for n in bins:
-        d_binned[n]=[k for k in data_dict.keys() if data_dict[k] == n]
+        d_binned[n]=[str(k) for k in data_dict.keys() if data_dict[k] == n]
         
     return d_binned
-
 
 
 # --------------------------------------------
 # CLUSTERING  
 # --------------------------------------------
-
-def get_node_clusterid(df, clusterid, n_clus, n_iterations = 10):
+def get_node_clusterid(df, X_clusterid, n_clus, n_iterations = 1000):
     n = n_clus
-    #cols = generate_colorlist_nodes(n)
-
-    X_clusterid = clusterid
+    cols = generate_colorlist_nodes(n)
+    
+    #X_clusterid = clusterid[0]
     X_id = df.index
     
-    #cols_to_clusters = {}
-    #for ix,col in enumerate(cols):
-    #    for j in X_clusterid:
-    #        for k in j:
-    #            if k == ix:
-    #                cols_to_clusters[k]=col
+    cols_to_clusters = {}
+    for ix,col in enumerate(cols):
+        for j in X_clusterid:
+            if j == ix:
+                cols_to_clusters[j]=col
 
     d_node_clusterid = {k:v for k,v in zip(X_id, X_clusterid)}
 
-    return d_node_clusterid 
+    return d_node_clusterid
 
 
-def get_clustercenter_xy(centers, n_clus, n_iterations = 10):
+def get_clustercenter_xy(centers, n_clus, n_iterations = 10): 
     lx = []
     ly = []
     for clu in range(n_clus):
@@ -1370,8 +1367,8 @@ def get_trace_edges(G, posG, color_list):
                         y = edge_y, 
                         z = edge_z,
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.5, color = color_list),
-                        opacity = 0.15
+                        line = dict(width = 0.1, color = color_list),
+                        opacity = 0.1
                 )
     
     return trace_edges

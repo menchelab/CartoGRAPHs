@@ -74,7 +74,6 @@ from scipy.spatial import distance_matrix
 from scipy.interpolate import interpn
 from scipy.stats import gaussian_kde
 import seaborn as sns
-import sklearn
 from sklearn.manifold import TSNE
 from sklearn.model_selection import ParameterGrid
 from sklearn import datasets
@@ -218,6 +217,7 @@ def heatmap_from_matrix(Matrix, title = None):
 
 
 '''
+Binning based on dict.
 Return binned nodes.
 '''
 def bin_nodes(data_dict): 
@@ -228,6 +228,51 @@ def bin_nodes(data_dict):
         d_binned[n]=[str(k) for k in data_dict.keys() if data_dict[k] == n]
         
     return d_binned
+
+
+# --------------------------------------------
+# CLUSTERING  
+# --------------------------------------------
+def get_node_clusterid(df, X_clusterid, n_clus, n_iterations = 1000):
+    n = n_clus
+    cols = generate_colorlist_nodes(n)
+    
+    #X_clusterid = clusterid[0]
+    X_id = df.index
+    
+    cols_to_clusters = {}
+    for ix,col in enumerate(cols):
+        for j in X_clusterid:
+            if j == ix:
+                cols_to_clusters[j]=col
+
+    d_node_clusterid = {k:v for k,v in zip(X_id, X_clusterid)}
+
+    return d_node_clusterid
+
+
+def get_clustercenter_xy(centers, n_clus, n_iterations = 10): 
+    lx = []
+    ly = []
+    for clu in range(n_clus):
+        for i in centers:
+            lx.append(i[clu][0])
+            ly.append(i[clu][1])
+
+    return lx, ly
+
+
+def get_clustercenter_xyz(centers, n_clus, n_iterations = 10):
+    lx = []
+    ly = []
+    lz = []
+    for clu in range(n_clus):
+        for i in centers:
+            lx.append(i[clu][0])
+            ly.append(i[clu][1])
+            lz.append(i[clu][2])
+
+    return lx, ly, lz
 
 
 
@@ -260,13 +305,11 @@ def hex_to_rgb(hex):
     hlen = len(hex)
     return tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
 
-
 def adjust_color_lightness(r, g, b, factor):
     h, l, s = rgb2hls(r / 255.0, g / 255.0, b / 255.0)
     l = max(min(l * factor, 1.0), 0.0)
     r, g, b = hls2rgb(h, l, s)
     return rgb2hex(int(r * 255), int(g * 255), int(b * 255))
-
 
 def darken_color(r, g, b, factor=0.9):
     return adjust_color_lightness(r, g, b, 1 - factor)
@@ -287,7 +330,7 @@ def color_nodes_from_dict(G, dict_color_nodes):
 
     #colours = list(d_col_sorted.values())
 
-    return d_col #colours
+    return d_col#colours
 
 
 def color_nodes_from_dict_same(G, dict_color_nodes, color):
@@ -800,7 +843,7 @@ def embed_tsne_2D(DM, prplxty, density, l_rate, steps, metric = 'precomputed'):
     embed = tsne.fit_transform(DM)
     return embed
 
-def embed_umap_2D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
+def embed_umap_2D(Matrix, n_neighbors, spread, min_dist, metric='cosine' ):
     n_components = 2 # for 2D
 
     U = umap.UMAP(
@@ -1337,6 +1380,100 @@ def get_trace_edges(G, posG, color_list):
 # -------------------------------------------------------------------------------------
 
 '''
+(DOSNES) The Nodes are embedded on a sphere.
+Return dict with coordinates (x,y,z)
+'''
+def embed_tsne_sphere(G, Matrix, momentum, final_momentum, learning_rate, min_gain, max_iter, metric = 'precomputed', rand_state = 42, verb=1):
+    model = dosnes.DOSNES(momentum = momentum, final_momentum = final_momentum, learning_rate = learning_rate, min_gain = min_gain,
+    max_iter = max_iter, verbose_freq = 10, metric = metric, verbose = verb, random_state=rand_state)
+    X_tsne_sphere = model.fit_transform(Matrix)
+    
+    posG = {}
+    cc = 0
+    for entz in sorted(G.nodes()):
+        posG[entz] = (X_tsne_sphere[cc,0],X_tsne_sphere[cc,1], X_tsne_sphere[cc,2])
+        cc += 1
+    
+    posG_sorted = {key:posG[key] for key in G.nodes()}
+
+    return posG_sorted
+
+'''
+Get respective sphere to locate a node based on a parameter dictionary (dict_param) chosen.
+Return dict with Node ids (keys) and respective sphere radius assigned based on dict_param.
+'''
+
+def assign_radius_to_nodes(G, dict_param):  
+
+    l_rad = []
+    count = 1
+    for i in set(sorted(dict_param.values())):
+        l_rad.append(count)
+        count+=1
+    
+    # bin nodes by dict_param
+    # get a dict: radius as keys and dict_param as values 
+
+    d_z = {}
+    for k, g in it.groupby(dict_param.values(), key=lambda n:n):
+        d_z[k] = list(g)
+
+    d_rad = {}
+    for idx,rad in enumerate(l_rad):
+        for i,k in enumerate(d_z.keys()):
+            if idx == i:
+                d_rad[rad] = k
+
+    # assign each node id to a radius based on dict_param 
+
+    d_node_rad = {}
+    for k,v in dict_param.items():
+        for r, deg in d_rad.items():
+            if v == deg:
+                d_node_rad[k] = r
+    
+    d_node_rad_sorted = {key:d_node_rad[key] for key in G.nodes()}
+    return d_node_rad_sorted
+
+
+'''
+(DOSNES) From embedded spherical coordinates for each node generate a trace.
+Return traces for nodes.
+'''
+def get_tsne_sphere_trace_nodes(posG, d_node_rad, color_list, size):
+
+    # multiply radius to specific node coordinate based on dict_param bin 
+    d_node_coords_trace = {}
+    for node,coord in posG.items():
+        for nd, rad in d_node_rad.items():
+            if node == nd:
+                d_node_coords_trace[node] = (rad*coord[0],rad*coord[1],rad*coord[2])
+                
+    # prep coordinates incl. respective radius for generating a trace  
+    x_trace = []
+    y_trace = []
+    z_trace = []
+    for k,v in d_node_coords_trace.items():
+        x_trace.append(v[0])
+        y_trace.append(v[1])
+        z_trace.append(v[2])
+        
+    # traces nodes
+    trace_nodes = pgo.Scatter3d(x = x_trace,
+                           y = y_trace,
+                           z = z_trace,
+                           mode = 'markers',
+                           marker = dict(
+                color = color_list,
+                size = size,
+                symbol = 'circle',
+            ),
+        )
+
+    return trace_nodes
+
+
+'''
 Generate a trace for 3D plotting a sphere (in the background) with chosen radius.
 Return list of traces of spheres with respective radii given by design.
 '''
@@ -1365,30 +1502,45 @@ def get_sphere_background(radius_list):
     return sphere_background
 
 
-
 '''
 (UMAP) The Nodes are embedded on a sphere.
-Return fitted model. 
+Return dict with coordinates (x,y,z)
 '''
-def embed_umap_sphere(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
+def embed_umap_sphere(G, Matrix, n_neighbors, spread, min_dist, metric='cosine'):
     
-    model = umap.UMAP(
-        n_neighbors = n_neighbors, 
+    model = umap.UMAP(n_neighbors = n_neighbors,
         spread = spread,
         min_dist = min_dist,
         metric = metric)
-
+    #model = umap.UMAP(output_metric=metric)
     sphere_mapper = model.fit(Matrix)
+    
+    x = np.sin(sphere_mapper.embedding_[:, 0]) * np.cos(sphere_mapper.embedding_[:, 1])
+    y = np.sin(sphere_mapper.embedding_[:, 0]) * np.sin(sphere_mapper.embedding_[:, 1])
+    z = np.cos(sphere_mapper.embedding_[:, 0])
+    
+    posG = {}
+    cc = 0
+    for entz in G.nodes():
+        posG[entz] = (x[cc],y[cc], z[cc])
+        cc += 1
+    
+    posG_sorted = {key:posG[key] for key in G.nodes()}
 
-    return sphere_mapper
+    return posG_sorted
 
 
 
-'''
-(UMAP) Nodes (l_genes) are positioned based on model (sphere_mapper) onto sphere.
-Return dict with coordinates (x,y,z).
-'''
-def get_posG_sphere(l_genes, sphere_mapper):
+
+def embed_umap_sphere_from_genelist(Matrix, l_genes, n_neighbors, spread, min_dist, metric='cosine'):
+    
+    model = umap.UMAP(n_neighbors = n_neighbors,
+        spread = spread,
+        min_dist = min_dist,
+        metric = metric)
+    #model = umap.UMAP(output_metric=metric)
+    sphere_mapper = model.fit(Matrix)
+    
     x = np.sin(sphere_mapper.embedding_[:, 0]) * np.cos(sphere_mapper.embedding_[:, 1])
     y = np.sin(sphere_mapper.embedding_[:, 0]) * np.sin(sphere_mapper.embedding_[:, 1])
     z = np.cos(sphere_mapper.embedding_[:, 0])
@@ -1400,8 +1552,6 @@ def get_posG_sphere(l_genes, sphere_mapper):
         cc += 1
     
     return posG
-
-
 
 '''
 (UMAP) From embedded spherical coordinates for each node generate a trace.

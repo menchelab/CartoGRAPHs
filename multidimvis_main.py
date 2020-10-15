@@ -102,11 +102,7 @@ import warnings
 ########################################################################################
 
 
-
-# --------------------------------------------
 # GENE entrezID <-> Gene Symbol 
-# --------------------------------------------
-
 """
 Return two dictionaries.
 First with gene entrezid > symbol. Second with symbol > entrezid. 
@@ -179,6 +175,7 @@ def rnd_walk_matrix2(A, r, a, num_nodes):
 
     return W
 
+
 '''
 Generate a heatmap + Dendogramm from a Matrix.
 Return plot.
@@ -229,6 +226,37 @@ def bin_nodes(data_dict):
         
     return d_binned
 
+
+def tsne_portrait2D_to_csv(posG, colours, organism):
+    colours_r = []
+    colours_g = []
+    colours_b = []
+    colours_a = []
+    for i in colours:
+        colours_r.append(int(i[0]*255)) # colour values should be integers within 0-255
+        colours_g.append(int(i[1]*255))
+        colours_b.append(int(i[2]*255))
+        colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
+        
+    df = pd.DataFrame(posG).T
+    df.columns=['X','Y']
+
+    df['R'] = colours_r
+    df['G'] = colours_g
+    df['B'] = colours_b
+    df['A'] = colours_a
+
+    return df.to_csv(r'output_layout_csv/2Dportrait_'+organism+'.csv', index = False, header = False)
+
+
+
+'''
+Function to make 3D html plot rotating.
+Returns frames, to be used in "pgo.Figure(frames = frames)"
+'''
+def rotate_z(x, y, z, theta):
+    w = x+1j*y
+    return np.real(np.exp(1j*theta)*w), np.imag(np.exp(1j*theta)*w), z 
 
 
 ########################################################################################
@@ -357,35 +385,6 @@ def get_trace_edges_from_genelist_2D(l_spec_edges, posG, color_list):
                 )
     
     return trace_edges
-
-def get_trace_edges_from_genelist(l_spec_edges, posG, color_list):
-    edge_x = []
-    edge_y = []
-    edge_z = []
-    for edge in l_spec_edges:
-            x0, y0, z0 = posG[edge[0]]
-            x1, y1, z1 = posG[edge[1]]
-            edge_x.append(x0)
-            edge_x.append(x1)
-            edge_x.append(None)
-            edge_y.append(y0)
-            edge_y.append(y1)
-            edge_y.append(None)
-            edge_z.append(z0)
-            edge_z.append(z1)
-            edge_z.append(None)
-        
-    trace_edges = pgo.Scatter3d(
-                        x = edge_x, 
-                        y = edge_y, 
-                        z = edge_z,
-                        mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.5, color = color_list),
-                        opacity = 0.05
-                )
-    
-    return trace_edges
-
 
 
 # -------------------------------------------------------------------------------------
@@ -721,20 +720,6 @@ def color_majornodes_outgoingedges(G, dict_majorcolor_nodes):
 ########################################################################################
 
 
-
-def draw_node_size(G, d_node_size, scalef):
-    
-    # sort according to Graph 
-    d_node_size_sorted = {key:d_node_size[key] for key in G.nodes()}    
-    
-    l_size = []
-    for nd,val in d_node_size_sorted.items():
-        R = scalef * (1 + val**1.5)      
-        l_size.append(R)
-        
-    return l_size
-
-
 # -------------------------------------------------------------------------------------
 # DEGREE SPECIFIC
 # -------------------------------------------------------------------------------------
@@ -956,25 +941,7 @@ def get_trace_edges_2D(G, posG, color_list):
     
     return edge_trace
 
-# -------------------------------------------------------------------------------------
-# FUNCTIONS FOR 3D GENERAL 
-# -------------------------------------------------------------------------------------
 
-
-'''
-Function to make 3D html plot rotating.
-Returns frames, to be used in "pgo.Figure(frames = frames)"
-'''
-def rotate_z(x, y, z, theta):
-    w = x+1j*y
-    return np.real(np.exp(1j*theta)*w), np.imag(np.exp(1j*theta)*w), z 
-
-def export_xyz_to_csv(G, posG, title):
-    coords = pd.DataFrame(posG, index = ['X','Y','Z'], columns = G.nodes()).T
-    #coords['Gene ID'] = genes_subset
-    #coords['Cluster ID'] = cluster_community
-    
-    return coords.to_csv(title +'.csv')
 
 def get_trace_spec_edges_only(l_spec_edge, posG, color_list):
     edge_x = []
@@ -1011,48 +978,6 @@ def get_trace_spec_edges_only(l_spec_edge, posG, color_list):
 # -------------------------------------------------------------------------------------
 # FUNCTIONS FOR LANDSCAPES
 # -------------------------------------------------------------------------------------
-
-'''
-From 2D embedded coordinates generate a 3D landscape by including the z-axis.
-Return x,y,z coordinates, where z is set 0.
-'''
-def get_coords_landscape(G, posG):
-    # IMPORTANT : sort pos by G.nodes()
-    posG_sorted = dict([(key, posG[key]) for key in G.nodes()])
-
-    df=pd.DataFrame(posG_sorted).T
-    df['Z'] = 0*len(G.nodes())
-    df.columns=['X','Y','Z']
-
-    x=np.array(df['X'])
-    y=np.array(df['Y'])
-    z=np.array(df['Z'])
-
-    return x,y,z
-
-
-'''
-Create trace of nodes for x,y,z0 and x,y,z=parameter (e.g.disease count).
-Return traces of nodes.
-
-'''   
-def get_trace_nodes_landscape(x,y,z, colours, size3d):
-
-    trace_z = pgo.Scatter3d(x=x,y=y,z=z,
-                             mode = 'markers',
-                           #text = list(d_gene_dc_sorted.items()),
-                           #hoverinfo = 'text',
-                           #textposition='middle center',
-                           marker = dict(                       
-                color = colours,
-                size = size3d,
-                symbol = 'circle',
-                line = dict(width = 1.0,
-                        color = colours)
-                           ),)
-    
-    return trace_z
-
 
 '''
 Create trace of vertical connecting edges in between node z0 and node z=parameter (e.g.disease count).
@@ -1143,48 +1068,6 @@ def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
 
 
 '''
-Get node coordinates based on distribution on sphere layers (different radii) given by a dictionary with all nodes having specific values based on a function.
-Return a dictionary  with node ids (keys) and node positions with assigned radius (values).
-'''
-def get_posG_with_sphere_radius(G, posG, d_param):
-    l_dict = []
-    for i in set(d_param.values()):
-        dsub_nodes_score = {}
-        for node, score in d_param.items():
-            for n, c in posG.items():
-                if score==i:
-                    dsub_nodes_score[node] = score
-        l_dict.append(dsub_nodes_score)
-    
-    radius_assigned = []
-    for dct in l_dict:
-        posG_withrad = {}
-        for n,score in dct.items():
-            for node,coords in posG.items():
-                if n==node:
-                    posG_withrad[n] = coords
-        radius_assigned.append(posG_withrad)
-    
-    l_trace_prep = []
-    for idx,dct in enumerate(radius_assigned):
-        posG_new = {}
-        for ir,rad in enumerate(range(1,len(set(d_param.values()))+1)):
-            for n,c in dct.items():
-                if ir == idx:
-                    posG_new[n] = (c[0]*rad, c[1]*rad, c[2]*rad)
-        l_trace_prep.append(posG_new) 
-        
-    posG_all = {}
-    for i in l_trace_prep:
-        posG_all.update(i)
-
-    posG_all_sorted = {key:posG_all[key] for key in G.nodes()}
-    
-    return posG_all_sorted
-
-
-
-'''
 Plot node features within 3D plot. 
 Return trace.
 '''
@@ -1206,32 +1089,6 @@ def get_node_features(posG, features):
     return node_labels
 
 
-'''
-Generates 3D coordinates from nodes (dict).
-Return trace.
-'''
-# former : "get_trace_nodes"
-def get_trace_nodes_from_graph(G, posG, info_list, color_list, size):
-
-    key_list=list(G.nodes())
-    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
-                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
-                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
-                           mode = 'markers',
-                           text = info_list,
-                           hoverinfo = 'text',
-                           #textposition='middle center',
-                           marker = dict(
-                color = color_list,
-                size = size,
-                symbol = 'circle',
-                line = dict(width = 0.8,
-                        color = color_list),
-                               opacity=0.8,
-            ),
-        )
-    
-    return trace
 
 def get_trace_nodes(posG, info_list, color_list, size):
 
@@ -1254,6 +1111,8 @@ def get_trace_nodes(posG, info_list, color_list, size):
     
     return trace
 
+
+
 def get_trace_nodes_2D(posG, info_list, color_list, size):
 
     key_list=list(posG.keys())
@@ -1273,6 +1132,7 @@ def get_trace_nodes_2D(posG, info_list, color_list, size):
         )
     
     return trace
+
 
 
 def get_trace_edges_2D(G, posG, color_list):
@@ -1301,7 +1161,6 @@ def get_trace_edges_2D(G, posG, color_list):
 Generates edges from 3D coordinates.
 Returns a trace of edges.
 '''
-
 def get_trace_edges(G, posG, color_list):
     edge_x = []
     edge_y = []
@@ -1436,10 +1295,57 @@ def get_trace_umap_sphere(posG, info_list, color_list, size3d):
     
     return sphere_trace
 
+
 def sample_spherical(npoints, ndim=3):
     vec = np.random.randn(ndim, npoints)
     vec /= np.linalg.norm(vec, axis=0)
     return vec
+
+
+
+
+'''
+Get node coordinates based on distribution on sphere layers (different radii) given by a dictionary with all nodes having specific values based on a function.
+Return a dictionary  with node ids (keys) and node positions with assigned radius (values).
+'''
+def get_posG_with_sphere_radius(G, posG, d_param):
+    l_dict = []
+    for i in set(d_param.values()):
+        dsub_nodes_score = {}
+        for node, score in d_param.items():
+            for n, c in posG.items():
+                if score==i:
+                    dsub_nodes_score[node] = score
+        l_dict.append(dsub_nodes_score)
+    
+    radius_assigned = []
+    for dct in l_dict:
+        posG_withrad = {}
+        for n,score in dct.items():
+            for node,coords in posG.items():
+                if n==node:
+                    posG_withrad[n] = coords
+        radius_assigned.append(posG_withrad)
+    
+    l_trace_prep = []
+    for idx,dct in enumerate(radius_assigned):
+        posG_new = {}
+        for ir,rad in enumerate(range(1,len(set(d_param.values()))+1)):
+            for n,c in dct.items():
+                if ir == idx:
+                    posG_new[n] = (c[0]*rad, c[1]*rad, c[2]*rad)
+        l_trace_prep.append(posG_new) 
+        
+    posG_all = {}
+    for i in l_trace_prep:
+        posG_all.update(i)
+
+    posG_all_sorted = {key:posG_all[key] for key in G.nodes()}
+    
+    return posG_all_sorted
+
+
+
 
 # -------------------------------------------------------------------------------------
 # 3D TORUS
@@ -1483,55 +1389,3 @@ def get_trace_umap_torus(torus_embedded, r, R, color_list, size3d):
         )
     return torus_trace
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Scoring 
-
-
-'''
-Essentiality Score function 
-input : list for major and minor nodes to be considered for the score; additionally add major and minor score system (e.g. integer number)
-output : List of scores (length of and order by G.nodes())
-'''
-def node_essentiality_scores(G, l_major_nodes, l_minor_nodes, major_score, minor_score):
-    
-    nodes_major_score = {}
-    for i in G.nodes():
-        for n in l_major_nodes:
-            if i == n:
-                nodes_major_score[i] = major_score
-
-    nodes_minor_score = {}
-    for i in G.nodes():
-        for n in l_minor_nodes:
-            if i == n:
-                nodes_minor_score[i] = minor_score
-
-    d_all_with_score = {**nodes_major_score,**nodes_minor_score}
-
-    d_no_score = {}
-    for j in G.nodes():
-        if j not in d_all_with_score.keys():
-            d_no_score[j] = 0
-
-    d_scores = {**d_all_with_score, **d_no_score}
-    
-    return d_scores

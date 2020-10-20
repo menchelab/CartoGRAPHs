@@ -802,22 +802,12 @@ def embed_umap_2D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
 Get 2D coordinates for each node.
 Return dict with node: x,y coordinates.
 ''' 
-def get_posG(G, embed):
-    posG = {}
-    cc = 0
-    for entz in G.nodes():
-    #for entz in sorted(G.nodes()):
-        posG[entz] = (embed[cc,0],embed[cc,1])
-        cc += 1
-
-    return posG
-
-
 def get_posG_2D(l_nodes, embed):
     posG = {}
     cc = 0
     for entz in l_nodes:
-        posG[str(entz)] = (embed[cc,0],embed[cc,1])
+        # posG[str(entz)] = (embed[cc,0],embed[cc,1])
+        posG[entz] = (embed[cc,0],embed[cc,1])
         cc += 1
 
     return posG
@@ -1161,7 +1151,7 @@ def get_trace_edges_2D(G, posG, color_list):
 Generates edges from 3D coordinates.
 Returns a trace of edges.
 '''
-def get_trace_edges(G, posG, color_list):
+def get_trace_edges(G, posG, color_list, opac = 0.2):
     edge_x = []
     edge_y = []
     edge_z = []
@@ -1184,7 +1174,7 @@ def get_trace_edges(G, posG, color_list):
                         z = edge_z,
                         mode = 'lines', hoverinfo='none',
                         line = dict(width = 0.1, color = color_list),
-                        opacity = 0.1
+                        opacity = opac
                 )
     
     return trace_edges

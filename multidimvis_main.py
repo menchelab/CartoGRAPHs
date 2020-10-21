@@ -1379,3 +1379,78 @@ def get_trace_umap_torus(torus_embedded, r, R, color_list, size3d):
         )
     return torus_trace
 
+
+
+
+
+
+
+########################################################################################
+#
+# EXPORT COORDINATES FUNCTIONS
+#
+########################################################################################
+
+
+# export for csv --> VR DataDiVR , NEON Webapp 
+
+# export Dataframe
+# Format is compatible with VR upload into DataDiVR and for WEBAPP "NEON"
+
+def export_to_csv2D(layout, organism, posG, entrezID_list, colours):
+    
+    colours_r = []
+    colours_g = []
+    colours_b = []
+    colours_a = []
+    for i in colours:
+        colours_r.append(int(i[0]*255)) # colour values should be integers within 0-255
+        colours_g.append(int(i[1]*255))
+        colours_b.append(int(i[2]*255))
+        colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
+        
+    df_2D = pd.DataFrame(posG).T
+    df_2D.columns=['X','Y']
+    df_2D['Z'] = 0
+    df_2D['R'] = colours_r
+    df_2D['G'] = colours_g
+    df_2D['B'] = colours_b
+    df_2D['A'] = colours_a
+
+    df_2D[layout] = layout
+    df_2D['ID'] = entrezID_list
+
+    cols = df_2D.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df_2D_final = df_2D[cols]
+    
+    return df_2D_final.to_csv(r'VR_layouts/NEON_'+layout+'_'+organism+'.csv',index=False, header=False)
+
+
+def export_to_csv3D(layout, organism, posG, entrezID_list, colours):
+    
+    colours_r = []
+    colours_g = []
+    colours_b = []
+    colours_a = []
+    for i in colours:
+        colours_r.append(int(i[0]*255)) # colour values should be integers within 0-255
+        colours_g.append(int(i[1]*255))
+        colours_b.append(int(i[2]*255))
+        colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
+        
+    df_3D = pd.DataFrame(posG).T
+    df_3D.columns=['X','Y','Z']
+    df_3D['R'] = colours_r
+    df_3D['G'] = colours_g
+    df_3D['B'] = colours_b
+    df_3D['A'] = colours_a
+
+    df_3D[layout] = layout
+    df_3D['ID'] = entrezID_list
+
+    cols = df_3D.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df_3D_final = df_3D[cols]
+    
+    return df_3D_final.to_csv(r'VR_layouts/NEON_'+layout+'_'+organism+'.csv',index=False, header=False)

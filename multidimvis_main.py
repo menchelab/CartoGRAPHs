@@ -1232,7 +1232,7 @@ def get_trace_edges_3D(G, posG, color_list, opac = 0.2):
                         y = edge_y, 
                         z = edge_z,
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.1, color = color_list),
+                        line = dict(width = 0.5, color = color_list),
                         opacity = opac
                 )
     

@@ -844,7 +844,7 @@ def position_labels(posG, move_x, move_y):
 Validation of Layouts 2D. Calculates distances from layout.
 Return list with distances. 
 '''
-def calc_dist_from_layout(posG):
+def calc_dist_2D(posG):
     
     l_x= []
     l_y=[]
@@ -864,15 +864,74 @@ def calc_dist_from_layout(posG):
     return p_dist
 
 '''
-Generate 2D trace. Especially for distance calculations (benchmarking)
-from x,y coordinates. 
-Return trace. ''' 
-def get_trace_xy(x,y,name,colour,size):
+Validation of Layouts 3D. Calculates distances from layout.
+Return list with distances. 
+'''
+def calc_dist_3D(posG):
+    
+    l_x = []
+    l_y = []
+    l_z = []
+    for coords in posG.values():
+            l_x.append(coords[0])
+            l_y.append(coords[1])
+            l_z.append(coords[2])
+            
+    p_dist = []
+    for idx,val in enumerate(l_x):
+        d_list = []
+        for c in range(len(l_x)):
+            d = np.sqrt((l_x[idx]-l_x[c])**2+(l_y[idx]-l_y[c])**2+(l_z[idx]-l_z[c])**2)
+        d_list.append(d)
+    p_dist.append(d_list)
+        
+    return p_dist
+
+'''
+Get trace 2D.
+Used for distance functions (2D) 
+'''
+def get_trace2D(x,y,trace_name,colour):
+    trace = pgo.Scatter(name = trace_name,
+    x = x,
+    y = y,
+    mode='markers',
+    marker=dict(
+        size=6,
+        color=colour
+    ),)
+    return trace
+
+
+
+'''
+Get trace 2D.
+Used for distance functions (2D; benchmarking) 
+'''
+def get_trace_xy(x,y,trace_name,colour):
+    trace = pgo.Scatter(name = trace_name,
+    x = x,
+    y = y,
+    mode='markers',
+    marker=dict(
+        size=6,
+        color=colour
+    ),)
+    return trace
+
+
+
+'''
+Generate 3D trace. 
+Used for distance functions (3D; benchmarking)
+''' 
+def get_trace_xyz(x,y,z,name,colour,size):
     
     
-    trace = pgo.Scatter(
+    trace = pgo.Scatter3d(
         x = x,
         y = y,
+        z = z,
         mode='markers',
         text=name,
         marker=dict(
@@ -1079,30 +1138,6 @@ def get_node_features(posG, features):
     return node_labels
 
 
-
-def get_trace_nodes(posG, info_list, color_list, size):
-
-    key_list=list(posG.keys())
-    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
-                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
-                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
-                           mode = 'markers',
-                           text = info_list,
-                           hoverinfo = 'text',
-                           #textposition='middle center',
-                           marker = dict(
-                color = color_list,
-                size = size,
-                symbol = 'circle',
-                line = dict(width = 1.0,
-                        color = color_list)
-            ),
-        )
-    
-    return trace
-
-
-
 def get_trace_nodes_2D(posG, info_list, color_list, size):
 
     key_list=list(posG.keys())
@@ -1147,11 +1182,35 @@ def get_trace_edges_2D(G, posG, color_list):
     return edge_trace
 
 
+
+def get_trace_nodes_3D(posG, info_list, color_list, size):
+
+    key_list=list(posG.keys())
+    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
+                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
+                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
+                           mode = 'markers',
+                           text = info_list,
+                           hoverinfo = 'text',
+                           #textposition='middle center',
+                           marker = dict(
+                color = color_list,
+                size = size,
+                symbol = 'circle',
+                line = dict(width = 1.0,
+                        color = color_list)
+            ),
+        )
+    
+    return trace
+
+
+
 '''
 Generates edges from 3D coordinates.
 Returns a trace of edges.
 '''
-def get_trace_edges(G, posG, color_list, opac = 0.2):
+def get_trace_edges_3D(G, posG, color_list, opac = 0.2):
     edge_x = []
     edge_y = []
     edge_z = []
@@ -1397,7 +1456,7 @@ def get_trace_umap_torus(torus_embedded, r, R, color_list, size3d):
 # export Dataframe
 # Format is compatible with VR upload into DataDiVR and for WEBAPP "NEON"
 
-def export_to_csv2D(layout, organism, posG, entrezID_list, colours):
+def export_to_csv2D(layout, posG, entrezID_list, colours):
     
     colours_r = []
     colours_g = []
@@ -1424,10 +1483,10 @@ def export_to_csv2D(layout, organism, posG, entrezID_list, colours):
     cols = cols[-1:] + cols[:-1]
     df_2D_final = df_2D[cols]
     
-    return df_2D_final.to_csv(r'VR_layouts/NEON_'+layout+'_'+organism+'.csv',index=False, header=False)
+    return df_2D_final.to_csv(r'VR_layouts/'+layout+'.csv',index=False, header=False)
 
 
-def export_to_csv3D(layout, organism, posG, entrezID_list, colours):
+def export_to_csv3D(layout, posG, entrezID_list, colours):
     
     colours_r = []
     colours_g = []
@@ -1453,4 +1512,4 @@ def export_to_csv3D(layout, organism, posG, entrezID_list, colours):
     cols = cols[-1:] + cols[:-1]
     df_3D_final = df_3D[cols]
     
-    return df_3D_final.to_csv(r'VR_layouts/NEON_'+layout+'_'+organism+'.csv',index=False, header=False)
+    return df_3D_final.to_csv(r'VR_layouts/'+layout+'.csv',index=False, header=False)

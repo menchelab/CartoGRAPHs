@@ -84,6 +84,8 @@ from sklearn import (manifold, datasets, decomposition, ensemble,
                      discriminant_analysis, random_projection,cluster)
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances
+from sklearn.linear_model import LinearRegression
+
 import sys 
 
 from tqdm import tqdm_notebook as tqdm
@@ -909,12 +911,13 @@ Get trace 2D.
 Used for distance functions (2D; benchmarking) 
 '''
 def get_trace_xy(x,y,trace_name,colour):
-    trace = pgo.Scatter(name = trace_name,
+    trace = pgo.Scatter(
+        name = trace_name,
     x = x,
     y = y,
     mode='markers',
     marker=dict(
-        size=6,
+        size=3,
         color=colour
     ),)
     return trace
@@ -925,7 +928,7 @@ def get_trace_xy(x,y,trace_name,colour):
 Generate 3D trace. 
 Used for distance functions (3D; benchmarking)
 ''' 
-def get_trace_xyz(x,y,z,name,colour,size):
+def get_trace_xyz(x,y,z,trace_name,colour):
     
     
     trace = pgo.Scatter3d(
@@ -933,9 +936,9 @@ def get_trace_xyz(x,y,z,name,colour,size):
         y = y,
         z = z,
         mode='markers',
-        text=name,
+        text=trace_name,
         marker=dict(
-            size=size,
+            size=3,
             color=colour, 
             line_width=0.5,
             line_color = colour,

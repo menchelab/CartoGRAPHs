@@ -304,9 +304,6 @@ def darken_color(r, g, b, factor=0.9):
 
 def color_nodes_from_dict(G, d_to_be_coloured, color_method):
 
-    #color_method = 'clos'
-    #d_to_be_coloured = d_clos # dict sorted by dict.values (that way the biggest value matches darkest colour of palette)
-
     # Colouring
     colour_groups = set(d_to_be_coloured.values())
     colour_count = len(colour_groups)
@@ -884,6 +881,7 @@ def calc_dist_2D(posG):
         
     return p_dist
 
+
 '''
 Validation of Layouts 3D. Calculates distances from layout.
 Return list with distances. 
@@ -924,7 +922,6 @@ def get_trace2D(x,y,trace_name,colour):
     return trace
 
 
-
 '''
 Get trace 2D.
 Used for distance functions (2D; benchmarking) 
@@ -936,7 +933,7 @@ def get_trace_xy(x,y,trace_name,colour):
     y = y,
     mode='markers',
     marker=dict(
-        size=3,
+        size=2,
         color=colour
     ),)
     return trace
@@ -957,12 +954,13 @@ def get_trace_xyz(x,y,z,trace_name,colour):
         mode='markers',
         text=trace_name,
         marker=dict(
-            size=3,
+            size=2,
             color=colour, 
             line_width=0.5,
             line_color = colour,
         ),)
     return trace
+
 
 
 ''' 

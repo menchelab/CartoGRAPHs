@@ -68,6 +68,8 @@ from scipy.spatial import distance_matrix
 from scipy.spatial import distance
 from scipy.cluster.hierarchy import fcluster
 import scipy.stats as st
+from scipy import stats
+
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as dist
 from scipy.spatial import distance_matrix

@@ -15,7 +15,6 @@ import colorsys
 from colormap import rgb2hex, rgb2hls, hls2rgb
 from colormath.color_objects import sRGBColor, LabColor
 from colormath.color_conversions import convert_color
-from collections import Counter
 
 from fisher import pvalue
 from fa2 import ForceAtlas2
@@ -38,7 +37,6 @@ import networkx as nx
 from networkx.algorithms.flow import shortest_augmenting_path
 from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
-from node2vec import Node2Vec
 import numpy as np
 from numpy import pi, cos, sin, arccos, arange
 import numpy.linalg as la
@@ -64,7 +62,6 @@ import pymysql as mysql
 
 import random as rd
 
-from scipy.spatial import distance_matrix
 from scipy.spatial import distance
 from scipy.cluster.hierarchy import fcluster
 import scipy.stats as st
@@ -72,7 +69,6 @@ from scipy import stats
 
 import scipy.cluster.hierarchy as sch
 import scipy.spatial.distance as dist
-from scipy.spatial import distance_matrix
 from scipy.interpolate import interpn
 from scipy.stats import gaussian_kde
 import seaborn as sns
@@ -304,12 +300,12 @@ def darken_color(r, g, b, factor=0.9):
     return adjust_color_lightness(r, g, b, 1 - factor)
 
 
-def color_nodes_from_dict(G, d_to_be_coloured, color_method):
+def color_nodes_from_dict(G, d_to_be_coloured, color_method, palette):
 
     # Colouring
     colour_groups = set(d_to_be_coloured.values())
     colour_count = len(colour_groups)
-    pal = sns.color_palette('YlOrRd', colour_count)
+    pal = sns.color_palette(palette, colour_count)
     palette = pal.as_hex()
 
     d_colourgroups = {}
@@ -332,10 +328,10 @@ def color_nodes_from_dict(G, d_to_be_coloured, color_method):
 
     # SORT dict based on G.nodes
     d_node_colour_sorted = dict([(key, d_node_colour[key]) for key in G.nodes()])
-    l_col = list(d_node_colour_sorted.values())
-    colours = l_col
+    #l_col = list(d_node_colour_sorted.values())
+    #colours = l_col
     
-    return colours
+    return d_node_colour_sorted # colours
 
 
 def color_nodes_from_dict_same(G, dict_color_nodes, color):

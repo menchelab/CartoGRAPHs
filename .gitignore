@@ -1,7 +1,9 @@
 
 # folders
-_MyUsefulSnippets
-_archivdata
+_MyUsefulSnippets/
+_archivdata/
+
+.DStore
 
 # big files 
 *.csv

@@ -4,7 +4,7 @@ _MyUsefulSnippets
 _archivdata
 
 # big files 
-#*.csv
+*.csv
 *.html
 
 # Mac files 

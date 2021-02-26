@@ -3,14 +3,12 @@
 _MyUsefulSnippets/
 _archivdata/
 
-.DStore
-
 # big files 
 *.csv
 *.html
 
 # Mac files 
-.DS_Store
+*.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

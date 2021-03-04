@@ -7,6 +7,8 @@
 
 import ast 
 
+from Bio import Entrez
+
 from collections import (defaultdict,Counter)
 from collections import defaultdict as dd
 from collections import Counter as ct
@@ -143,6 +145,29 @@ def genent2sym():
 #     print(time.time()-t0)
     
     return d_ent_sym, d_sym_ent
+
+
+# NEW NEW NEW NEW
+# Gene entrezID <-> Gene Symbol 
+'''
+Get gene list and name of species and
+Return a dict of Gene Symbol and EntrezID
+'''
+
+def convert_symbol_to_entrez(gene_list,name_species):   #name_species must be the official entrez name in string format
+
+    sym_to_entrez_dict={}    #create a dictionary symbol to entrez
+    for gene in gene_list:
+        #retrieve gene ID
+        handle = Entrez.esearch(db="gene", term=name_species+ "[Orgn] AND " + gene + "[Gene]")
+        record = Entrez.read(handle)
+
+        if len(record["IdList"]) > 0:
+            sym_to_entrez_dict[gene]=record["IdList"][0]
+        else:
+            pass
+    return sym_to_entrez_dict
+
 
 
 
@@ -283,10 +308,10 @@ def generate_colorlist_nodes(n):
 From generated colors, get lighter or darker subcategorical colors.
 Return colors in light/dark version.
 '''
-def hex_to_rgb(hex):
-    hex = hex.lstrip('#')
-    hlen = len(hex)
-    return tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
+def hex_to_rgb(hx):
+    hx = hx.lstrip('#')
+    hlen = len(hx)
+    return tuple(int(hx[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
 
 
 def adjust_color_lightness(r, g, b, factor):
@@ -299,6 +324,39 @@ def adjust_color_lightness(r, g, b, factor):
 def darken_color(r, g, b, factor=0.9):
     return adjust_color_lightness(r, g, b, 1 - factor)
 
+
+def color_nodes_from_dict_unsort(G, d_to_be_coloured, color_method, palette):
+
+    # Colouring
+    colour_groups = set(d_to_be_coloured.values())
+    colour_count = len(colour_groups)
+    pal = sns.color_palette(palette, colour_count)
+    palette = pal.as_hex()
+
+    d_colourgroups = {}
+    for n in colour_groups:
+        d_colourgroups[n] = [k for k in d_to_be_coloured.keys() if d_to_be_coloured[k] == n]
+        
+    d_colourgroups_sorted = {key:d_colourgroups[key] for key in sorted(d_colourgroups.keys())}
+
+    d_val_col = {}
+    for idx,val in enumerate(d_colourgroups_sorted):
+        for ix,v in enumerate(palette):
+            if idx == ix:
+                d_val_col[val] = v
+
+    d_node_colour = {}
+    for y in d_to_be_coloured.items(): # y[0] = node id, y[1] = val
+        for x in d_val_col.items(): # x[0] = val, x[1] = (col,col,col)
+            if x[0] == y[1]:
+                d_node_colour[y[0]]=x[1]
+
+    # SORT dict based on G.nodes
+    d_node_colour_sorted = dict([(key, d_node_colour[key]) for key in G.nodes()])
+    #l_col = list(d_node_colour_sorted.values())
+    #colours = l_col
+    
+    return d_node_colour_sorted # colours
 
 def color_nodes_from_dict(G, d_to_be_coloured, color_method, palette):
 
@@ -809,7 +867,8 @@ def embed_umap_2D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
         spread = spread,
         min_dist = min_dist,
         n_components = n_components,
-        metric = metric)
+        metric = metric, 
+        random_state=42)
     embed = U.fit_transform(Matrix)
     
     return embed
@@ -1455,7 +1514,54 @@ def get_trace_umap_torus(torus_embedded, r, R, color_list, size3d):
     return torus_trace
 
 
+'''
+Create a 3D plot from traces using plotly.
 
+data = list of traces
+filename = string
+scheme = 'light' or 'dark'
+'''
+
+def plot_3D(data, fname, scheme):
+    
+    fig = pgo.Figure()
+    
+    for i in data:
+        fig.add_trace(i)
+
+    if scheme == 'dark':
+        fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                            dragmode="turntable",
+                            #annotations=annotations,
+                        ))
+    elif scheme == 'light':
+        fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),    
+                            dragmode="turntable",
+                            #annotations=annotations,
+                        ))    
+
+
+    return plotly.offline.plot(fig, filename = fname+'.html', auto_open=True)
 
 
 
@@ -1474,14 +1580,19 @@ def get_trace_umap_torus(torus_embedded, r, R, color_list, size3d):
 
 def export_to_csv2D(layout, posG, entrezID_list, colours):
     
+    colours_hex2rgb = []
+    for j in colours: 
+        k = hex_to_rgb(j)
+        colours_hex2rgb.append(k)
+        
     colours_r = []
     colours_g = []
     colours_b = []
     colours_a = []
-    for i in colours:
-        colours_r.append(int(i[0]*255)) # colour values should be integers within 0-255
-        colours_g.append(int(i[1]*255))
-        colours_b.append(int(i[2]*255))
+    for i in colours_hex2rgb:
+        colours_r.append(int(i[0]))#*255)) # colour values should be integers within 0-255
+        colours_g.append(int(i[1]))#*255))
+        colours_b.append(int(i[2]))#*255))
         colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
         
     df_2D = pd.DataFrame(posG).T
@@ -1499,19 +1610,24 @@ def export_to_csv2D(layout, posG, entrezID_list, colours):
     cols = cols[-1:] + cols[:-1]
     df_2D_final = df_2D[cols]
     
-    return df_2D_final.to_csv(r'VR_layouts/'+layout+'.csv',index=False, header=False)
+    return df_2D_final.to_csv(r'_VR_layouts/'+layout+'.csv',index=False, header=False)
 
 
 def export_to_csv3D(layout, posG, entrezID_list, colours):
     
+    colours_hex2rgb = []
+    for j in colours: 
+        k = hex_to_rgb(j)
+        colours_hex2rgb.append(k)
+        
     colours_r = []
     colours_g = []
     colours_b = []
     colours_a = []
-    for i in colours:
-        colours_r.append(int(i[0]*255)) # colour values should be integers within 0-255
-        colours_g.append(int(i[1]*255))
-        colours_b.append(int(i[2]*255))
+    for i in colours_hex2rgb:
+        colours_r.append(int(i[0]))#*255)) # colour values should be integers within 0-255
+        colours_g.append(int(i[1]))#*255))
+        colours_b.append(int(i[2]))#*255))
         colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
         
     df_3D = pd.DataFrame(posG).T
@@ -1528,4 +1644,4 @@ def export_to_csv3D(layout, posG, entrezID_list, colours):
     cols = cols[-1:] + cols[:-1]
     df_3D_final = df_3D[cols]
     
-    return df_3D_final.to_csv(r'VR_layouts/'+layout+'.csv',index=False, header=False)
+    return df_3D_final.to_csv(r'_VR_layouts/'+layout+'.csv',index=False, header=False)

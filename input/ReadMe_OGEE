@@ -1,0 +1,208 @@
+Terms or column names used in OGEE v3 downloadable files:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+File name: avana.txt.gz
+  id: Row number identifier
+  expt_id:  OGEE unique internal human cell lines experiment id
+  cell_line: Names of tested human cell lines
+  tissue: organ of origin / tissue from which the cell lines are derived
+  genes: tested genes from a particular cell line
+  score: statistical score provided by data source
+  type: binary notation for OGEE internal usage of essential/ non-essential denoted by 1/0 respectively
+  source: data source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name: broad.txt.gz
+  id: Row number identifier
+  expt_id:  OGEE unique internal human cell lines experiment id
+  cell_line: Names of tested human cell lines
+  tissue: organ of origin / tissue from which the cell lines are derived
+  genes: tested genes from a particular cell line
+  score: statistical score provided by data source
+  type: binary notation for OGEE internal usage of essential/ non-essential denoted by 1/0 respectively
+  source: data source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name: co_essentiality.txt.gz
+  features: genes with essentiality in at least 50% in the specified tissue
+  Tissue: organ of origin
+  variable: genes that are co-essential with the corresponding feature
+  P_value:  P-value of correlation
+  r2: coefficients of correlation
+  eg_Y: number of cell lines where the feature are essential
+  eg_N: number of cell lines where the feature are not essential
+  rate: percentage of essentiality of the feature
+  Method: correlation method used: Pearson / Spearman
+  Data: name/ type of dataset
+  N_cell_line:  number of cell lines of the corresponding tissue
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name: connectivity.txt.gz
+  id: Row number identifier
+  locus: locus identifier [may same as gene names] 
+  gene: gene names obtained from NCBI
+  taxon_id: NCBI taxon id
+  score:  score provided by STRING database v11
+  connectivity: the number of a protein’s direct-interacting partners in a protein-protein interaction (PPI) network
+  percentile: percentile score based on connectivity score for a specific organism
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name: dataset.txt.gz
+  datasetID:  OGEE v3 unique identifier of essentiality dataset
+  taxID:  NCBI taxon id
+  dataSource: database name or pubmed id of dataset source
+  url:  website of data source if collected from a database or repository
+  dataType: types of essentiality dataset
+  dataSubType:  types of genes for a specific dataset
+  experimentalTechBrief:  brief idea about experimental method
+  experimentalConditionBrief: brief explanation about experimental condition
+  definitionOfEssential:  brief note on how essential is defined
+  note: additional information if available
+  DateAdded:  date recorded when OGEE team collected the data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  devgenes.txt.gz
+  sciName:  scientific name of the species
+  kingdom:  phyllum classification
+  taxID:  NCBI taxon id
+  locus:  locus identifier
+  GOID: Gene Ontology id
+  GOTerm: Gene Ontology terms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  dupgenes.txt.gz
+  sciName:  scientific name of the species
+  kingdom:  phyllum classification
+  taxID:  NCBI taxon id
+  locus:  locus identifier
+  locusMostRecentDup:
+  Dn:
+  Ds:
+  DnDs:
+  MSAMethod:
+  familyMemberCount:
+  mostRecentDupType:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name: gecko.txt.gz
+  id: Row number identifier
+  expt_id:  OGEE unique internal human cell lines experiment id
+  cell_line: Names of tested human cell lines
+  tissue: organ of origin / tissue from which the cell lines are derived
+  genes: tested genes from a particular cell line
+  score: statistical score provided by data source
+  type: binary notation for OGEE internal usage of essential/ non-essential denoted by 1/0 respectively
+  source: data source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  gene_essentiality.txt.gz
+  dataset:  OGEE unique internal dataset id
+  taxaID: taxon id
+  locus:  locus identifier
+  gene: gene names obtained from NCBI
+  score: OGEE internal usage of essential or non-essential or conditional
+  essentiality: short notation of essentiality
+  pmid: NCBI pubmed id
+  Ref_db: name of database or repository if collected from database
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  genes.txt.gz
+  taxID: NCBI taxon id
+  locus:  locus identifier
+  gene: gene names obtained from NCBI
+  description: gene description
+  alternative: alternative gene names or former gene name
+  seqType:
+  gene_seq_id:  NCBI gene sequence id
+  protein_seq_id: uniprot or NCBI protein id
+  source: reference database of protein sequences
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  methylation.txt.gz
+  cell_line: Names of tested human cell lines
+  genes: tested genes from a particular cell line
+  sites:  methylated parts of the gene
+  score:  statistical score provided by data source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  mutation.txt.gz
+  cell_line:  Names of tested human cell lines
+  gene: tested genes from a particular cell line
+  tissue: organ of origin / tissue from which the cell lines are derived
+  CDS:  the change that has occurred in the nucleotide sequence
+  AA: the change that has occurred in the peptide sequence
+  description:  types of mutation
+  zygosity: whether the mutation was reported to be homozygous or heterozygous within the sample
+  FATHMM_prediction:  
+  FATHMM_scoreVerification:
+  somatic_status: whether the sample was reported to be Confirmed Somatic, Previously Reported or Variant of unknown origin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  novartis.txt.gz
+  id: Row number identifier
+  expt_id:  OGEE unique internal human cell lines experiment id
+  cell_line: Names of tested human cell lines
+  tissue: organ of origin / tissue from which the cell lines are derived
+  genes: tested genes from a particular cell line
+  score: statistical score provided by data source
+  type: binary notation for OGEE internal usage of essential/ non-essential denoted by 1/0 respectively
+  source: data source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  panCancer.txt.gz
+  id: Row number identifier
+  genes:  tested genes
+  tissue: organ of origin / tissue from which the cell lines are derived
+  ess: number of cell lines in which the particular gene is essential
+  non_ess:  number of cell lines in which the particular gene is non-essential
+  total: total number of tested cell lines considered for pan-cancer studies
+  pc: percentage of essential genes based on particular tissue
+  dataType: either RNAi or CRISPR data
+  source: dataset source name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  sample_info.txt.gz
+  cell_line:  Names of tested human cell lines
+  ref_cell_line:  cell lines name in reference database
+  tissue: organ of origin / tissue from which the cell lines are derived
+  depmap_id:  cell line identifier used in depmap.org
+  cosmic_id: COSMIC database identifier
+  ccle_id:  CCLE cell line identifier
+  sex:  gender
+  source: cell line source/ provider
+  primary_or_metastasis:
+  primary_disease:
+  Subtype:
+  Age:
+  lineage:
+  gecko_ess:  number of essential genes if the cell line is tested in gecko dataset
+  novar_ess:  number of essential genes if the cell line is tested in novartis dataset
+  avana_ess:  number of essential genes if the cell line is tested in avana dataset
+  sanger_ess: number of essential genes if the cell line is tested in sanger dataset
+  broad_ess:  number of essential genes if the cell line is tested in broad dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name: sanger.txt.gz
+  id: Row number identifier
+  expt_id:  OGEE unique internal human cell lines experiment id
+  cell_line: Names of tested human cell lines
+  tissue: organ of origin / tissue from which the cell lines are derived
+  genes: tested genes from a particular cell line
+  corrected_logfc: statistical score provided by data source
+  type: binary notation for OGEE internal usage of essential/ non-essential denoted by 1/0 respectively
+  source: data source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+File name:  tissueSpecific.txt.gz
+  id: Row number identifier
+  genes:  tested genes
+  tissue: organ of origin / tissue from which the cell lines are derived
+  ess: number of cell lines in which the particular gene is essential
+  non_ess:  number of cell lines in which the particular gene is non-essential
+  total: total number of tested cell lines considered for pan-cancer studies
+  pc: percentage of essential genes based on particular tissue
+  dataType: either RNAi or CRISPR data
+  source: dataset source name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

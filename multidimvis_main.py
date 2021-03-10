@@ -1520,16 +1520,31 @@ Create a 3D plot from traces using plotly.
 data = list of traces
 filename = string
 scheme = 'light' or 'dark'
+annotations = None or plotly annotations
 '''
 
-def plot_3D(data, fname, scheme):
+def plot_3D(data, fname, scheme, annotations=None):
     
     fig = pgo.Figure()
     
     for i in data:
         fig.add_trace(i)
 
-    if scheme == 'dark':
+    if scheme == 'dark' and annotations==None:
+        fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                            dragmode="turntable"
+                        ))
+    elif scheme == 'dark':       
         fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
                           scene=dict(
                               xaxis_title='',
@@ -1542,9 +1557,9 @@ def plot_3D(data, fname, scheme):
                               zaxis=dict(nticks=0,tickfont=dict(
                                     color='black')),
                             dragmode="turntable",
-                            #annotations=annotations,
+                            annotations=annotations,
                         ))
-    elif scheme == 'light':
+    elif scheme == 'light' and annotations==None:
         fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
@@ -1557,11 +1572,26 @@ def plot_3D(data, fname, scheme):
                               zaxis=dict(nticks=0,tickfont=dict(
                                     color='white')),    
                             dragmode="turntable",
-                            #annotations=annotations,
+                        ))    
+    elif scheme == 'light':
+         fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),    
+                            dragmode="turntable",
+                            annotations = annotations
                         ))    
 
 
     return plotly.offline.plot(fig, filename = fname+'.html', auto_open=True)
+
 
 
 
@@ -1578,7 +1608,7 @@ def plot_3D(data, fname, scheme):
 # export Dataframe
 # Format is compatible with VR upload into DataDiVR and for WEBAPP "NEON"
 
-def export_to_csv2D(layout, posG, entrezID_list, colours):
+def export_to_csv2D(layout_namespace, posG, colours):
     
     colours_hex2rgb = []
     for j in colours: 
@@ -1603,17 +1633,17 @@ def export_to_csv2D(layout, posG, entrezID_list, colours):
     df_2D['B'] = colours_b
     df_2D['A'] = colours_a
 
-    df_2D[layout] = layout
-    df_2D['ID'] = entrezID_list
+    df_2D[layout_namespace] = layout_namespace
+    df_2D['ID'] = list(posG.keys())
 
     cols = df_2D.columns.tolist()
     cols = cols[-1:] + cols[:-1]
     df_2D_final = df_2D[cols]
     
-    return df_2D_final.to_csv(r'_VR_layouts/'+layout+'.csv',index=False, header=False)
+    return df_2D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)
 
 
-def export_to_csv3D(layout, posG, entrezID_list, colours):
+def export_to_csv3D(layout_namespace, posG, colours):
     
     colours_hex2rgb = []
     for j in colours: 
@@ -1637,11 +1667,11 @@ def export_to_csv3D(layout, posG, entrezID_list, colours):
     df_3D['B'] = colours_b
     df_3D['A'] = colours_a
 
-    df_3D[layout] = layout
-    df_3D['ID'] = entrezID_list
+    df_3D[layout_namespace] = layout_namespace
+    df_3D['ID'] = list(posG.keys())
 
     cols = df_3D.columns.tolist()
     cols = cols[-1:] + cols[:-1]
     df_3D_final = df_3D[cols]
     
-    return df_3D_final.to_csv(r'_VR_layouts/'+layout+'.csv',index=False, header=False)
+    return df_3D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)

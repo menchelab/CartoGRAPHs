@@ -417,7 +417,7 @@ def color_nodes_from_genelist(G, l_genes, color):
     d_rest = {}
     for g in G.nodes():
         if g not in d_col.keys():
-            d_rest[g] = 'dimgrey' # 'rgba(50,50,50,0.5)'
+            d_rest[g] = '#696969' # 'dimgrey' # 'rgba(50,50,50,0.5)'
                     
     d_allnodes_col = {**d_col, **d_rest}
     d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}

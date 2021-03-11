@@ -9,6 +9,7 @@ import ast
 
 from Bio import Entrez
 
+import collections
 from collections import (defaultdict,Counter)
 from collections import defaultdict as dd
 from collections import Counter as ct

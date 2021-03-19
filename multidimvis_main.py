@@ -326,7 +326,7 @@ def darken_color(r, g, b, factor=0.9):
     return adjust_color_lightness(r, g, b, 1 - factor)
 
 
-def color_nodes_from_dict_unsort(G, d_to_be_coloured, color_method, palette):
+def color_nodes_from_dict_unsort(d_to_be_coloured, color_method, palette):
 
     # Colouring
     colour_groups = set(d_to_be_coloured.values())
@@ -351,13 +351,8 @@ def color_nodes_from_dict_unsort(G, d_to_be_coloured, color_method, palette):
         for x in d_val_col.items(): # x[0] = val, x[1] = (col,col,col)
             if x[0] == y[1]:
                 d_node_colour[y[0]]=x[1]
-
-    # SORT dict based on G.nodes
-    d_node_colour_sorted = dict([(key, d_node_colour[key]) for key in G.nodes()])
-    #l_col = list(d_node_colour_sorted.values())
-    #colours = l_col
     
-    return d_node_colour_sorted # colours
+    return d_node_colour # colours
 
 def color_nodes_from_dict(G, d_to_be_coloured, color_method, palette):
 
@@ -475,26 +470,23 @@ def color_essentiality_nodes(G, essentials, nonessentials, colour1, colour2):
     # NODES ------------------------------
     d_ess = {}
     for node in essentials:
-        d_ess['entrez gene/locuslink:'+str(node)] = colour1
+        d_ess[node] = colour1
 
     d_no_ess = {}
     for node in nonessentials:
-        d_no_ess['entrez gene/locuslink:'+str(node)] = colour2
+        d_no_ess[node] = colour2
 
     d_essentiality = {**d_ess, **d_no_ess}
 
     d_restnodes = {}
     for i in G.nodes():
         if i not in d_essentiality.keys():
-            d_restnodes[i] = 'lightgrey'
+            d_restnodes[i] = 'grey'
 
     d_all_essentiality = {**d_essentiality, **d_restnodes}
-    d_all_nodes_sorted = {key:d_all_essentiality[key] for key in G.nodes()}
-
-    node_color = list(d_all_nodes_sorted.values())
+    d_all_nodes_sorted = {key:d_all_essentiality[key] for key in G.nodes()}   
     
-    return node_color
-
+    return d_all_nodes_sorted
 
 '''
 Color edges based on their Essentiality (Yeast PPI).
@@ -541,6 +533,27 @@ def color_essentiality_edges(G, essentials, nonessentials, colour1, colour2):
     
     return edge_color
 
+
+def z_landscape_essentiality(G, essential_genes, non_ess_genes, value_ess, value_noness, value_undef):
+    d_ess = {}
+    for node in essential_genes:
+        d_ess[node] = value_ess
+
+    d_no_ess = {}
+    for node in non_ess_genes:
+        d_no_ess[node] = value_noness
+
+    d_essentiality = {**d_ess, **d_no_ess}
+
+    d_restnodes = {}
+    for i in G.nodes():
+        if i not in d_essentiality.keys():
+            d_restnodes[i] = value_undef
+            
+    d_all_essentiality = {**d_essentiality, **d_restnodes}
+    d_all_nodes_sorted = {key:d_all_essentiality[key] for key in G.nodes()}   
+    
+    return d_all_nodes_sorted
 
 
 # -------------------------------------------------------------------------------------
@@ -1281,6 +1294,28 @@ def get_trace_nodes_3D(posG, info_list, color_list, size):
     return trace
 
 
+def get_trace_nodes_3D_(posG, info_list, color_list, size, opac):
+
+    key_list=list(posG.keys())
+    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
+                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
+                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
+                           mode = 'markers',
+                           text = info_list,
+                           hoverinfo = 'text',
+                           #textposition='middle center',
+                           marker = dict(
+                color = color_list,
+                size = size,
+                symbol = 'circle',
+                line = dict(width = 1.0,
+                        color = color_list),
+                opacity = opac,
+            ),
+        )
+    
+    return trace
+
 
 '''
 Generates edges from 3D coordinates.
@@ -1523,15 +1558,14 @@ filename = string
 scheme = 'light' or 'dark'
 annotations = None or plotly annotations
 '''
-
-def plot_3D(data, fname, scheme, annotations=None):
+def plot_3D(data, fname, scheme, annotat=None):
     
     fig = pgo.Figure()
     
     for i in data:
         fig.add_trace(i)
 
-    if scheme == 'dark' and annotations==None:
+    if scheme == 'dark' and annotat==None:
         fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
                           scene=dict(
                               xaxis_title='',
@@ -1545,22 +1579,23 @@ def plot_3D(data, fname, scheme, annotations=None):
                                     color='black')),
                             dragmode="turntable"
                         ))
-    elif scheme == 'dark':       
+    elif scheme == 'dark':    
         fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
-                          scene=dict(
-                              xaxis_title='',
-                              yaxis_title='',
-                              zaxis_title='',
-                              xaxis=dict(nticks=0,tickfont=dict(
-                                    color='black')),
-                              yaxis=dict(nticks=0,tickfont=dict(
-                                    color='black')),
-                              zaxis=dict(nticks=0,tickfont=dict(
-                                    color='black')),
-                            dragmode="turntable",
-                            annotations=annotations,
-                        ))
-    elif scheme == 'light' and annotations==None:
+                                  scene=dict(
+                                      xaxis_title='',
+                                      yaxis_title='',
+                                      zaxis_title='',
+                                      xaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                      yaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                      zaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                    dragmode="turntable",
+                                    annotations=annotat,
+                                ))
+
+    elif scheme == 'light' and annotat==None:
         fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
@@ -1587,12 +1622,11 @@ def plot_3D(data, fname, scheme, annotations=None):
                               zaxis=dict(nticks=0,tickfont=dict(
                                     color='white')),    
                             dragmode="turntable",
-                            annotations = annotations
+                            annotations = annotat
                         ))    
 
 
     return plotly.offline.plot(fig, filename = fname+'.html', auto_open=True)
-
 
 
 

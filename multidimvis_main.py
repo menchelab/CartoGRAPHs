@@ -1272,29 +1272,8 @@ def get_trace_nodes_2D(posG, info_list, color_list, size):
     return trace
 
 
-def get_trace_nodes_3D(posG, info_list, color_list, size):
 
-    key_list=list(posG.keys())
-    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
-                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
-                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
-                           mode = 'markers',
-                           text = info_list,
-                           hoverinfo = 'text',
-                           #textposition='middle center',
-                           marker = dict(
-                color = color_list,
-                size = size,
-                symbol = 'circle',
-                line = dict(width = 1.0,
-                        color = color_list)
-            ),
-        )
-    
-    return trace
-
-
-def get_trace_nodes_3D_(posG, info_list, color_list, size, opac):
+def get_trace_nodes_3D(posG, info_list, color_list, size, opac):
 
     key_list=list(posG.keys())
     trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],

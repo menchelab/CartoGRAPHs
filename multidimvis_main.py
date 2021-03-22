@@ -84,6 +84,7 @@ from sklearn.preprocessing import normalize
 from sklearn import (manifold, datasets, decomposition, ensemble,
                      discriminant_analysis, random_projection,cluster)
 from sklearn.cluster import KMeans
+from sklearn.cluster import DBSCAN
 from sklearn.metrics import pairwise_distances
 from sklearn.linear_model import LinearRegression
 

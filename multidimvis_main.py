@@ -1420,8 +1420,80 @@ def cluster_annotation(d_clusterid_coords, d_genes_per_cluster, mode = 'light'):
     else: 
         print('Please choose mode by setting mode="light" or "dark".')
 
+    
+
+def genes_annotation(posG_genes, d_genes, mode = mod):
+    '''
+    Add Anntation of genes to 3D plot.
+    Input:
+    - posG_genes = dictionary with node id and x,y,z coordinates of cluster center.
+    - d_genes = dictionary with node id as keys and symbol (gene symbol) as values. Same order as posG_genes
+    - mode of plot (i.e. 'light', 'dark')
+    
+    Return Annotations for each cluster.
+    ''' 
+    
+    gene_sym = list(d_genes.values())
+    
+    x = []
+    y = []
+    z = []
+    for k,v in posG_genes.items():
+        x.append(v[0])
+        y.append(v[1])
+        z.append(v[2])
+
+    if mode == 'light':
+        annotations = []
+        for i in range(len(x)):
+            annot = dict(
+                                    x=x[i],
+                                    y=y[i],
+                                    z=z[i],
+                                    showarrow=True,
+                                    text=f'Gene symbol: {gene_sym[i]}',                            
+                                    font=dict(
+                                        color="black",
+                                        size=10),
+                                    xanchor="right",
+                                    ay=-100,
+                                    ax=-100,
+                                    opacity=0.5,
+                                    arrowhead=0,
+                                    arrowwidth=0.5,
+                                    arrowcolor="dimgrey")
+            i=+1
+            annotations.append(annot)
+        return annotations
+
+    elif mode == 'dark':
+        annotations = []
+        for i in range(len(x)):
+            annot = dict(
+                                    x=x[i],
+                                    y=y[i],
+                                    z=z[i],
+                                    showarrow=True,
+                                    text=f'Gene symbol: {gene_sym[i]}',
+                                    font=dict(
+                                        color="white",
+                                        size=10),
+                                    xanchor="right",
+                                    ay=-100,
+                                    ax=-100,
+                                    opacity=0.5,
+                                    arrowhead=0,
+                                    arrowwidth=0.5,
+                                    arrowcolor="lightgrey")
+            i=+1
+            annotations.append(annot)
+        return annotations
+
+    else: 
+        print('Please choose mode by setting mode="light" or "dark".')
 
 
+        
 ########################################################################################
 #
 # E X P O R T   C O O R D I N A T E S   F U N C T I O N S 

@@ -16,7 +16,7 @@ from collections import OrderedDict
 import colorsys
 from colormap import rgb2hex, rgb2hls, hls2rgb
 from colormath.color_objects import sRGBColor, LabColor
-from colormath.color_conversions import convert_color
+#from colormath.color_conversions import convert_color
 
 from fisher import pvalue
 from fa2 import ForceAtlas2
@@ -370,6 +370,56 @@ def color_nodes_from_dict(G, d_to_be_coloured, palette):
     return d_node_colour_sorted
 
 
+def color_nodes_from_genelist(G, l_genes, color, color_rest):
+    '''
+    Color (highlight) nodes from specific node list.
+    Input: 
+    - G = Graph 
+    - l_genes = list of nodes 
+    - color = string; color to hightlight
+    - color_rest = string; color for all other genes
+    
+    Return node color list sorted based on G.nodes() 
+    '''
+    
+    d_col = {}
+    for node in l_genes:
+        d_col[str(node)] = color
+            
+    d_rest = {}
+    for g in G.nodes():
+        if g not in d_col.keys():
+            d_rest[g] = color_rest #'d3d3d3' #'696969', #'dimgrey' # 'rgba(50,50,50,0.5)'
+                    
+    d_allnodes_col = {**d_col, **d_rest}
+    d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}
+
+    colours = list(d_allnodes_col_sorted.values())
+    
+    return colours
+
+
+def color_edges_from_genelist(G, l_genes, color):
+    '''
+    Color (highlight) edges from specific node list.
+    Input: 
+    - G = Graph 
+    - l_nodes = list of nodes 
+    - color = string; color to hightlight
+    
+    Return edge list for selected edges. 
+    '''
+    
+    edge_lst = [(u,v) for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]
+
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color
+
+    return d_col_edges
+
+
+
 # -------------------------------------------------------------------------------------
 # E S S E N T I A L I T Y   S P E C I F I C  
 # -------------------------------------------------------------------------------------
@@ -382,7 +432,7 @@ def color_essentiality_nodes(G, essentials, nonessentials, colour1, colour2):
     - G = graph
     - essentials = list of all essential genes
     - nonessentials = list of all non-essential genes 
-    - colour1 = string; to color essential genes 
+    - colour1 = string; to color essential genes
     - colour2 = string; to color non-essential genes 
     All rest genes will be coloured in grey.
     
@@ -408,59 +458,6 @@ def color_essentiality_nodes(G, essentials, nonessentials, colour1, colour2):
     d_all_nodes_sorted = {key:d_all_essentiality[key] for key in G.nodes()}   
     
     return d_all_nodes_sorted
-
-
-def color_essentiality_edges(G, essentials, nonessentials, colour1, colour2):
-    '''
-    Color edges based on essentiality state.
-    Input: 
-    - G = graph
-    - essentials = list of all essential genes
-    - nonessentials = list of all non-essential genes 
-    - colour1 = string; to color essential genes 
-    - colour2 = string; to color non-essential genes 
-    All rest edges will be coloured in grey.
-    
-    Return list of colors for each edge, sorted based on Graph edges.
-    '''
-    # NODES ------------------------------
-    d_ess = {}
-    for node in essentials:
-        d_ess['entrez gene/locuslink:'+str(node)] = colour1
-
-    d_no_ess = {}
-    for node in nonessentials:
-        d_no_ess['entrez gene/locuslink:'+str(node)] = colour2
-
-    # EDGES ------------------------------
-    edge_lst = []
-    for edge in G.edges():
-        for e in edge:
-            for node in d_ess.keys():
-                if e == node:
-                    edge_lst.append(edge)
-
-    d_col_edges = {}
-    for e in edge_lst:
-        for node,col in d_ess.items():
-            if e[0] == node:
-                d_col_edges[e]= col
-            elif e[1] == node:
-                d_col_edges[e]= col
-
-    d_grey_edges = {}
-    for edge in G.edges():
-        if edge not in d_col_edges.keys(): 
-            d_grey_edges[edge] = 'silver'
-
-    d_edges_all = {**d_col_edges, **d_grey_edges}
-
-    # Sort according to G.edges()
-    d_edges_all_sorted = {key:d_edges_all[key] for key in G.edges()}
-
-    edge_color = list(d_edges_all_sorted.values())
-    
-    return edge_color
 
 
 def z_landscape_essentiality(G, essential_genes, non_ess_genes, value_ess, value_noness, value_undef):
@@ -531,7 +528,7 @@ def get_disease_genes(G, d_names_do, d_do_genes, disease_category):
     return set_disease_genes
 
 
-def color_edges_from_nodelist(G, l_nodes, color): # former: def color_disease_outgoingedges(G, l_majorcolor_nodes, color)
+def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def color_disease_outgoingedges(G, l_majorcolor_nodes, color)
     '''
     Color (highlight) edges from specific node list.
     Input: 
@@ -543,74 +540,28 @@ def color_edges_from_nodelist(G, l_nodes, color): # former: def color_disease_ou
     Return edge list sorted based on G.edges() 
     '''
     
-    d_col_major = {}
-    for n in l_nodes:
-            d_col_major[n] = color
-
-    # Node outgoing/incoming edges
     edge_lst = []
     for edge in G.edges():
         for e in edge:
-            for node in d_col_major.keys():
-                if e == node:
-                    edge_lst.append(edge)
+            if e in l_nodes:
+                edge_lst.append(edge)
 
-    # Color edges based on major nodes
     d_col_edges = {}
     for e in edge_lst:
-        for node,col in d_col_major.items():
-            if e[0] == node:
-                d_col_edges[e]=col
-            elif e[1] == node:
-                d_col_edges[e]=col
+        d_col_edges[e]=color_main
 
     d_grey_edges = {}
     for edge in G.edges():
         if edge not in d_col_edges.keys(): 
-            d_grey_edges[edge] = 'grey'
+            d_grey_edges[edge] = color_rest # '#d3d3d3'
 
     d_edges_all = {**d_col_edges, **d_grey_edges}
-
-    # Sort according to G.edges()
     d_edges_all_sorted = {key:d_edges_all[key] for key in G.edges()}
 
     edge_color = list(d_edges_all_sorted.values())
     
-    return edge_color
+    return  d_edges_all
 
-
-# not in use (?) 
-def color_diseasecategory(G, d_names_do, d_do_genes, disease_category, colour):
-    
-    # get all genes from disease category
-    l_disease_genes = []
-    for d_name in d_names_do.keys():
-        if d_name.find(disease_category) != -1:
-            try:
-                l_genes = d_do_genes[d_names_do[d_name]]
-                for gene in l_genes:
-                    l_disease_genes.append(gene)
-            except:
-                    pass
-                
-    set_disease_genes = set(l_disease_genes)
-    
-    # assign colours to disease cat.(colour1) and other nodes(grey)
-    d_col = {}
-    for node in set_disease_genes:
-        d_col[node] = colour
-    
-    d_rest = {}
-    for i in G.nodes():
-        if i not in d_col.keys():
-            d_rest[i] = '#303030' # 'dimgrey'
-        
-    d_allnodes_col = {**d_col, **d_rest}
-    d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}
-    
-    colours = list(d_allnodes_col_sorted.values())
-    
-    return colours
 
 
 # -------------------------------------------------------------------------------------
@@ -653,10 +604,10 @@ def identify_hubs(degs, closeness, betweens, cutoff):
     
 def color_nodes_and_neighbors(G, dict_nodes):
     '''
-    Generate colors from node list and also color their neighbors in a lighter color.
+    Generate colors from nodes and also color their neighbors in a lighter color.
     Input: 
     - G = Graph
-    - l_nodes = list of nodes to color 
+    - dict_nodes = list of nodes to color 
     Each node will get one color. It's respective neighbor nodes will show in the same but lighter color.
     
     Return colours for each node in the graph, sorted by graph nodes. 
@@ -1039,6 +990,138 @@ def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
     return trace_edges
 
 
+def get_trace_nodes_2D(posG, info_list, color_list, size):
+    '''
+    Get trace of nodes for plotting in 2D. 
+    Input: 
+    - G = Graph
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - color_list = list of colours obtained from any color function (see above sections).
+    - opacity = transparency of edges e.g. 0.2
+    
+    Return a trace for plotly graph objects plot. 
+    '''
+    
+    key_list=list(posG.keys())
+    trace = pgo.Scatter(x=[posG[key_list[i]][0] for i in range(len(key_list))],
+                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
+                           mode = 'markers',
+                           text = info_list,
+                           hoverinfo = 'text',
+                           #textposition='middle center',
+                           marker = dict(
+                color = color_list,
+                size = size,
+                symbol = 'circle',
+                line = dict(width = 1.0,
+                        color = 'dimgrey')
+            ),
+        )
+    
+    return trace
+
+
+def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
+    '''
+    Get trace of edges for plotting in 2D. 
+    Input: 
+    - G = Graph
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - color_list = list of colours obtained from any color function (see above sections).
+    - opacity = transparency of edges e.g. 0.2
+    
+    Return a trace for plotly graph objects plot. 
+    '''
+    
+    edge_x = []
+    edge_y = []
+    for edge in G.edges():
+        x0, y0 = posG[edge[0]]
+        x1, y1 = posG[edge[1]]
+        edge_x.append(x0)
+        edge_x.append(x1)
+        edge_x.append(None)
+        edge_y.append(y0)
+        edge_y.append(y1)
+        edge_y.append(None)
+ 
+    trace_edges = pgo.Scatter(
+                        x = edge_x, 
+                        y = edge_y, 
+                        mode = 'lines', hoverinfo='none',
+                        line = dict(width = 0.2, color = color_list),
+                        opacity = opac
+                )
+    
+    return trace_edges
+
+
+def get_trace_edges_from_genelist2D(l_spec_edges, posG, color):
+    '''
+    Get trace of edges for plotting in 3D only for specific edges. 
+    Input: 
+    - G = Graph
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - color = string; specific color to highlight specific edges 
+    
+    Return a trace of specific edges. 
+    '''
+    
+    edge_x = []
+    edge_y = []
+    for edge in l_spec_edges:
+            x0, y0 = posG[edge[0]]
+            x1, y1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            
+    trace_edges = pgo.Scatter(
+                        x = edge_x, 
+                        y = edge_y, 
+                        mode = 'lines', hoverinfo='none',
+                        line = dict(width = 0.1, color = color),
+                        opacity = 0.1
+                )
+    
+    return trace_edges
+
+
+def plot_2D(data,fname):
+    '''
+    Create a 3D plot from traces using plotly.
+    Input: 
+    - data = list of traces
+    - filename = string
+    
+    Return plot in 2D and file, saved as png.
+    '''
+
+    fig = pgo.Figure()
+    
+    for i in data:
+        fig.add_trace(i)
+        
+    fig.update_layout(template= 'plotly_white', 
+                      showlegend=False, width=1200, height=1200,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                        ))    
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)
+    #py.iplot(fig)
+    return fig.write_image(fname+'.png')
+
+
+
 # -------------------------------------------------------------------------------------
 #
 #      ######     #######
@@ -1206,24 +1289,63 @@ def get_trace_edges_3D(G, posG, color_list, opac = 0.2):
     edge_y = []
     edge_z = []
     for edge in G.edges():
-        x0, y0, z0 = posG[edge[0]]
-        x1, y1, z1 = posG[edge[1]]
-        edge_x.append(x0)
-        edge_x.append(x1)
-        edge_x.append(None)
-        edge_y.append(y0)
-        edge_y.append(y1)
-        edge_y.append(None)
-        edge_z.append(z0)
-        edge_z.append(z1)
-        edge_z.append(None)
+            x0, y0, z0 = posG[edge[0]]
+            x1, y1, z1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            edge_z.append(z0)
+            edge_z.append(z1)
+            edge_z.append(None)
 
+
+    trace_edges = pgo.Scatter3d(
+                            x = edge_x, 
+                            y = edge_y, 
+                            z = edge_z,
+                            mode = 'lines', hoverinfo='none',
+                            line = dict(width = 0.2, color = color_list),
+                            opacity = opac
+                    )
+    return trace_edges
+
+
+def get_trace_edges_from_genelist3D(l_spec_edges, posG, color, opac=0.2):
+    '''
+    Get trace of edges for plotting in 3D only for specific edges. 
+    Input: 
+    - G = Graph
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - color = string; specific color to highlight specific edges 
+    
+    Return a trace of specific edges. 
+    '''
+    
+    edge_x = []
+    edge_y = []
+    edge_z = []
+    for edge in l_spec_edges:
+            x0, y0,z0 = posG[edge[0]]
+            x1, y1,z1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            edge_z.append(z0)
+            edge_z.append(z1)
+            edge_z.append(None)
+            
     trace_edges = pgo.Scatter3d(
                         x = edge_x, 
                         y = edge_y, 
                         z = edge_z,
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.5, color = color_list),
+                        line = dict(width = 1.0, color = 3*list(color)),
                         opacity = opac
                 )
     
@@ -1422,7 +1544,7 @@ def cluster_annotation(d_clusterid_coords, d_genes_per_cluster, mode = 'light'):
 
     
 
-def genes_annotation(posG_genes, d_genes, mode = mod):
+def genes_annotation(posG_genes, d_genes, mode = 'light'):
     '''
     Add Anntation of genes to 3D plot.
     Input:
@@ -1653,3 +1775,159 @@ def convert_symbol_to_entrez(gene_list,name_species):   #name_species must be th
             pass
     return sym_to_entrez_dict
 
+
+
+
+
+########################################################################################
+#
+# N O T  I N  U S E  ??? 
+#
+########################################################################################
+
+def color_edges_from_list(G, genelist, col):
+    '''
+    Color edges based on essentiality state.
+    Input: 
+    - G = graph
+    - genelist = list of all genes to take into consideration 
+    - colour = string; to color gene edges 
+    All rest edges will be coloured in grey.
+    
+    Return list of colors for each edge, sorted based on Graph edges.
+    '''
+    
+    # EDGES ------------------------------
+    edge_lst = []
+    for edge in G.edges():
+        for e in edge:
+            for node in d_genes.keys():
+                if e == node:
+                    edge_lst.append(edge)
+
+    d_col_edges = {}
+        for node,col in d_genes.items():
+            if e[0] == node:
+                d_col_edges[e]= col
+            elif e[1] == node:
+                d_col_edges[e]= col
+
+    d_grey_edges = {}
+    for edge in G.edges():
+        if edge not in d_col_edges.keys(): 
+            d_grey_edges[edge] = '#d3d3d3'
+
+    d_edges_all = {**d_col_edges, **d_grey_edges}
+
+    # Sort according to G.edges()
+    d_edges_all_sorted = {key:d_edges_all[key] for key in G.edges()}
+
+    edge_color = list(d_edges_all_sorted.values())
+    
+    return edge_color
+
+
+def color_diseasecategory(G, d_names_do, d_do_genes, disease_category, colour):
+    
+    # get all genes from disease category
+    l_disease_genes = []
+    for d_name in d_names_do.keys():
+        if d_name.find(disease_category) != -1:
+            try:
+                l_genes = d_do_genes[d_names_do[d_name]]
+                for gene in l_genes:
+                    l_disease_genes.append(gene)
+            except:
+                    pass
+                
+    set_disease_genes = set(l_disease_genes)
+    
+    # assign colours to disease cat.(colour1) and other nodes(grey)
+    d_col = {}
+    for node in set_disease_genes:
+        d_col[node] = colour
+    
+    d_rest = {}
+    for i in G.nodes():
+        if i not in d_col.keys():
+            d_rest[i] = '#303030' # 'dimgrey'
+        
+    d_allnodes_col = {**d_col, **d_rest}
+    d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}
+    
+    colours = list(d_allnodes_col_sorted.values())
+    
+    return colours
+
+
+def color_nodes_from_list(G, l_nodes, col):
+    '''
+    Color nodes based on essentiality state.
+    Input: 
+    - G = graph
+    - l_nodes = list of nodes
+    - col = string or hex; colour 
+    All rest genes will be coloured in grey.
+    
+    Return list of colors for each node in the graph, sorted based on Graph nodes.
+    '''
+
+    d_nodes = {}
+    for node in l_nodes:
+        d_nodes[node] = col
+
+    d_restnodes = {}
+    for i in G.nodes():
+        if i not in d_nodes.keys():
+            d_restnodes[i] = 'lightgrey'
+
+    d_all_nodes = {**d_nodes, **d_restnodes}
+    d_all_nodes_sorted = {key:d_all_nodes[key] for key in G.nodes()}   
+    
+    return d_all_nodes_sorted
+
+
+def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def color_disease_outgoingedges(G, l_majorcolor_nodes, color)
+    '''
+    Color (highlight) edges from specific node list.
+    Input: 
+    - G = Graph 
+    - l_nodes = list of nodes 
+    - color = color to hightlight
+    All other edges will remain in grey.
+    
+    Return edge list sorted based on G.edges() 
+    '''
+    
+    d_col_major = {}
+    for n in l_nodes:
+            d_col_major[n] = color_main
+
+    edge_lst = []
+    for edge in G.edges():
+        for e in edge:
+            if e in d_col_major.keys():
+                #if e == node:
+                edge_lst.append(edge)
+
+    d_col_edges = {}
+    for e in edge_lst:
+        for node,col in d_col_major.items():
+            if e[0] == node:
+                d_col_edges[e]=col
+            elif e[1] == node:
+                d_col_edges[e]=col
+
+    d_grey_edges = {}
+    for edge in G.edges():
+        if edge not in d_col_edges.keys(): 
+            d_grey_edges[edge] = color_rest# '#d3d3d3'
+
+    d_edges_all = {**d_col_edges, **d_grey_edges}
+
+    # Sort according to G.edges()
+    #d_edges_all_sorted = {key:d_edges_all[key] for key in G.edges()}
+
+    #edge_color = list(d_edges_all_sorted.values())
+    
+    return  d_edges_all

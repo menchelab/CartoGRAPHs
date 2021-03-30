@@ -21,6 +21,8 @@ from colormath.color_objects import sRGBColor, LabColor
 from fisher import pvalue
 from fa2 import ForceAtlas2
 
+from html2image import Html2Image
+
 import itertools as it
 
 import math
@@ -75,6 +77,8 @@ from sklearn import (manifold, datasets, decomposition, ensemble,
                      discriminant_analysis, random_projection,cluster)
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
+from sklearn.cluster import SpectralClustering
+
 from sklearn.metrics import pairwise_distances
 from sklearn.linear_model import LinearRegression
 
@@ -302,7 +306,7 @@ def color_nodes_from_dict_unsort(d_to_be_coloured, palette):
     Return dictionary (randomly sorted) with nodes as keys and assigned color to each node.
     ''' 
 
-    # Colouring
+    # Colouringg
     colour_groups = set(d_to_be_coloured.values())
     colour_count = len(colour_groups)
     pal = sns.color_palette(palette, colour_count)
@@ -410,7 +414,7 @@ def color_edges_from_genelist(G, l_genes, color):
     Return edge list for selected edges. 
     '''
     
-    edge_lst = [(u,v) for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]
+    edge_lst = [(u,v) for u,v in G.edges(l_genes) if u in l_genes or v in l_genes]
 
     d_col_edges = {}
     for e in edge_lst:
@@ -1056,7 +1060,7 @@ def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
     return trace_edges
 
 
-def get_trace_edges_from_genelist2D(l_spec_edges, posG, color):
+def get_trace_edges_from_genelist2D(l_spec_edges, posG, col, opac=0.1):
     '''
     Get trace of edges for plotting in 3D only for specific edges. 
     Input: 
@@ -1083,14 +1087,49 @@ def get_trace_edges_from_genelist2D(l_spec_edges, posG, color):
                         x = edge_x, 
                         y = edge_y, 
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.1, color = color),
-                        opacity = 0.1
+                        line = dict(width = 0.1, color = [col]*len(edge_x)),
+                        opacity = opac
                 )
     
     return trace_edges
 
 
-def plot_2D(data,fname):
+def get_trace_edges_from_genelist2D_(l_spec_edges, posG, col, opac=0.1):
+    '''
+    Get trace of edges for plotting in 3D only for specific edges. 
+    Input: 
+    - G = Graph
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - color = string; specific color to highlight specific edges 
+    
+    Return a trace of specific edges. 
+    '''
+    
+    edge_x = []
+    edge_y = []
+    for edge in l_spec_edges:
+            x0, y0 = posG[edge[0]]
+            x1, y1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            
+    trace_edges = pgo.Scatter(
+                        x = edge_x, 
+                        y = edge_y, 
+                        mode = 'lines', hoverinfo='none',
+                        line = dict(width = 0.1, color = col),#[col]*len(edge_x)),
+                        opacity = opac
+                )
+    
+    return trace_edges
+
+
+
+def plot_2D(data,path,fname):
     '''
     Create a 3D plot from traces using plotly.
     Input: 
@@ -1117,8 +1156,22 @@ def plot_2D(data,fname):
                         ))    
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
+    
+    # --- show figure ---
     #py.iplot(fig)
-    return fig.write_image(fname+'.png')
+    
+    # --- get html file ---  
+    fig.write_html(path+fname+'.html')
+    
+    # --- get screenshot image (png) from html --- 
+    hti = Html2Image(output_path=path)
+    hti.screenshot(html_file = path+fname+'.html', save_as = fname+'.png')
+    
+    #not working with large file / time ! 
+    #fig.write_image(fname+'.png') 
+    
+    return #py.iplot(fig)
+
 
 
 
@@ -1313,7 +1366,8 @@ def get_trace_edges_3D(G, posG, color_list, opac = 0.2):
     return trace_edges
 
 
-def get_trace_edges_from_genelist3D(l_spec_edges, posG, color, opac=0.2):
+
+def get_trace_edges_from_genelist3D(l_spec_edges, posG, col, opac=0.2):
     '''
     Get trace of edges for plotting in 3D only for specific edges. 
     Input: 
@@ -1345,10 +1399,9 @@ def get_trace_edges_from_genelist3D(l_spec_edges, posG, color, opac=0.2):
                         y = edge_y, 
                         z = edge_z,
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 1.0, color = 3*list(color)),
+                        line = dict(width = 1.0, color = [col]*len(edge_x)),
                         opacity = opac
                 )
-    
     return trace_edges
 
 
@@ -1573,7 +1626,7 @@ def genes_annotation(posG_genes, d_genes, mode = 'light'):
                                     y=y[i],
                                     z=z[i],
                                     showarrow=True,
-                                    text=f'Gene symbol: {gene_sym[i]}',                            
+                                    text=f'Gene: {gene_sym[i]}',                            
                                     font=dict(
                                         color="black",
                                         size=10),
@@ -1596,7 +1649,7 @@ def genes_annotation(posG_genes, d_genes, mode = 'light'):
                                     y=y[i],
                                     z=z[i],
                                     showarrow=True,
-                                    text=f'Gene symbol: {gene_sym[i]}',
+                                    text=f'Gene: {gene_sym[i]}',
                                     font=dict(
                                         color="white",
                                         size=10),
@@ -1806,7 +1859,7 @@ def color_edges_from_list(G, genelist, col):
                     edge_lst.append(edge)
 
     d_col_edges = {}
-        for node,col in d_genes.items():
+    for node,col in d_genes.items():
             if e[0] == node:
                 d_col_edges[e]= col
             elif e[1] == node:

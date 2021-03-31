@@ -70,6 +70,7 @@ from scipy.interpolate import interpn
 from scipy.stats import gaussian_kde
 import seaborn as sns
 import sklearn
+from sklearn import preprocessing
 from sklearn.manifold import TSNE
 from sklearn import datasets
 from sklearn.preprocessing import normalize
@@ -78,7 +79,6 @@ from sklearn import (manifold, datasets, decomposition, ensemble,
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import SpectralClustering
-
 from sklearn.metrics import pairwise_distances
 from sklearn.linear_model import LinearRegression
 
@@ -1293,7 +1293,7 @@ def get_posG_sphere(l_genes, sphere_mapper):
 # -------------------------------------------------------------------------------------
 
 
-def get_trace_nodes_3D(posG, info_list, color_list, size, opac):
+def get_trace_nodes_3D(posG, info_list, color_list, size, opac=0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 

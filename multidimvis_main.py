@@ -928,7 +928,7 @@ def get_trace2D(x,y,trace_name,colour):
     return trace
 
 
-def get_trace_nodes_2D(posG, info_list, color_list, size):
+def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.4):
     '''
     Get trace of nodes for plotting in 2D. 
     Input: 
@@ -951,74 +951,8 @@ def get_trace_nodes_2D(posG, info_list, color_list, size):
                 color = color_list,
                 size = size,
                 symbol = 'circle',
-                line = dict(width = 1.0,
+                line = dict(width = linewidth,
                         color = color_list)
-            ),
-        )
-    
-    return trace
-
-
-def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
-    '''
-    Get trace of edges for plotting in 2D. 
-    Input: 
-    - G = Graph
-    - posG = dictionary with nodes as keys and coordinates as values.
-    - color_list = list of colours obtained from any color function (see above sections).
-    - opacity = transparency of edges e.g. 0.2
-    
-    Return a trace for plotly graph objects plot. 
-    '''
-    
-    edge_x = []
-    edge_y = []
-    for edge in G.edges():
-        x0, y0 = posG[edge[0]]
-        x1, y1 = posG[edge[1]]
-        edge_x.append(x0)
-        edge_x.append(x1)
-        edge_x.append(None)
-        edge_y.append(y0)
-        edge_y.append(y1)
-        edge_y.append(None)
- 
-    trace_edges = pgo.Scatter(
-                        x = edge_x, 
-                        y = edge_y, 
-                        mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.2, color = color_list),
-                        opacity = opac
-                )
-    
-    return trace_edges
-
-
-def get_trace_nodes_2D(posG, info_list, color_list, size):
-    '''
-    Get trace of nodes for plotting in 2D. 
-    Input: 
-    - G = Graph
-    - posG = dictionary with nodes as keys and coordinates as values.
-    - color_list = list of colours obtained from any color function (see above sections).
-    - opacity = transparency of edges e.g. 0.2
-    
-    Return a trace for plotly graph objects plot. 
-    '''
-    
-    key_list=list(posG.keys())
-    trace = pgo.Scatter(x=[posG[key_list[i]][0] for i in range(len(key_list))],
-                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
-                           mode = 'markers',
-                           text = info_list,
-                           hoverinfo = 'text',
-                           #textposition='middle center',
-                           marker = dict(
-                color = color_list,
-                size = size,
-                symbol = 'circle',
-                line = dict(width = 1.0,
-                        color = 'dimgrey')
             ),
         )
     
@@ -1326,7 +1260,7 @@ def get_trace_nodes_3D(posG, info_list, color_list, size, opac=0.9):
     return trace
 
 
-def get_trace_edges_3D(G, posG, color_list, opac = 0.2):
+def get_trace_edges_3D(G, posG, color_list, opac = 0.2, linewidth=0.2):
     '''
     Get trace of edges for plotting in 3D. 
     Input: 
@@ -1360,11 +1294,10 @@ def get_trace_edges_3D(G, posG, color_list, opac = 0.2):
                             y = edge_y, 
                             z = edge_z,
                             mode = 'lines', hoverinfo='none',
-                            line = dict(width = 0.2, color = color_list),
+                            line = dict(width = linewidth, color = color_list),
                             opacity = opac
                     )
     return trace_edges
-
 
 
 def get_trace_edges_from_genelist3D(l_spec_edges, posG, col, opac=0.2):

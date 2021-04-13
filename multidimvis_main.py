@@ -952,7 +952,7 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.4):
                 size = size,
                 symbol = 'circle',
                 line = dict(width = linewidth,
-                        color = color_list)
+                        color = 'dimgrey')
             ),
         )
     

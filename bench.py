@@ -65,7 +65,7 @@ d_netsize_branch1 = {#1093:3,
                     #9841:3,
                     #19531:5,
                     55987:6,
-                    97656:5,
+                    #97656:5,
                     #597871:9,
                     #1398101:4,
                     #5592404:4,
@@ -93,8 +93,12 @@ for i,branch in d_netsize_branch1.items():
     print('--- Spring ---')
     
     start = time.time()
+    print('spring embedding')
     posG_spring2D = nx.spring_layout(G, iterations = itr, dim = 2)
+    print('spring embedding done')
 
+    print('---')
+    print('spring normalization')
     df_posG = pd.DataFrame(posG_spring2D).T
     x = df_posG.values 
     min_max_scaler = preprocessing.MinMaxScaler()
@@ -102,6 +106,8 @@ for i,branch in d_netsize_branch1.items():
     df_posG_norm = pd.DataFrame(x_scaled)
 
     posG_spring2D_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values)))
+    print('spring normalization done')
+    print('---')
 
     end = time.time()
 
@@ -138,19 +144,25 @@ for i,branch in d_netsize_branch1.items():
     metric = 'cosine'
     lnr = 1 
     nep = None 
+    print('RWR embedding')
 
     umap_rwr = embed_umap_2D(DM_rwr, n_neighbors, spread, min_dist, metric, learn_rate = lnr, n_ep = nep)
     posG_umap_rwr = get_posG_2D(list(G.nodes()), umap_rwr)
     posG_complete_umap_rwr = {key:posG_umap_rwr[key] for key in G.nodes()}
     df_posG = pd.DataFrame(posG_complete_umap_rwr).T
+    print('RWR embedding done')
 
+    print('---')
+    print('RWR normalization')
     x = df_posG.values #returns a numpy array
     min_max_scaler = preprocessing.MinMaxScaler()
     x_scaled = min_max_scaler.fit_transform(x)
     df_posG_norm = pd.DataFrame(x_scaled)
 
     posG_complete_umap_rwr_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values)))
-    
+    print('RWR normalization done')
+    print('---')
+
     end = time.time()
     
     #===========================

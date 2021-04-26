@@ -55,7 +55,7 @@ def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine', learn_
     embed = U_3d.fit_transform(Matrix)
     
     return embed
-    
+
 #---------------------------------------
 
 itr = 50 
@@ -63,7 +63,9 @@ itr = 50
 d_netsize_branch1 = {#1093:3, 
                     #5461:4} 
                     #9841:3,
-                    19531:5,
+                    #19531:5,
+                    55987:6,
+                    97656:5,
                     #597871:9,
                     #1398101:4,
                     #5592404:4,

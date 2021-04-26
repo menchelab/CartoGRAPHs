@@ -14,14 +14,14 @@ from collections import defaultdict as dd
 from collections import Counter as ct
 from collections import OrderedDict
 import colorsys
-from colormap import rgb2hex, rgb2hls, hls2rgb
+#from colormap import rgb2hex, rgb2hls, hls2rgb
 from colormath.color_objects import sRGBColor, LabColor
 #from colormath.color_conversions import convert_color
 
-from fisher import pvalue
-from fa2 import ForceAtlas2
+#from fisher import pvalue
+#from fa2 import ForceAtlas2
 
-from html2image import Html2Image
+#from html2image import Html2Image
 
 import itertools as it
 
@@ -29,8 +29,8 @@ import math
 import matplotlib.pyplot as plt
 import numpy.linalg as la
 #%matplotlib inline
-import multiprocessing
-import mygene
+#import multiprocessing
+#import mygene
 
 import networkx as nx
 from networkx.algorithms.flow import shortest_augmenting_path
@@ -39,7 +39,7 @@ from networkx.algorithms.community import greedy_modularity_communities
 import numpy as np
 from numpy import pi, cos, sin, arccos, arange
 import numpy.linalg as la
-import numba
+#import numba
 #@numba.njit(fastmath=True)
 
 import os

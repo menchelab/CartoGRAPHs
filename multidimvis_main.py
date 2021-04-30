@@ -110,8 +110,6 @@ def rnd_walk_matrix2(A, r, a, num_nodes):
 
     Return Matrix with visiting probabilites (non-symmetric!!).
     ''' 
-    
-    num = 1*num_nodes
     n = num_nodes
     factor = float((1-a)/n)
 
@@ -254,11 +252,30 @@ def get_trace_xyz(x,y,z,trace_name,colour):
     return trace
 
 
+def exec_time(start, end):
+    diff_time = end - start
+    m, s = divmod(diff_time, 60)
+    h, m = divmod(m, 60)
+    s,m,h = int(round(s, 3)), int(round(m, 0)), int(round(h, 0))
+    print("Execution Time: " + "{0:02d}:{1:02d}:{2:02d}".format(h, m, s))
+   
+    return m,s
+
+
 ########################################################################################
 #
 # C O L O R F U N C T I O N S 
 #
 ########################################################################################
+
+
+def color_nodes(l_genes, color):
+
+    d_col = {}
+    for node in l_genes:
+        d_col[str(node)] = color
+    
+    return d_col
 
 
 def generate_colorlist_nodes(n):
@@ -333,6 +350,7 @@ def color_nodes_from_dict_unsort(d_to_be_coloured, palette):
     return d_node_colour # colours
 
 
+
 def color_nodes_from_dict(G, d_to_be_coloured, palette): 
     ''' 
     Generate node colors based on dictionary.
@@ -374,34 +392,6 @@ def color_nodes_from_dict(G, d_to_be_coloured, palette):
     return d_node_colour_sorted
 
 
-def color_nodes_from_genelist(G, l_genes, color, color_rest):
-    '''
-    Color (highlight) nodes from specific node list.
-    Input: 
-    - G = Graph 
-    - l_genes = list of nodes 
-    - color = string; color to hightlight
-    - color_rest = string; color for all other genes
-    
-    Return node color list sorted based on G.nodes() 
-    '''
-    
-    d_col = {}
-    for node in l_genes:
-        d_col[str(node)] = color
-            
-    d_rest = {}
-    for g in G.nodes():
-        if g not in d_col.keys():
-            d_rest[g] = color_rest #'d3d3d3' #'696969', #'dimgrey' # 'rgba(50,50,50,0.5)'
-                    
-    d_allnodes_col = {**d_col, **d_rest}
-    d_allnodes_col_sorted = {key:d_allnodes_col[key] for key in G.nodes()}
-
-    colours = list(d_allnodes_col_sorted.values())
-    
-    return colours
-
 
 def color_edges_from_genelist(G, l_genes, color):
     '''
@@ -421,6 +411,139 @@ def color_edges_from_genelist(G, l_genes, color):
         d_col_edges[e]=color
 
     return d_col_edges
+
+
+def color_edges_from_genelist_x(G, l_genes, color):
+    '''
+    Color (highlight) edges from specific node list exclusively.
+    Input: 
+    - G = Graph 
+    - l_nodes = list of nodes 
+    - color = string; color to hightlight
+    
+    Return edge list for selected edges IF ONE node is IN l_genes. 
+    '''
+    
+    edge_lst = [(u,v)for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]
+
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color
+
+    return d_col_edges
+
+
+
+def colours_spectralclustering(G, posG, n_clus, n_comp, pal ='gist_rainbow'):
+    '''
+    Generate node colors based on clustering.
+    Input:
+    - G = Graph
+    - posG = dictionary with nodes as keys and xy(z) coordinates
+    - n_clus = int; number of clusters
+    - n_comp = int; number of components (e.g. 10)
+    - palette(optional) = string; sns color palette e.g. "gist_rainbow"
+
+    Returns a dictionary with nodes as keys and color values based on clustering method. 
+    '''
+    
+    df_posG = pd.DataFrame(posG).T 
+
+    model = SpectralClustering(n_clusters=n_clus,n_components = n_comp, affinity='nearest_neighbors',random_state=0)
+    clusterid = model.fit(df_posG)
+    d_node_clusterid = dict(zip(genes, clusterid.labels_))
+
+    colours_unsort = color_nodes_from_dict_unsort(d_node_clusterid, pal) #'ocean'
+    genes_val = ['#696969']*len(genes_rest)
+    colours_rest = dict(zip(genes_rest, genes_val))
+    colours_all = {**colours_rest, **colours_unsort}
+
+    d_colours = {key:colours_all[key] for key in G.nodes}
+    
+    return d_colours
+
+
+
+def colours_dbscanclustering(G, DM, posG, epsi, min_sam, pal = 'gist_rainbow', col_rest = '#696969'):
+    '''
+    Generate node colors based on clustering.
+    Input:
+    - G = Graph
+    - posG = dictionary with nodes as keys and xy(z) coordinates
+    - epsi = int; number of clusters
+    - min_sam = int; number of components (e.g. 10)
+    - palette(optional) = string; sns color palette e.g. "gist_rainbow"
+
+    Returns a dictionary with nodes as keys and color values based on clustering method. 
+    '''
+    genes = []
+    for i in DM.index:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+            
+    df_posG = pd.DataFrame(posG).T 
+    dbscan = DBSCAN(eps=epsi, min_samples=min_sam) 
+    clusterid = dbscan.fit(df_posG)
+    d_node_clusterid = dict(zip(genes, clusterid.labels_))
+
+    colours_unsort = color_nodes_from_dict_unsort(d_node_clusterid, pal)
+    genes_val = [col_rest]*len(genes_rest)
+    colours_rest = dict(zip(genes_rest, genes_val))
+    colours_all = {**colours_rest, **colours_unsort}
+
+    d_colours_sorted = {key:colours_all[key] for key in G.nodes}
+    print('Number of Clusters: ', len(set(clusterid.labels_)))
+    
+    return d_colours_sorted
+
+
+
+def kmeansclustering(posG, n_clus):
+    
+    df_posG = pd.DataFrame(posG).T 
+    kmeans = KMeans(n_clusters=n_clus, random_state=0).fit(df_posG)
+    centrs = kmeans.cluster_centers_
+    
+    return kmeans, centrs
+
+
+
+def colours_kmeansclustering(G, DM, kmeans, pal = 'gist_rainbow'):
+    '''
+    Generate node colors based on clustering.
+    Input:
+    - G = Graph
+    - posG = dictionary with nodes as keys and xy(z) coordinates
+    - n_clus = int; number of clusters
+    - palette(optional) = string; sns color palette e.g. "gist_rainbow"
+
+    Returns a dictionary with nodes as keys and color values based on clustering method. 
+    '''
+
+    genes = []
+    for i in DM.index:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+            
+    d_node_clusterid = dict(zip(genes, kmeans.labels_))
+    colours_unsort = color_nodes_from_dict_unsort(d_node_clusterid, pal ) #'prism'
+    
+    genes_val = ['#696969']*len(genes_rest)
+    colours_rest = dict(zip(genes_rest, genes_val))
+    colours_all = {**colours_rest, **colours_unsort}
+    d_colours_sorted = {key:colours_all[key] for key in G.nodes}
+    
+    return d_colours_sorted
 
 
 
@@ -605,7 +728,70 @@ def identify_hubs(degs, closeness, betweens, cutoff):
     
     return d_node_hubs
 
+
+   
+def get_hubs(G, max_treshold, min_treshold):
     
+    d_degree = dict(nx.degree(G))
+
+    hubs = {}
+    for k,v in d_degree.items():
+        if v >= min_treshold and v <= max_treshold:
+            hubs[k] = v
+    #print('Hubs: ',hubs)
+
+    # get their neighbours
+    neighbours = {}
+    hubs_neigh = []
+    for i in hubs.keys():
+        for edge in G.edges():
+            if edge[0] == i:
+                hubs_neigh.append(edge[1])
+            elif edge[1] == i:
+                hubs_neigh.append(edge[0])
+            neighbours[i] = hubs_neigh
+    
+    
+    return hubs,neighbours
+
+
+
+def color_nodes_hubs(G, hubs, neighs, hubs_col_nodes, neigh_col_nodes):
+    
+    rest_col_nodes = '#d3d3d3' 
+    rest_col_edges = '#d3d3d3' 
+
+    colours_hubs = {}
+    for i in G.nodes():
+        if str(i) in hubs.keys():
+            colours_hubs[i] = hubs_col_nodes
+        elif str(i) in hubs_neigh:
+            colours_hubs[i] = neigh_col_nodes
+        else: 
+            colours_hubs[i] = rest_col_nodes
+
+    hubs_all_sorted = {key:colours_hubs[key] for key in G.nodes()}
+    #colours = list(hubs_all_sorted.values())
+    
+    return hubs_all_sorted 
+
+
+
+def color_edges_hubs(G, hubs, hub_col_edges, rest_col_edges):
+
+    d_edge_col_ = color_edges_from_genelist(G, list(hubs.keys()), hub_col_edges)
+    d_rest_edges={}
+    for e in G.edges():
+        if str(e) not in d_edge_col_.keys():
+            d_rest_edges[e] = rest_col_edges
+
+    d_all_edges = {**d_edge_col_, **d_rest_edges}
+    d_all_edges_sort = {key:d_all_edges[key] for key in G.edges()}
+    
+    return d_all_edges_sort
+
+
+
 def color_nodes_and_neighbors(G, dict_nodes):
     '''
     Generate colors from nodes and also color their neighbors in a lighter color.
@@ -840,20 +1026,22 @@ def embed_tsne_2D(Matrix, prplxty, density, l_rate, steps, metric = 'precomputed
     return embed
 
 
-def embed_umap_2D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
+def embed_umap_2D(Matrix, n_neigh, spre, m_dist, metric='cosine', learn_rate = 1, n_ep = None):
     '''
     Dimensionality reduction from Matrix using UMAP.
     Return dict (keys: node IDs, values: x,y).
     ''' 
-    n_components = 2 
+    n_comp = 2 
 
     U = umap.UMAP(
-        n_neighbors = n_neighbors,
-        spread = spread,
-        min_dist = min_dist,
-        n_components = n_components,
+        n_neighbors = n_neigh,
+        spread = spre,
+        min_dist = m_dist,
+        n_components = n_comp,
         metric = metric, 
-        random_state=42)
+        random_state=42,
+        learning_rate = learn_rate, 
+        n_epochs = n_ep)
     
     embed = U.fit_transform(Matrix)
     
@@ -874,6 +1062,87 @@ def get_posG_2D(l_nodes, embed):
         cc += 1
 
     return posG
+
+
+def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - G = Graph
+    - DM = matrix 
+    - embed = embedding from e.g. tSNE , UMAP ,... 
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D normed. 
+    '''
+    
+    genes = []
+    for i in DM.index:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+
+        
+    posG_umap = {}
+    cc = 0
+    for entz in genes:
+        posG_umap[entz] = (embed[cc,0],embed[cc,1])
+        cc += 1
+
+    #--------------------------------------------------------------
+    # REST (if genes = G.nodes then rest will be ignored / empty)
+    
+    # generate circle coordinates for rest genes (without e.g. GO term or Disease Annotation)
+    t = np.random.uniform(0,2*np.pi,len(genes_rest))
+    
+    xx=[]
+    yy=[]
+    for i in posG_umap.values():
+        xx.append(i[0])
+        yy.append(i[1])
+    
+    cx = np.mean(xx)
+    cy = np.mean(yy)
+
+    xm, ym = max(posG_umap.values())
+    r = (math.sqrt((xm-cx)**2 + (ym-cy)**2))*r_scalingfactor #*1.05 # multiplying with 1.05 makes cirle larger to avoid "outsider nodes/genes"
+        
+    x = r*np.cos(t)
+    y = r*np.sin(t)
+    rest = []
+    for i,j in zip(x,y):
+            rest.append((i,j))
+
+    posG_rest = dict(zip(genes_rest, rest))
+
+    posG_all = {**posG_umap, **posG_rest}
+    posG_complete_umap = {key:posG_all[key] for key in G.nodes()}
+
+    # normalize coordinates 
+    x_list = []
+    y_list = []
+    for k,v in posG_complete_umap.items():
+        x_list.append(v[0])
+        y_list.append(v[1])
+
+    xx_norm = sklearn.preprocessing.minmax_scale(x_list, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm = sklearn.preprocessing.minmax_scale(y_list, feature_range=(0, 1), axis=0, copy=True)
+
+    xx_norm_final=[]
+    for i in xx_norm:
+        xx_norm_final.append(round(i,10))
+
+    yy_norm_final=[]
+    for i in yy_norm:
+        yy_norm_final.append(round(i,10))
+
+    posG_complete_umap_norm = dict(zip(list(G.nodes()),zip(xx_norm_final,yy_norm_final)))
+    
+    return posG_complete_umap_norm
+
 
 
 def labels2D(posG, feature_dict):
@@ -1138,7 +1407,7 @@ def embed_tsne_3D(Matrix, prplxty, density, l_rate, n_iter, metric = 'precompute
     return embed 
 
 
-def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
+def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine', learn_rate = 1, n_ep = None):
     '''
     Dimensionality reduction from Matrix (UMAP).
     Return dict (keys: node IDs, values: x,y,z).
@@ -1151,7 +1420,10 @@ def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
         spread = spread,
         min_dist = min_dist,
         n_components = n_components,
-        metric = metric)
+        metric = metric,
+        random_state=42,
+        learning_rate = learn_rate, 
+        n_epochs = n_ep)
     embed = U_3d.fit_transform(Matrix)
     
     return embed
@@ -1174,6 +1446,99 @@ def get_posG_3D(l_genes, embed):
         cc += 1
     
     return posG
+
+
+def get_posG_3D_norm(G, DM, embed):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - G = Graph
+    - DM = matrix 
+    - embed = embedding from e.g. tSNE , UMAP ,... 
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D normed. 
+    '''
+    
+    genes = []
+    for i in DM.index:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+
+        
+    posG_3Dumap = {}
+    cc = 0
+    for entz in genes:
+        posG_3Dumap[entz] = (embed[cc,0],embed[cc,1],embed[cc,2])
+        cc += 1
+
+    #--------------------------------------------------------------
+    # REST (if genes = G.nodes then rest will be ignored / empty)
+    
+    # center for sphere to arrange rest gene-datapoints
+    xx=[]
+    yy=[]
+    zz=[]
+    for i in posG_3Dumap.values():
+        xx.append(i[0])
+        yy.append(i[1])
+        zz.append(i[2]) 
+
+    cx = sum(xx)/len(genes)
+    cy = sum(yy)/len(genes)
+    cz = sum(zz)/len(genes)
+
+    # generate spherical coordinates for rest genes (without e.g. GO term or Disease Annotation)
+    indices = arange(0, len(genes_rest))
+    phi = arccos(1 - 2*indices/len(genes_rest)) # 2* --> for both halfs of sphere (upper+lower)
+    theta = pi * (1 + 5**0.5) * indices
+
+    xm, ym, zm = max(posG_3Dumap.values())
+    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))+1 # +10 to ensure all colored nodes are within the sphere
+    x, y, z = cx+r*cos(theta) * sin(phi),cy+r*sin(theta) * sin(phi), cz+r*cos(phi)
+
+    rest_points = []
+    for i,j,k in zip(x,y,z):
+        rest_points.append((i,j,k))
+
+    posG_rest = dict(zip(genes_rest, rest_points))
+
+    posG_all = {**posG_3Dumap, **posG_rest}
+    posG_3D_complete_umap = {key:posG_all[key] for key in G.nodes()}
+
+    # normalize coordinates 
+    x_list3D = []
+    y_list3D = []
+    z_list3D = []
+    for k,v in posG_3D_complete_umap.items():
+        x_list3D.append(v[0])
+        y_list3D.append(v[1])
+        z_list3D.append(v[2])
+
+    xx_norm3D = sklearn.preprocessing.minmax_scale(x_list3D, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm3D = sklearn.preprocessing.minmax_scale(y_list3D, feature_range=(0, 1), axis=0, copy=True)
+    zz_norm3D = sklearn.preprocessing.minmax_scale(z_list3D, feature_range=(0, 1), axis=0, copy=True)
+
+    xx_norm3D_final=[]
+    for i in xx_norm3D:
+        xx_norm3D_final.append(round(i,10))
+
+    yy_norm3D_final=[]
+    for i in yy_norm3D:
+        yy_norm3D_final.append(round(i,10))
+
+    zz_norm3D_final=[]
+    for i in zz_norm3D:
+        zz_norm3D_final.append(round(i,10)) 
+
+    posG_3D_complete_umap_norm = dict(zip(list(G.nodes()), zip(xx_norm3D_final,yy_norm3D_final,zz_norm3D_final)))
+    
+    return posG_3D_complete_umap_norm
+
 
 
 def embed_umap_sphere(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
@@ -1220,6 +1585,80 @@ def get_posG_sphere(l_genes, sphere_mapper):
         cc += 1
     
     return posG
+
+
+def get_posG_sphere_norm(G, l_genes, sphere_mapper, d_param, radius_rest_genes = 20):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - G = Graph 
+    - DM = matrix 
+    - sphere_mapper = embedding from UMAP spherical embedding 
+    - d_param = dictionary with nodes as keys and assigned radius as values 
+    - radius_rest_genes = int; radius in case of genes e.g. not function associated if genes not all G.nodes()
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D. 
+    '''
+    
+    x = np.sin(sphere_mapper.embedding_[:, 0]) * np.cos(sphere_mapper.embedding_[:, 1])
+    y = np.sin(sphere_mapper.embedding_[:, 0]) * np.sin(sphere_mapper.embedding_[:, 1])
+    z = np.cos(sphere_mapper.embedding_[:, 0])
+    
+    genes = []
+    for i in l_genes:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+            
+    posG_3Dsphere = {}
+    cc = 0
+    for entz in genes:
+        posG_3Dsphere[entz] = (x[cc],y[cc], z[cc])
+        cc += 1
+
+    posG_3Dsphere_radius = {}
+    for node,rad in d_param.items():
+        for k,v in posG_3Dsphere.items():
+            if k == node:
+                posG_3Dsphere_radius[k] = (v[0]*rad, v[1]*rad, v[2]*rad)
+ 
+    # generate spherical coordinates for rest genes (without e.g. GO term or Disease Annotation)
+    indices = arange(0, len(genes_rest))
+    phi = arccos(1 - 2*indices/len(genes_rest))
+    theta = pi * (1 + 5**0.5) * indices
+
+    r_rest = radius_rest_genes # radius for rest genes (e.g. if functional layout)
+    x, y, z = r_rest*cos(theta) * sin(phi), r_rest*sin(theta) * sin(phi), r_rest*cos(phi)
+
+    rest_points = []
+    for i,j,k in zip(x,y,z):
+        rest_points.append((i,j,k))
+
+    posG_rest = dict(zip(genes_rest, rest_points))
+
+    posG_all = {**posG_3Dsphere_radius, **posG_rest}
+    posG_complete_sphere = {key:posG_all[key] for key in G.nodes()}
+
+    # normalize coordinates 
+    x_list = []
+    y_list = []
+    z_list = []
+    for k,v in posG_complete_sphere.items():
+        x_list.append(v[0])
+        y_list.append(v[1])
+        z_list.append(v[2])
+
+    xx_norm = sklearn.preprocessing.minmax_scale(x_list, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm = sklearn.preprocessing.minmax_scale(y_list, feature_range=(0, 1), axis=0, copy=True)
+    zz_norm = sklearn.preprocessing.minmax_scale(z_list, feature_range=(0, 1), axis=0, copy=True)
+
+    posG_complete_sphere_norm = dict(zip(list(G.nodes()), zip(xx_norm,yy_norm,zz_norm)))
+    
+    return posG_complete_sphere_norm
 
 
 # -------------------------------------------------------------------------------------
@@ -1418,7 +1857,7 @@ def plot_3D(data, fname, scheme, annotat=None):
                                 ))
 
     elif scheme == 'light' and annotat==None:
-        fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
+        fig.update_layout(template='none', showlegend=False, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',
@@ -1433,7 +1872,7 @@ def plot_3D(data, fname, scheme, annotat=None):
                         ))    
         
     elif scheme == 'light':
-         fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
+         fig.update_layout(template='none', showlegend=False, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',
@@ -1456,7 +1895,74 @@ def plot_3D(data, fname, scheme, annotat=None):
 # P L O T   A N N O T A T I O N S 
 # -------------------------------------------------------------------------------------
 
+def annotation_kmeansclustering(kmeans, centrs, mode):
+   
+    # number of genes in each cluster ( used for annotation )
+    d_clus_genecount = dict(collections.Counter(kmeans.labels_))
+    d_clus_genecount_sort = dict(collections.OrderedDict(sorted(d_clus_genecount.items())))
+    l_clus_genecount = list(d_clus_genecount_sort.values())
 
+    # Centers for clusters ( used for annotation )
+    x=[]
+    y=[]
+    z=[]
+    for i in centrs:
+        x.append(i[0])
+        y.append(i[1])
+        z.append(i[2])
+        
+    if mode == 'light':
+        annotations = []
+        for i in range(len(x)):
+            annot = dict(
+                                x=x[i],
+                                y=y[i],
+                                z=z[i],
+                                showarrow=True,
+                                text=f'Cluster: {str(i+1)} <br> total: {str(l_clus_genecount[i])}', 
+                                font=dict(
+                                    color="dimgrey",
+                                    size=8),
+                                xanchor="right",
+                                ay=-20,
+                                ax=-20,
+                                opacity=0.5,
+                                arrowhead=0,
+                                arrowwidth=0.5,
+                                arrowcolor="dimgrey"
+                                )
+            i=+1
+            annotations.append(annot)
+        return annotations
+
+    elif mode == 'dark':
+        annotations = []
+        for i in range(len(x)):
+            annot = dict(
+                                x=x[i],
+                                y=y[i],
+                                z=z[i],
+                                showarrow=True,
+                                text=f'Cluster: {str(i+1)} <br> total: {str(l_clus_genecount[i])}',
+                                font=dict(
+                                    color="lightgrey",
+                                    size=8),
+                                xanchor="right",
+                                ay=-20,
+                                ax=-20,
+                                opacity=0.5,
+                                arrowhead=0,
+                                arrowwidth=0.5,
+                                arrowcolor="lightgrey")
+            i=+1
+            annotations.append(annot)
+        return annotations
+        
+    else: 
+        print('Please choose mode by setting mode="light" or "dark".')
+        
+        
+        
 def cluster_annotation(d_clusterid_coords, d_genes_per_cluster, mode = 'light'):
     ''' 
     Add Anntation of clusters to 3D plot.
@@ -1650,7 +2156,7 @@ def export_to_csv2D(layout_namespace, posG, colours):
     return df_2D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)
 
 
-def export_to_csv3D(layout_namespace, posG, colours):
+def export_to_csv3D(path, layout_namespace, posG, colours):
     '''
     Generate csv for upload to VRnetzer plaform for 3D layouts. 
     Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
@@ -1685,7 +2191,8 @@ def export_to_csv3D(layout_namespace, posG, colours):
     cols = cols[-1:] + cols[:-1]
     df_3D_final = df_3D[cols]
     
-    return df_3D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)
+    return df_3D_final.to_csv(r''+path+layout_namespace+'_layout.csv',index=False, header=False)
+    # return df_3D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)
 
 
 
@@ -1760,9 +2267,6 @@ def convert_symbol_to_entrez(gene_list,name_species):   #name_species must be th
         else:
             pass
     return sym_to_entrez_dict
-
-
-
 
 
 ########################################################################################
@@ -1917,3 +2421,8 @@ def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def
     #edge_color = list(d_edges_all_sorted.values())
     
     return  d_edges_all
+
+
+def only_numerics(seq):
+    seq_type= type(seq)
+    return seq_type().join(filter(seq_type.isdigit, seq))

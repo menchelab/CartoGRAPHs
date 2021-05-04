@@ -63,11 +63,19 @@ del A
 del FM_m_array
 
 umap_rwr_3D = embed_umap_3D(DM_rwr, n_neighbors, spread, min_dist, metric)
-posG_3Dumap_rwr = get_posG_3D(list(G.nodes()), umap_rwr_3D)
+posG_umap_rwr = get_posG_3D(list(G.nodes()), umap_rwr_3D)
+posG_complete_umap_rwr = {key:posG_umap_rwr[key] for key in G.nodes()}
 
+df_posG = pd.DataFrame(posG_complete_umap_rwr).T
+x = df_posG.values 
+min_max_scaler = preprocessing.MinMaxScaler()
+x_scaled = min_max_scaler.fit_transform(x)
+df_posG_norm = pd.DataFrame(x_scaled)
+
+posG = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values)))
+    
 del DM_rwr
-del umap_rwr_3D
-print('prep layout distances')
+del df_posG
 
 dist_network = d_SPL_pairs
 
@@ -75,7 +83,8 @@ print('prep layout distance')
 dist_layout3D = {} 
 for p1,p2 in it.combinations(G.nodes(),2):
     dist_layout3D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
-    
+
+print('prep layout / network distance')
 d_plot_layout = {}
 for spldist in range(1,int(max(dist_network.values()))+1):
     l_s = []

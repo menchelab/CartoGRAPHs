@@ -67,8 +67,8 @@ x = df_posG.values
 min_max_scaler = preprocessing.MinMaxScaler()
 x_scaled = min_max_scaler.fit_transform(x)
 df_posG_norm = pd.DataFrame(x_scaled)
+posG_complete_umap_rwr_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values))) 
 
-posG = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values))) 
 del DM_rwr
 del df_posG
 
@@ -84,11 +84,10 @@ x_scaled = min_max_scaler.fit_transform(x)
 df_posG_norm = pd.DataFrame(x_scaled)
 posG_spring3D_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values, df_posG_norm[2].values)))
 
-
 print('-------')
 print('get spring and global layout distances')
 posG_layout = posG_complete_umap_rwr#_norm
-posG_spring = posG_spring2D #_norm
+posG_spring = posG_spring3D #_norm
 
 dist_network = d_SPL_pairs
 dist_spring3D = {} 

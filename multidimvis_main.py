@@ -261,6 +261,7 @@ def exec_time(start, end):
    
     return m,s
 
+
 def globallayout_2D(G,n_neighbors, spread, min_dist, metric):
     
     r=0.9
@@ -304,54 +305,6 @@ def springlayout_2D(G, itr):
     del df_posG
     
     return posG_spring2D_norm
-
-
-def pearson_corrcoef_2D(G, posG):
-    
-    print('prep layout distance')
-    dist_layout2D = {} 
-    for p1,p2 in it.combinations(G.nodes(),2):
-        dist_layout2D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2)
-   
-    print('prep network distance')
-    dist_network = {}
-    for p1,p2 in it.combinations(G.nodes(),2):
-        spl = nx.shortest_path_length(G,p1,p2)
-        dist_network[(p1,p2)] = spl
-
-    print('prep corr. coeff. data')
-    d_plot_layout = {}
-    for spldist in range(1,int(max(dist_network.values()))+1):
-        l_s = []
-        for k, v in dist_network.items():
-            if v == spldist:
-                l_s.append(k)
-        
-        #print('list '+str(spldist)+' done')
-        l_xy = []
-        for nodes in l_s:
-            dxy = dist_layout2D[nodes]
-            l_xy.append(dxy)
-        d_plot_layout[spldist] = l_xy
-        #print('dict '+str(spldist)+' done')
-        
-    max_dist_network = int(max(dist_network.values()))
-    
-    del dist_layout2D
-    del dist_network
-    
-    l_medians_layout = []
-    for k, v in d_plot_layout.items():
-        l_medians_layout.append(statistics.median(v))
-    
-    del d_plot_layout
-   
-    print('calculate corr. coeff.')
-    x = np.array(range(1,max_dist_network+1))
-    y = np.array(l_medians_layout)
-    r_layout = np.corrcoef(x, y)
-        
-    return r_layout[0][1]
 
 
 def globallayout_3D(G,n_neighbors, spread, min_dist, metric):
@@ -399,53 +352,61 @@ def springlayout_3D(G, itr):
     return posG_spring3D_norm
 
 
-def pearson_corrcoef_3D(G, posG):
-   
-    print('prep layout distance')
-    dist_layout3D = {} 
+def pairwise_layout_distance_2D(G,posG):
+
+    dist_layout = {} 
     for p1,p2 in it.combinations(G.nodes(),2):
-        dist_layout3D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
+        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2)
+        
+    return dist_layout
+
+
+def pairwise_layout_distance_3D(G,posG):
+
+    dist_layout = {} 
+    for p1,p2 in it.combinations(G.nodes(),2):
+        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
+        
+    return dist_layout
+ 
     
-    print('prep network distance')
+def pairwise_network_distance(G):
+    
     dist_network = {}
     for p1,p2 in it.combinations(G.nodes(),2):
-        spl = nx.shortest_path_length(G,p1,p2)
-        dist_network[(p1,p2)] = spl
+        dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2)
 
-    print('prep corr. coeff. data')
+    return dist_network
+
+    
+def pearson_corrcoef(dist_network, dist_layout):
+    
     d_plot_layout = {}
     for spldist in range(1,int(max(dist_network.values()))+1):
         l_s = []
         for k, v in dist_network.items():
             if v == spldist:
                 l_s.append(k)
-        l_xy = []
-        
-        #print('list '+str(spldist)+' done')
-        for nodes in l_s:
-            if nodes in dist_layout3D.keys():
-                dxy = dist_layout3D[nodes]
-                l_xy.append(dxy)
-        d_plot_layout[spldist] = l_xy
-        #print('dict '+str(spldist)+' done')
-    
-    max_dist_network = int(max(dist_network.values()))
-    
-    del dist_layout3D
-    del dist_network
 
+        l_xy = []
+        for nodes in l_s:
+            try:
+                dxy = dist_layout[nodes]
+                l_xy.append(dxy)
+            except:
+                pass
+        d_plot_layout[spldist] = l_xy
+    
     l_medians_layout = []
     for k, v in d_plot_layout.items():
         l_medians_layout.append(statistics.median(v))
-
-    del d_plot_layout
    
-    print('calculate corr. coeff.')
-    x = np.array(range(1,max_dist_network+1))
+    x = np.array(range(1,int(max(dist_network.values()))+1))
     y = np.array(l_medians_layout)
     r_layout = np.corrcoef(x, y)
     
     return r_layout[0][1]
+
 
 
 ########################################################################################

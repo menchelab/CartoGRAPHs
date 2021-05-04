@@ -315,10 +315,9 @@ def pearson_corrcoef_2D(G, posG):
    
     print('prep network distance')
     dist_network = {}
-    for a in nx.shortest_path_length(G):
-        for n,spl in a[1].items():
-            if (a[0],n) in dist_layout2D.keys():
-                dist_network[(a[0],n)] = int(spl)
+    for p1,p2 in it.combinations(G.nodes(),2):
+        spl = nx.shortest_path_length(G,p1,p2)
+        dist_network[(p1,p2)] = spl
 
     print('prep corr. coeff. data')
     d_plot_layout = {}
@@ -409,9 +408,9 @@ def pearson_corrcoef_3D(G, posG):
     
     print('prep network distance')
     dist_network = {}
-    for a in nx.shortest_path_length(G):
-        for n,spl in a[1].items():
-            dist_network[(a[0],n)] = spl
+    for p1,p2 in it.combinations(G.nodes(),2):
+        spl = nx.shortest_path_length(G,p1,p2)
+        dist_network[(p1,p2)] = spl
 
     print('prep corr. coeff. data')
     d_plot_layout = {}
@@ -447,7 +446,6 @@ def pearson_corrcoef_3D(G, posG):
     r_layout = np.corrcoef(x, y)
     
     return r_layout[0][1]
-
 
 
 ########################################################################################

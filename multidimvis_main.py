@@ -261,6 +261,194 @@ def exec_time(start, end):
    
     return m,s
 
+def globallayout_2D(G,n_neighbors, spread, min_dist, metric):
+    
+    r=0.9
+    alpha=1.0
+
+    A = nx.adjacency_matrix(G)
+    FM_m_array = rnd_walk_matrix2(A, r, alpha, len(G.nodes()))
+    DM_rwr = pd.DataFrame(FM_m_array).T
+
+    umap_rwr_2D = embed_umap_2D(DM_rwr, n_neighbors, spread, min_dist, metric)
+    posG_umap_rwr = get_posG_2D(list(G.nodes()), umap_rwr_2D)
+    posG_complete_umap_rwr = {key:posG_umap_rwr[key] for key in G.nodes()}
+
+    df_posG = pd.DataFrame(posG_complete_umap_rwr).T
+    x = df_posG.values #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df_posG_norm = pd.DataFrame(x_scaled)
+
+    posG_complete_umap_rwr_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values)))
+    
+    del DM_rwr
+    del df_posG
+    
+    return posG_complete_umap_rwr_norm
+
+
+def springlayout_2D(G, itr):
+    
+    posG_spring2D = nx.spring_layout(G, iterations = itr, dim = 2)
+
+    df_posG = pd.DataFrame(posG_spring2D).T
+    x = df_posG.values 
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df_posG_norm = pd.DataFrame(x_scaled)
+    
+    posG_spring2D_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values)))
+    
+    del posG_spring2D
+    del df_posG
+    
+    return posG_spring2D_norm
+
+
+def pearson_corrcoef_2D(G, posG):
+    
+    print('prep layout distance')
+    dist_layout2D = {} 
+    for p1,p2 in it.combinations(G.nodes(),2):
+        dist_layout2D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2)
+   
+    print('prep network distance')
+    dist_network = {}
+    for a in nx.shortest_path_length(G):
+        for n,spl in a[1].items():
+            if (a[0],n) in dist_layout2D.keys():
+                dist_network[(a[0],n)] = int(spl)
+
+    print('prep corr. coeff. data')
+    d_plot_layout = {}
+    for spldist in range(1,int(max(dist_network.values()))+1):
+        l_s = []
+        for k, v in dist_network.items():
+            if v == spldist:
+                l_s.append(k)
+        
+        #print('list '+str(spldist)+' done')
+        l_xy = []
+        for nodes in l_s:
+            dxy = dist_layout2D[nodes]
+            l_xy.append(dxy)
+        d_plot_layout[spldist] = l_xy
+        #print('dict '+str(spldist)+' done')
+        
+    max_dist_network = int(max(dist_network.values()))
+    
+    del dist_layout2D
+    del dist_network
+    
+    l_medians_layout = []
+    for k, v in d_plot_layout.items():
+        l_medians_layout.append(statistics.median(v))
+    
+    del d_plot_layout
+   
+    print('calculate corr. coeff.')
+    x = np.array(range(1,max_dist_network+1))
+    y = np.array(l_medians_layout)
+    r_layout = np.corrcoef(x, y)
+        
+    return r_layout[0][1]
+
+
+def globallayout_3D(G,n_neighbors, spread, min_dist, metric):
+    
+    r=0.9
+    alpha=1.0
+    
+    A = nx.adjacency_matrix(G)
+    FM_m_array = rnd_walk_matrix2(A, r, alpha, len(G.nodes()))
+    DM_rwr = pd.DataFrame(FM_m_array).T
+
+    umap_rwr_3D = embed_umap_3D(DM_rwr, n_neighbors, spread, min_dist, metric)
+    posG_umap_rwr = get_posG_3D(list(G.nodes()), umap_rwr_3D)
+    posG_complete_umap_rwr = {key:posG_umap_rwr[key] for key in G.nodes()}
+
+    df_posG = pd.DataFrame(posG_complete_umap_rwr).T
+    x = df_posG.values #returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df_posG_norm = pd.DataFrame(x_scaled)
+
+    posG_complete_umap_rwr_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values)))
+    
+    del DM_rwr
+    del df_posG
+    
+    return posG_complete_umap_rwr_norm
+
+
+def springlayout_3D(G, itr):
+    
+    posG_spring3D = nx.spring_layout(G, iterations = itr, dim = 3)
+
+    df_posG = pd.DataFrame(posG_spring3D).T
+    x = df_posG.values 
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df_posG_norm = pd.DataFrame(x_scaled)
+    
+    posG_spring3D_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values)))
+    
+    del posG_spring3D
+    del df_posG
+    
+    return posG_spring3D_norm
+
+
+def pearson_corrcoef_3D(G, posG):
+   
+    print('prep layout distance')
+    dist_layout3D = {} 
+    for p1,p2 in it.combinations(G.nodes(),2):
+        dist_layout3D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
+    
+    print('prep network distance')
+    dist_network = {}
+    for a in nx.shortest_path_length(G):
+        for n,spl in a[1].items():
+            dist_network[(a[0],n)] = spl
+
+    print('prep corr. coeff. data')
+    d_plot_layout = {}
+    for spldist in range(1,int(max(dist_network.values()))+1):
+        l_s = []
+        for k, v in dist_network.items():
+            if v == spldist:
+                l_s.append(k)
+        l_xy = []
+        
+        #print('list '+str(spldist)+' done')
+        for nodes in l_s:
+            if nodes in dist_layout3D.keys():
+                dxy = dist_layout3D[nodes]
+                l_xy.append(dxy)
+        d_plot_layout[spldist] = l_xy
+        #print('dict '+str(spldist)+' done')
+    
+    max_dist_network = int(max(dist_network.values()))
+    
+    del dist_layout3D
+    del dist_network
+
+    l_medians_layout = []
+    for k, v in d_plot_layout.items():
+        l_medians_layout.append(statistics.median(v))
+
+    del d_plot_layout
+   
+    print('calculate corr. coeff.')
+    x = np.array(range(1,max_dist_network+1))
+    y = np.array(l_medians_layout)
+    r_layout = np.corrcoef(x, y)
+    
+    return r_layout[0][1]
+
+
 
 ########################################################################################
 #

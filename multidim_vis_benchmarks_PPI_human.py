@@ -41,20 +41,17 @@ print('Network density: %.11f%%' %(200.*len(list(G.edges()))/(len(list(G.nodes()
 
 
 # GLOBAL LAYOUT 
-#-----------------------------
-# UMAP PARAMETERS:
-#-----------------------------
-n_neighbors = 20 
-spread = 0.8
+n_neighbors = 12 
+spread = 1
 min_dist = 0.0
 metric = 'cosine'
 lnr = 1
 nep = None
-
 feature = 'RWRvis'
 r = .9
 alpha = 1.0
 
+print('RWR calculation')
 A = nx.adjacency_matrix(G)
 FM_m_array = rnd_walk_matrix2(A, r, alpha, len(G.nodes()))
 DM_rwr = pd.DataFrame(FM_m_array).T
@@ -65,70 +62,21 @@ del FM_m_array
 umap_rwr_3D = embed_umap_3D(DM_rwr, n_neighbors, spread, min_dist, metric)
 posG_umap_rwr = get_posG_3D(list(G.nodes()), umap_rwr_3D)
 posG_complete_umap_rwr = {key:posG_umap_rwr[key] for key in G.nodes()}
-
 df_posG = pd.DataFrame(posG_complete_umap_rwr).T
 x = df_posG.values 
 min_max_scaler = preprocessing.MinMaxScaler()
 x_scaled = min_max_scaler.fit_transform(x)
 df_posG_norm = pd.DataFrame(x_scaled)
 
-posG = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values)))
-    
+posG = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values,df_posG_norm[2].values))) 
 del DM_rwr
 del df_posG
 
-dist_network = d_SPL_pairs
+print('--------')
 
-print('prep layout distance')
-dist_layout3D = {} 
-for p1,p2 in it.combinations(G.nodes(),2):
-    dist_layout3D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
-
-print('prep layout / network distance')
-d_plot_layout = {}
-for spldist in range(1,int(max(dist_network.values()))+1):
-    l_s = []
-    for k, v in dist_network.items():
-        if v == spldist:
-            l_s.append(k)
-    print('list '+str(spldist)+' done')
-    l_xy = []
-    for nodes in l_s:
-        if nodes in dist_layout3D.keys():
-            dxy = dist_layout3D[nodes]
-            l_xy.append(dxy)
-    d_plot_layout[spldist] = l_xy
-    print('dict '+str(spldist)+' done')
-
-max_dist_network = int(max(dist_network.values()))
-del dist_network 
-
-print('calculate corr. coeff.')
-
-# GLOBAL RWR Pearson Correlation
-l_medians_layout = []
-for k, v in d_plot_layout.items():
-    l_medians_layout.append(statistics.median(v))
-print('list done')
-
-x = np.array(range(1,max_dist_network+1))
-y = np.array(l_medians_layout)
-r_layout = np.corrcoef(x, y)
-
-print('GLOBAL (RWR) Pearson Correlation Factor: ', r_layout[0][1])
-
-del dist_layout3D 
-
-print('all RWR done')
-
-# SPRING LAYOUT
-itr = 50 #20
-
+print('Spring calculation')
+itr = 50
 posG_spring3D = nx.spring_layout(G, iterations = itr, dim = 3)
-
-# NORMALIZED COORDINATES FOR CORRELATION CALCULATION
-
-print('normalize coordinates')
 df_posG = pd.DataFrame(posG_spring3D).T
 x = df_posG.values #returns a numpy array
 min_max_scaler = preprocessing.MinMaxScaler()
@@ -136,50 +84,77 @@ x_scaled = min_max_scaler.fit_transform(x)
 df_posG_norm = pd.DataFrame(x_scaled)
 posG_spring3D_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values, df_posG_norm[2].values)))
 
-print('get layout distances')
-posG = posG_spring3D_norm
-dist_spring3D = {} 
-for p1,p2 in it.combinations(G.nodes(),2):
-    #dist_spring2D[(p1,p2)] = (posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2
-    dist_spring3D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2+(posG[p1][2]-posG[p2][2])**2)
+
+print('-------')
+print('get spring and global layout distances')
+posG_layout = posG_complete_umap_rwr#_norm
+posG_spring = posG_spring2D #_norm
 
 dist_network = d_SPL_pairs
+dist_spring3D = {} 
+dist_layout3D = {} 
+for p1,p2 in it.combinations(G.nodes(),2):
+    dist_spring3D[(p1,p2)] = np.sqrt((posG_spring[p1][0]-posG_spring[p2][0])**2 + (posG_spring[p1][1]-posG_spring[p2][1])**2+(posG_spring[p1][2]-posG_spring[p2][2])**2)
+    dist_layout3D[(p1,p2)] = np.sqrt((posG_layout[p1][0]-posG_layout[p2][0])**2 + (posG_layout[p1][1]-posG_layout[p2][1])**2 + (posG_layout[p1][1]-posG_layout[p2][2])**2)
 
-print('prep layout distances')
-print(int(max(dist_network.values())))
-
+print('prep layout / network distance data')
 d_plot_spring = {}
 for spldist in range(1,int(max(dist_network.values()))+1):
     l_s = []
     for k, v in dist_network.items():
         if v == spldist:
             l_s.append(k)
-    print('list '+str(spldist)+' done')
+
     l_xy = []
     for nodes in l_s:
-        if nodes in dist_spring3D.keys():
+        try:
             dxy = dist_spring3D[nodes]
             l_xy.append(dxy)
+        except:
+            pass
     d_plot_spring[spldist] = l_xy
-    print('dict '+str(spldist)+' done')
+    
+    
+d_plot_layout = {}
+for spldist in range(1,int(max(dist_network.values()))+1):
+    l_s = []
+    for k, v in dist_network.items():
+        if v == spldist:
+            l_s.append(k)
 
-max_dist_network = int(max(dist_network.values()))
-del dist_network 
+    l_xy = []
+    for nodes in l_s:
+        try:
+            dxy = dist_layout3D[nodes]
+            l_xy.append(dxy)
+        except:
+            pass
+    d_plot_layout[spldist] = l_xy
 
-print('calculate corr. coeff.')
 
-# SPRING Pearson Correlation
+print('RWR - calculate corr. coeff.')
+l_medians_layout = []
+for k, v in d_plot_layout.items():
+    l_medians_layout.append(statistics.median(v))
+x = np.array(range(1,int(max(dist_network.values()))+1))
+y = np.array(l_medians_layout)
+r_layout = np.corrcoef(x, y)
+print('GLOBAL (RWR) Pearson Correlation Factor: ', r_layout[0][1])
+
+print('---------')
+
+print('Spring - calculate corr. coeff.')
 l_medians_spring = []
 for k, v in d_plot_spring.items():
     l_medians_spring.append(statistics.median(v))
-print('list done') 
-
-x = np.array(range(1,max_dist_network+1))
+x = np.array(range(1,int(max(dist_network.values()))+1))
 y = np.array(l_medians_spring)
 r_spring = np.corrcoef(x, y)
-
 print('SPRING Pearson Correlation Factor: ', r_spring[0][1])
 
+print('---------')
+
+print('start diagram')
 ##############
 # DIAGRAM 
 ##############

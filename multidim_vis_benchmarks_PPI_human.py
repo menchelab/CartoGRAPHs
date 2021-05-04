@@ -71,6 +71,11 @@ print('prep layout distances')
 
 dist_network = d_SPL_pairs
 
+print('prep layout distance')
+dist_layout3D = {} 
+for p1,p2 in it.combinations(G.nodes(),2):
+    dist_layout3D[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
+    
 d_plot_layout = {}
 for spldist in range(1,int(max(dist_network.values()))+1):
     l_s = []

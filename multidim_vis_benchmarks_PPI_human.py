@@ -86,8 +86,8 @@ posG_spring3D_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG
 
 print('-------')
 print('get spring and global layout distances')
-posG_layout = posG_complete_umap_rwr#_norm
-posG_spring = posG_spring3D #_norm
+posG_layout = posG_complete_umap_rwr_norm
+posG_spring = posG_spring3D_norm
 
 dist_network = d_SPL_pairs
 dist_spring3D = {} 
@@ -112,8 +112,8 @@ for spldist in range(1,int(max(dist_network.values()))+1):
         except:
             pass
     d_plot_spring[spldist] = l_xy
-    
-    
+print('done spring')
+
 d_plot_layout = {}
 for spldist in range(1,int(max(dist_network.values()))+1):
     l_s = []
@@ -129,6 +129,7 @@ for spldist in range(1,int(max(dist_network.values()))+1):
         except:
             pass
     d_plot_layout[spldist] = l_xy
+print('done layout')
 
 
 print('RWR - calculate corr. coeff.')
@@ -185,4 +186,4 @@ plt.title('3D | '+organism, fontsize=14)
 plt.suptitle('Pears corr coef: '+'\n'+'SPRING: '+str(r_spring[0][1])+'\n'+ 'GLOBAL: '+str(r_layout[0][1]), fontsize=10)
 
 plt.show()
-fig.savefig('output_plots/benchmark/3Dtoynetwork_NetworkDistances_'+'springitr'+str(itr)+'_'+organism+'.png')
+fig.savefig('output_plots/benchmark/3Dtoynetwork_NetworkDistances_'+'springitr'+str(itr)+'_'+organism+'_norm.png')

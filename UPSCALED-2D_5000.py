@@ -15,12 +15,12 @@ i=5461
 
 
 # 10 k > corr coeff 0.98
-branch=3
-i=9841
+#branch=3
+#i=9841
 
 # 20 k > corr coeff 0.95
-branch=5
-i=19531
+#branch=5
+#i=19531
 
 
 G = nx.full_rary_tree(branch,i)
@@ -28,7 +28,7 @@ G = nx.full_rary_tree(branch,i)
 print('Runtime spring for Corr. Coeff. 0.97')
 
 start = time.time()
-posG_spring = springlayout_2D(G,itr=5000)
+posG_spring = springlayout_2D(G,itr=1000)
 end = time.time()
 m,s = exec_time(start,end)
 

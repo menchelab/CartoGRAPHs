@@ -375,7 +375,7 @@ def pairwise_network_distance(G):
     
     dist_network = {}
     for p1,p2 in it.combinations(G.nodes(),2):
-        dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2)
+        dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2, method='dijkstra')
 
     return dist_network
 

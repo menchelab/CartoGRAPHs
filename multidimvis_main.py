@@ -23,7 +23,7 @@ from colormath.color_objects import sRGBColor, LabColor
 
 #from html2image import Html2Image
 
-from igraph import *
+#from igraph import *
 import itertools as it
 
 import math

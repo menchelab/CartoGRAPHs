@@ -398,10 +398,12 @@ def pearson_corrcoef(dist_network, dist_layout):
                 pass
         d_plot_layout[spldist] = l_xy
     
+    print('done layout distances prep')
     l_medians_layout = []
     for k, v in d_plot_layout.items():
         l_medians_layout.append(statistics.median(v))
-   
+    
+    print('calculate pearson correlation coefficient')
     x = np.array(range(1,int(max(dist_network.values()))+1))
     y = np.array(l_medians_layout)
     r_layout = np.corrcoef(x, y)

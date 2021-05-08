@@ -34,10 +34,7 @@ print('calculate network distance')
 dist_network = pairwise_network_distance(G)
 print('distances network done')
 
-a_file = open('dist_network_'+str(len(G.nodes()))+'_cube.pkl', "wb")
+a_file = open('bench_precalc/dist_network_'+str(len(G.nodes()))+'_cube.pkl', "wb")
 pickle.dump(dist_network, a_file)
 a_file.close()
-
-b_file = open('dist_network_'+str(len(G.nodes()))+'_cube.pkl', "rb")
-dist_network = pickle.load(b_file)
-print(len(dist_network))
+print('save done')

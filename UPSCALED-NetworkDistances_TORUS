@@ -24,7 +24,7 @@ from multidimvis_main import *
 
 #5k
 #i=5000
-#G = nx.grid_2d_graph(90,55,periodic=True)
+G = nx.grid_2d_graph(90,55,periodic=True)
 
 #10k
 #i=10k

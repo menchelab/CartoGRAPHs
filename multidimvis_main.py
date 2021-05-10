@@ -379,6 +379,16 @@ def pairwise_network_distance(G):
 
     return dist_network
 
+
+def pairwise_network_distance_parts(G,list_of_nodes):
+    
+    dist_network = {}
+    for p1,p2 in it.combinations(list_of_nodes,2):
+        dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2, method='dijkstra')
+    
+    return dist_network
+
+
     
 def pearson_corrcoef(dist_network, dist_layout):
     

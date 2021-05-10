@@ -141,3 +141,6 @@ dmypy.json
 .pyre/
 *.txt
 *.rtf
+bench_precalc/dist_network_19531_tree.pkl
+bench_precalc/dist_network_5461_tree.pkl
+bench_precalc/dist_network_9841_tree.pkl

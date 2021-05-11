@@ -5,6 +5,7 @@ _archivdata/
 # big files 
 *.csv
 *.html
+*.pkl
 
 # Mac files 
 *.DS_Store

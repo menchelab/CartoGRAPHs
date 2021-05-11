@@ -1,4 +1,4 @@
-# The Embodiment of Biological Networks
+# CartoGRAPHs - The Embodiment of Biological Networks
 ### A Framework for Multidimensional Explicit Network Visualization
 
 

@@ -28,7 +28,6 @@ import itertools as it
 
 import math
 import matplotlib.pyplot as plt
-import numpy.linalg as la
 #%matplotlib inline
 #import multiprocessing
 #import mygene

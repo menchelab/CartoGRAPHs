@@ -1,14 +1,21 @@
 
 # folders
 _archivdata/
+_VR_layouts/
+_MyUsefulSnippets/
 
 # big files 
 *.csv
 *.html
+*.pkl
 
 # Mac files 
 *.DS_Store
 .DS_Store
+
+# other 
+.vscode
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

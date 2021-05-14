@@ -3,6 +3,7 @@
 _archivdata/
 _VR_layouts/
 _MyUsefulSnippets/
+benchmark/netdist_precalc/
 
 # big files 
 *.csv

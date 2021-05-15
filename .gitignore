@@ -3,11 +3,12 @@
 _archivdata/
 _VR_layouts/
 _MyUsefulSnippets/
+benchmark/netdist_precalc/
+input/archiv/ 
 
 # big files 
 *.csv
-*.html
-*.pkl
+
 
 # Mac files 
 *.DS_Store

@@ -1,6 +1,8 @@
 # CartoGRAPHs
 ### A Framework for Interpretable Network Visualizations
 
+![](img/3DPortrait.png)
+
 
 Networks offer an intuitive visual representation of complex systems. Important network
 characteristics can often be recognized by eye and, in turn, patterns that stand out

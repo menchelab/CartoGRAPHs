@@ -1,6 +1,6 @@
 # CartoGRAPHs
 ### A Framework for Interpretable Network Visualization
-# -----
+# _______
 
 ### **How to use**
 

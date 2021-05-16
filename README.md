@@ -12,9 +12,8 @@ series of two and three-dimensional layouts, benchmark their efficiency for mode
 networks, and demonstrate their power for elucidating s tructure to function 
 relationships in large-scale biological networks.
 
-___
-### **How to use the Framework**
-___
+
+### **HOW TO USE THE FRAMEWORK**
 
 *Please note : This project is work in progress and will be updated/improved frequently.*
 
@@ -25,7 +24,7 @@ is entitled "cartographs_main.ipynb" with the python functions included in "cart
 A web-based application will be available to the public soon. 
 
 
-### **Which Layouts can be produced**
+### **NETWORK LAYOUT CATEGORIES**
 
 Four different Layout Categories are implemented. 
 + 2D Network portrait
@@ -33,6 +32,6 @@ Four different Layout Categories are implemented.
 + 3D Topographic Network Map
 + 3D Geodesic Network Map
 
-### **Benchmarking with Model Networks**
+### **MODEL NETWORKS FOR BENCHMARKING**
 
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used. The scripts regarding all benchmarking figures can be found in the folder "benchmarks". The network distances for all model network sizes, which are required to run the scripts were precalculated and can be downloaded from here and shall be located in the folder "benchmark" after unzipping.  

@@ -3,16 +3,17 @@
 _archivdata/
 _VR_layouts/
 _MyUsefulSnippets/
-_input/
-benchmark/netdist_precalc/
 
-# big files 
-*.csv
+# available via link in read-me
+input/ 
+benchmark/netdist_precalc/
+output_plots/manuscript/
 
 
 # Mac files 
 *.DS_Store
 .DS_Store
+__pycache__
 
 # other 
 .vscode

@@ -23,4 +23,15 @@ is entitled "cartographs_main.ipynb" with the python functions included in "cart
 
 A web-based application will be available to the public soon. 
 
+
+### **Which Layouts can be produced**
+
+Four different Layout Categories are implemented. 
++ 2D Network portrait
++ 3D Network portrait
++ 3D Topographic Network Map
++ 3D Geodesic Network Map
+
+### **Benchmarking with Model Networks**
+
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used. The scripts regarding all benchmarking figures can be found in the folder "benchmarks". The network distances for all model network sizes, which are required to run the scripts were precalculated and can be downloaded from here and shall be located in the folder "benchmark" after unzipping.  

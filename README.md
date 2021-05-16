@@ -1,10 +1,13 @@
 # CartoGRAPHs
 ### A Framework for Interpretable Network Visualization
-
+# -----
 
 ### **How to use**
 
-The Code can be run using Jupyter Notebook/Lab. The main script for producing Layouts for the Protein-Protein Interaction Network (homo sapiens or saccharomyces cerevisiae) is entitled "cartographs_main.ipynb" with the python functions included in "cartographs_main.py". 
+The Code can be run using Jupyter Notebook/Lab and will soon be available as a python package. 
+The main script for producing Layouts for the Protein-Protein Interaction Network (homo sapiens or saccharomyces cerevisiae) 
+is entitled "cartographs_main.ipynb" with the python functions included in "cartographs_main.py". 
+
 
 ### **Benchmarks** 
 

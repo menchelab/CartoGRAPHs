@@ -12,9 +12,9 @@ series of two and three-dimensional layouts, benchmark their efficiency for mode
 networks, and demonstrate their power for elucidating s tructure to function 
 relationships in large-scale biological networks.
 
----
+___
 ### **How to use the Framework**
----
+___
 
 *Please note : This project is work in progress and will be updated/improved frequently.*
 

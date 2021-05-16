@@ -92,6 +92,332 @@ import warnings
 #warnings.filterwarnings("ignore", category=UserWarning)
 
 
+
+
+
+
+
+########################################################################################
+#
+# F U N C T I O N S   T O  L O A D  D A T A 
+# 
+########################################################################################
+
+
+def load_graph(organism):
+    
+    if organism == 'yeast':
+    
+        data = pickle.load( open( "input/BIOGRID-ORGANISM-Saccharomyces_cerevisiae_S288c-3.5.185.mitab.pickle", "rb" ) )
+
+        filter_score = data[
+                            #(data['Interaction Types'] == 'psi-mi:"MI:0915"(physical association)') +
+                            (data['Interaction Types'] == 'psi-mi:"MI:0407"(direct interaction)') 
+                            #&
+                            #(data['Taxid Interactor A'] == "taxid:559292") & 
+                            #(data['Taxid Interactor B'] == "taxid:559292") 
+        ]
+
+        g = nx.from_pandas_edgelist(filter_score, '#ID Interactor A', 'ID Interactor B')
+        g.remove_edges_from(nx.selfloop_edges(g)) #remove self loop
+
+        G_cere = g.subgraph(max(nx.connected_components(g), key=len)) # largest connected component (lcc)
+        G = G_cere
+
+        return G
+    
+    elif organism == 'human':
+        
+        G = nx.read_edgelist('input/ppi_elist.txt',data=False)
+        return G    
+    
+    else: 
+        print('Please choose organism by typing "human" or "yeast"')
+
+
+def load_genesymbols(G,organism):
+    '''
+    Load prepared symbols of genes.
+    Input: 
+    - organism = string; choose from 'human' or 'yeast'
+
+    Return dictionary of geneID (keys) and symbols (values).
+    '''  
+    if organism == 'yeast':
+        df_gID_sym = pd.read_csv('input/DF_gene_symbol_yeast.csv', index_col=0)
+        gene_sym = list(df_gID_sym['Sym'])
+        gene_id = list(df_gID_sym.index)
+        d_gene_sym  = dict(list(zip(gene_id, gene_sym)))
+        
+        return d_gene_sym 
+    
+    elif organism == 'human':
+        df_gene_sym = pd.read_csv('input/DF_gene_symbol_human.csv', index_col=0)
+        sym = list(df_gene_sym['0'])
+        l_features = []
+        for i in sym:
+            l_features.append(i[2:-2])
+        d_gene_sym = dict(zip(G.nodes(),l_features))
+        
+        return d_gene_sym 
+  
+    else: 
+        print('Please choose organism by typing "human" or "yeast"')
+        
+            
+
+def load_centralities(G,organism):
+        '''
+        Load prepared centralities of genes.
+        Input: 
+        - G = Graph
+        - organism = string; choose from 'human' or 'yeast'
+
+        Return dictionary with genes as keys and four centrality metrics as values.
+        '''
+        df_centralities = pd.read_csv('input/Features_centralities_Dataframe_'+organism+'.csv', index_col=0)
+
+        d_deghubs = dict(G.degree()) 
+        d_clos = dict(zip(G.nodes(), df_centralities['clos']))
+        d_betw = dict(zip(G.nodes(), df_centralities['betw']))
+        d_eigen = dict(zip(G.nodes(), df_centralities['eigen']))
+
+        d_centralities = dict(zip(list(G.nodes),zip(d_deghubs.values(),d_clos.values(),d_betw.values(),d_eigen.values())))
+
+        #cent_features = []
+        #for i in d_centralities.items():
+        #    k=list(i)
+        #    cent_features.append(k)
+        
+        return d_centralities
+
+
+
+def load_essentiality(G, organism):
+        '''
+        Load prepared essentiality state of organism. 
+        Input: 
+        - organism = string; choose from 'human' or 'yeast'
+
+        Return lists of genes, split based on essentiality state. 
+        '''
+        if organism == 'human':
+            
+            # ESSENTIALITY 
+            # get dataframe with ENSG-ID and essentiality state 
+            df_human_ess = pd.read_table("input/human_essentiality.txt", delim_whitespace=True)
+
+            # create dict with ENSG-ID:essentiality state 
+            ensg_id = list(set(df_human_ess['sciName']))
+            gene_ess = list(df_human_ess['locus'])
+            d_ensg_ess = dict(zip(ensg_id, gene_ess))
+
+            # match ENSG-ID with entrezID
+            # "engs_to_entrezid": entrezIDs were matched with "ensg_id.txt" via "DAVID Database" (https://david.ncifcrf.gov/conversion.jsp)
+            df_human_ensg_entrez = pd.read_table('input/ensg_to_entrezid.txt') # delim_whitespace=False)
+            df_human_ensg_entrez.dropna()
+
+            df = df_human_ensg_entrez
+            df['To'] = df['To'].fillna(0)
+            df['To'] = df['To'].astype(int)
+            df_human_ensg_entrez = df
+
+            # create dict with ENGS-ID: entrezID
+            ensgid = list(df_human_ensg_entrez['From']) #engs ID
+            entrezid = list(df_human_ensg_entrez['To']) #entrez ID 
+
+            # dict with engsid : entrezid
+            d_ensg_entrez = dict(zip(ensgid, entrezid))
+
+            # create dict with entrezID:essentiality state 
+            d_id_ess_unsorted = {}
+            for ens,ent in d_ensg_entrez.items():
+                for en, ess in d_ensg_ess.items():
+                    if ens == en:
+                        d_id_ess_unsorted[str(ent)] = ess
+
+
+            # check if G.nodes match entrezID in dict and sort according to G.nodes 
+            d_gid_ess = {}
+            for k,v in d_id_ess_unsorted.items():
+                if k in G.nodes():
+                    d_gid_ess[k]=v
+
+            # create dict with rest of G.nodes not in dict (entrezID:essentiality)
+            d_gid_rest = {}
+            for g in G.nodes():
+                if g not in d_gid_ess.keys():
+                    d_gid_rest[g]='not defined'
+
+            #print(len(d_gid_rest)+len(d_gid_ess)) # this should match G.nodes count 
+
+            # merge both dicts
+            d_gid_ess_all_unsorted = {**d_gid_ess, **d_gid_rest}
+
+            # sort -> G.nodes()
+            d_gID_all = {key:d_gid_ess_all_unsorted[key] for key in G.nodes()}
+
+            essential_genes = []
+            non_ess_genes = []
+            notdefined_genes = [] 
+            for k,v in d_gID_all.items():
+                if v == 'E':
+                    essential_genes.append(k)
+                elif v == 'NE':
+                    non_ess_genes.append(k)
+                else:
+                    notdefined_genes.append(k)
+                    
+            return essential_genes,non_ess_genes,notdefined_genes
+        
+        
+        elif organism == 'yeast':
+            
+            # ESSENTIALITY 
+            cere_gene =pd.read_csv("input/Saccharomyces cerevisiae.csv",
+                       delimiter= ',',
+                       skipinitialspace=True)
+
+            cere_sym = list(cere_gene['symbols'])
+            cere_ess = list(cere_gene['essentiality status'])
+            cere_sym_essentiality = dict(zip(cere_sym, cere_ess))
+
+            d_cere_ess = {}
+            d_cere_noess = {}
+            d_cere_unknown = {}
+
+            for node,es in cere_sym_essentiality.items():
+                if es == 'E':
+                    d_cere_ess[node]=es
+                elif es == 'NE':
+                    d_cere_noess[node]=es
+
+            d_cere_alless = {}
+            for nid, sym in g_ID_sym.items():
+                for sy,ess in cere_sym_essentiality.items():
+                    if sym == sy:
+                        d_cere_alless[nid] = ess
+
+            d_cere_unknown = {} 
+            for g in G.nodes():
+                if g not in d_cere_alless.keys():
+                    d_cere_unknown[g]='status unkonwn'
+
+            d_geneID_ess = {**d_cere_unknown, **d_cere_alless}
+
+            d_gID_ess = {}
+            d_gID_noess = {}
+            d_gID_notdef = {}
+
+            for k,i in d_geneID_ess.items():
+                if i == 'E':
+                    d_gID_ess[k] = i
+                elif i == 'NE':
+                    d_gID_noess[k] = i
+                else: 
+                    d_gID_notdef[k] = 'not defined'
+
+            d_gID_all_unsorted = {**d_gID_ess, **d_gID_noess, **d_gID_notdef}
+            d_gID_all = {key:d_gID_all_unsorted[key] for key in G.nodes()}
+
+            essential_genes = []
+            non_ess_genes = []
+            notdefined_genes = [] 
+            for k,v in d_gID_all.items():
+                if v == 'E':
+                    essential_genes.append(k)
+                elif v == 'NE':
+                    non_ess_genes.append(k)
+                else:
+                    notdefined_genes.append(k)
+            
+            return essential_genes,non_ess_genes,notdefined_genes
+
+        else:
+            print('Please choose organism by typing "human" or "yeast"')
+
+            
+            
+def load_structural_datamatrix(G,organism,netlayout):
+    '''
+    Load precalculated Matrix with N genes and M features.
+    Input: 
+    - path = directory of file location
+    - organism = string; choose from 'human' or 'yeast'
+    - netlayout = string; choose a network layout e.g. 'local', 'global', 'importance', 'funct-bio', 'funct-cel', 'funct-mol', funct-dis'
+
+    Return Matrix based on choice.
+    '''
+    path = 'input/'
+    
+    if netlayout == 'local':
+        
+        DM_adj = pd.read_csv(path+'Adjacency_Dataframe_'+organism+'.csv', index_col=0)
+        DM_adj.index = list(G.nodes())
+        DM_adj.columns = list(G.nodes())
+        
+        return DM_adj
+    
+    elif netlayout == 'global':
+        
+        #r = 0.9
+        #alpha = 0.9-1.0
+        
+        DM_m_visprob_transposed = pd.read_csv(path+'RWR_Dataframe_'+organism+'.csv', index_col=0)
+        DM_m_visprob_transposed.index = list(G.nodes())
+        DM_m_visprob_transposed.columns = list(G.nodes())
+        
+        return DM_m_visprob_transposed
+    
+    elif netlayout == 'importance':
+        
+        df_centralities = load_centralities(organism)
+        DM_centralities = pd.DataFrame(distance.squareform(distance.pdist(df_centralities, 'cosine')))
+
+        DM_centralities = round(DM_centralities,6)
+        DM_centralities.index = list(G.nodes())
+        DM_centralities.columns = list(G.nodes())
+        
+        return DM_centralities
+    
+    elif netlayout == 'funct-bio' and organism == 'human':
+        
+        DM_BP = pd.read_csv(path+'DistanceMatrix_goBP_Dataframe_human_cosine.csv', index_col=0)
+        DM_BP_round = DM_BP.round(decimals=6)
+        
+        return DM_BP_round
+    
+    
+    elif netlayout == 'funct-mol' and organism == 'human':
+        
+        DM_MF = pd.read_csv('input/DistanceMatrix_goMF_Dataframe_Human_cosine.csv', index_col=0)
+        DM_MF_round = DM_MF.round(decimals=6)
+        
+        return DM_MF_round
+    
+    elif netlayout == 'funct-cel' and organism == 'human':
+        
+        DM_CC = pd.read_csv('input/DistanceMatrix_goCC_Dataframe_Human_cosine.csv', index_col=0)
+        DM_CC_round = DM_CC.round(decimals=6)
+
+        return DM_CC_round
+    
+    elif netlayout == 'funct-dis' and organism == 'human':
+
+        DM_Disease = pd.read_csv('input/DistanceMatrix_Disease_Dataframe_Human_cosine.csv', index_col=0)
+        DM_Disease_round= DM_Disease.round(decimals=6)
+
+        return DM_Disease_round
+    
+    else: 
+        print('Please type one of the following: "local", "global", "importance", "functional"')
+
+        
+        
+        
+        
+        
+        
 ########################################################################################
 #
 # F U N C T I O N S   F O R   A N A L Y S I S + C A L C U L A T I O N S
@@ -552,7 +878,35 @@ def color_nodes_from_dict(G, d_to_be_coloured, palette):
 
 
 
-def color_edges_from_genelist(G, l_genes, color):
+def color_nodes_from_list(G, l_nodes, col):
+    '''
+    Color nodes based on essentiality state.
+    Input: 
+    - G = graph
+    - l_nodes = list of nodes
+    - col = string or hex; colour 
+    All rest genes will be coloured in grey.
+    
+    Return list of colors for each node in the graph, sorted based on Graph nodes.
+    '''
+
+    d_nodes = {}
+    for node in l_nodes:
+        d_nodes[node] = col
+
+    d_restnodes = {}
+    for i in G.nodes():
+        if i not in d_nodes.keys():
+            d_restnodes[i] = 'lightgrey'
+
+    d_all_nodes = {**d_nodes, **d_restnodes}
+    d_all_nodes_sorted = {key:d_all_nodes[key] for key in G.nodes()}   
+    
+    return d_all_nodes_sorted
+
+
+
+def color_edges_from_nodelist(G, l_genes, color):
     '''
     Color (highlight) edges from specific node list.
     Input: 
@@ -572,7 +926,7 @@ def color_edges_from_genelist(G, l_genes, color):
     return d_col_edges
 
 
-def color_edges_from_genelist_x(G, l_genes, color):
+def color_edges_from_nodelist_x(G, l_genes, color):
     '''
     Color (highlight) edges from specific node list exclusively.
     Input: 
@@ -746,7 +1100,7 @@ def color_essentiality_nodes(G, essentials, nonessentials, colour1, colour2):
     return d_all_nodes_sorted
 
 
-def z_landscape_essentiality(G, essential_genes, non_ess_genes, value_ess, value_noness, value_undef):
+def zparam_essentiality(G, essential_genes, non_ess_genes, value_ess, value_noness, value_undef):
     '''
     Generate z-heights for each node based on essentiality. 
     Input: 
@@ -924,7 +1278,7 @@ def color_nodes_hubs(G, hubs, neighs, hubs_col_nodes, neigh_col_nodes):
     for i in G.nodes():
         if str(i) in hubs.keys():
             colours_hubs[i] = hubs_col_nodes
-        elif str(i) in hubs_neigh:
+        elif str(i) in neighs.keys():
             colours_hubs[i] = neigh_col_nodes
         else: 
             colours_hubs[i] = rest_col_nodes
@@ -1245,10 +1599,10 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
             genes_rest.append(g)
 
         
-    posG_umap = {}
+    posG = {}
     cc = 0
     for entz in genes:
-        posG_umap[entz] = (embed[cc,0],embed[cc,1])
+        posG[entz] = (embed[cc,0],embed[cc,1])
         cc += 1
 
     #--------------------------------------------------------------
@@ -1259,14 +1613,14 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     
     xx=[]
     yy=[]
-    for i in posG_umap.values():
+    for i in posG.values():
         xx.append(i[0])
         yy.append(i[1])
     
     cx = np.mean(xx)
     cy = np.mean(yy)
 
-    xm, ym = max(posG_umap.values())
+    xm, ym = max(posG.values())
     r = (math.sqrt((xm-cx)**2 + (ym-cy)**2))*r_scalingfactor #*1.05 # multiplying with 1.05 makes cirle larger to avoid "outsider nodes/genes"
         
     x = r*np.cos(t)
@@ -1277,13 +1631,13 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
 
     posG_rest = dict(zip(genes_rest, rest))
 
-    posG_all = {**posG_umap, **posG_rest}
-    posG_complete_umap = {key:posG_all[key] for key in G.nodes()}
+    posG_all = {**posG, **posG_rest}
+    posG_complete = {key:posG_all[key] for key in G.nodes()}
 
     # normalize coordinates 
     x_list = []
     y_list = []
-    for k,v in posG_complete_umap.items():
+    for k,v in posG_complete.items():
         x_list.append(v[0])
         y_list.append(v[1])
 
@@ -1298,9 +1652,9 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     for i in yy_norm:
         yy_norm_final.append(round(i,10))
 
-    posG_complete_umap_norm = dict(zip(list(G.nodes()),zip(xx_norm_final,yy_norm_final)))
+    posG_complete_norm = dict(zip(list(G.nodes()),zip(xx_norm_final,yy_norm_final)))
     
-    return posG_complete_umap_norm
+    return posG_complete_norm
 
 
 
@@ -1422,7 +1776,7 @@ def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
     return trace_edges
 
 
-def get_trace_edges_from_genelist2D(l_spec_edges, posG, col, opac=0.1):
+def get_trace_edges_from_nodelist2D_old(l_spec_edges, posG, col, opac=0.1):
     '''
     Get trace of edges for plotting in 3D only for specific edges. 
     Input: 
@@ -1456,7 +1810,7 @@ def get_trace_edges_from_genelist2D(l_spec_edges, posG, col, opac=0.1):
     return trace_edges
 
 
-def get_trace_edges_from_genelist2D_(l_spec_edges, posG, col, opac=0.1):
+def get_trace_edges_from_nodelist2D(l_spec_edges, posG, col, opac=0.1):
     '''
     Get trace of edges for plotting in 3D only for specific edges. 
     Input: 
@@ -1553,7 +1907,7 @@ def plot_2D(data,path,fname):
 # E M B E D D I N G 
 # -------------------------------------------------------------------------------------
 
-def embed_tsne_3D(Matrix, prplxty, density, l_rate, n_iter, metric = 'precomputed'):
+def embed_tsne_3D(Matrix, prplxty, density, l_rate, n_iter, metric = 'cosine'):
     '''
     Dimensionality reduction from Matrix (t-SNE).
     Return dict (keys: node IDs, values: x,y,z).
@@ -2276,7 +2630,7 @@ def genes_annotation(posG_genes, d_genes, mode = 'light'):
 ########################################################################################
 
 
-def export_to_csv2D(layout_namespace, posG, colours):
+def export_to_csv2D(path, layout_namespace, posG, colours):
     '''
     Generate csv for upload to VRnetzer plaform for 2D layouts. 
     Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
@@ -2312,8 +2666,8 @@ def export_to_csv2D(layout_namespace, posG, colours):
     cols = cols[-1:] + cols[:-1]
     df_2D_final = df_2D[cols]
     
-    return df_2D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)
-
+    return df_2D_final.to_csv(r''+path+layout_namespace+'_layout.csv',index=False, header=False)
+    
 
 def export_to_csv3D(path, layout_namespace, posG, colours):
     '''
@@ -2351,7 +2705,6 @@ def export_to_csv3D(path, layout_namespace, posG, colours):
     df_3D_final = df_3D[cols]
     
     return df_3D_final.to_csv(r''+path+layout_namespace+'_layout.csv',index=False, header=False)
-    # return df_3D_final.to_csv(r'_VR_layouts/'+layout_namespace+'.csv',index=False, header=False)
 
 
 
@@ -2509,31 +2862,10 @@ def color_diseasecategory(G, d_names_do, d_do_genes, disease_category, colour):
     return colours
 
 
-def color_nodes_from_list(G, l_nodes, col):
-    '''
-    Color nodes based on essentiality state.
-    Input: 
-    - G = graph
-    - l_nodes = list of nodes
-    - col = string or hex; colour 
-    All rest genes will be coloured in grey.
-    
-    Return list of colors for each node in the graph, sorted based on Graph nodes.
-    '''
 
-    d_nodes = {}
-    for node in l_nodes:
-        d_nodes[node] = col
-
-    d_restnodes = {}
-    for i in G.nodes():
-        if i not in d_nodes.keys():
-            d_restnodes[i] = 'lightgrey'
-
-    d_all_nodes = {**d_nodes, **d_restnodes}
-    d_all_nodes_sorted = {key:d_all_nodes[key] for key in G.nodes()}   
-    
-    return d_all_nodes_sorted
+def only_numerics(seq):
+    seq_type= type(seq)
+    return seq_type().join(filter(seq_type.isdigit, seq))
 
 
 def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def color_disease_outgoingedges(G, l_majorcolor_nodes, color)
@@ -2580,8 +2912,3 @@ def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def
     #edge_color = list(d_edges_all_sorted.values())
     
     return  d_edges_all
-
-
-def only_numerics(seq):
-    seq_type= type(seq)
-    return seq_type().join(filter(seq_type.isdigit, seq))

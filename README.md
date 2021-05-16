@@ -1,4 +1,5 @@
-# CartoGRAPH | A Framework for Interpretable Network Visualizations
+# CartoGRAPHs
+### A Framework for Interpretable Network Visualizations
 
 
 Networks offer an intuitive visual representation of complex systems. Important network

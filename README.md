@@ -1,7 +1,7 @@
 # CartoGRAPHs
 ### A Framework for Interpretable Network Visualizations
 
-![3D Network Portrait](img/3DPortrait_.png)
+![3D Network Portrait](img/3DNetworkPortrait.png)
 
 
 Networks offer an intuitive visual representation of complex systems. Important network

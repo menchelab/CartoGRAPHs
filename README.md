@@ -29,7 +29,7 @@ menchelab/cartoGRAPHs
 
 ### **HOW TO USE THE FRAMEWORK**
 
-At the moment the code can be run using Jupyter Notebook/Lab and will soon be available as a python package. 
+The code can be run using Jupyter Notebook/Lab and will soon be available as a python package. 
 The main script for producing Layouts for the Protein-Protein Interaction Network (*homo sapiens* or *saccharomyces cerevisiae*) 
 is entitled "cartographs_main.ipynb" with the python functions included in "cartographs_main.py". Input files essential to run the scripts can be downloaded
 [here](https://drive.google.com/file/d/1_FR-It9-h9ZZ1Pn-ErwGqxxIlMCHG_54/view?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
@@ -42,7 +42,7 @@ Four different Layouts can be produced.
 + local layout (based on node pairwise adjacencies)
 + global layout (based on network propagation)
 + importance layout (based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality)
-+ functional layout (e.g. based on a NxM matrix including N nodes in the network and M features)
++ functional layout (e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features)
 
 ### ''NETWORK CATEGORIES**
 

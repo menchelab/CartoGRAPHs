@@ -52,6 +52,11 @@ Four different Layout Categories are implemented.
 + 3D Topographic Network Map
 + 3D Geodesic Network Map
 
+
+### **INTERDISCIPLINARY ENVIRONMENT**
+
+A web-based application was developed to visually inspect networks with different layouts and maps in three dimensions. The repository of the web application can be reached [here](https://github.com/chris-huetter/cartoGRAPHs_app).
+
 ### **MODEL NETWORKS FOR BENCHMARKING**
 
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used.

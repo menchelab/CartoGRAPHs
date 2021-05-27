@@ -1,3 +1,5 @@
+markdown: kramdown
+
 # CartoGRAPHs
 ### A Framework for Interpretable Network Visualizations
 

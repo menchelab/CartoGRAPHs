@@ -192,7 +192,8 @@ def load_centralities(G,organism):
         return d_centralities
 
 
-
+    
+    
 def load_essentiality(G, organism):
         '''
         Load prepared essentiality state of organism. 
@@ -291,7 +292,12 @@ def load_essentiality(G, organism):
                     d_cere_ess[node]=es
                 elif es == 'NE':
                     d_cere_noess[node]=es
-
+                    
+            df_gID_sym = pd.read_csv('input/DF_gene_symbol_yeast.csv', index_col=0)
+            gene_sym = list(df_gID_sym['Sym'])
+            gene_id = list(df_gID_sym.index)
+            g_ID_sym = dict(list(zip(gene_id, gene_sym)))
+            
             d_cere_alless = {}
             for nid, sym in g_ID_sym.items():
                 for sy,ess in cere_sym_essentiality.items():
@@ -338,7 +344,9 @@ def load_essentiality(G, organism):
 
             
             
-def load_structural_datamatrix(G,organism,netlayout):
+            
+            
+def load_datamatrix(G,organism,netlayout):
     '''
     Load precalculated Matrix with N genes and M features.
     Input: 
@@ -371,7 +379,9 @@ def load_structural_datamatrix(G,organism,netlayout):
     
     elif netlayout == 'importance':
         
-        df_centralities = load_centralities(organism)
+        d_centralities = load_centralities(G, organism)
+        df_centralities = pd.DataFrame(d_centralities).T
+
         DM_centralities = pd.DataFrame(distance.squareform(distance.pdist(df_centralities, 'cosine')))
 
         DM_centralities = round(DM_centralities,6)
@@ -1961,7 +1971,7 @@ def get_posG_3D(l_genes, embed):
     return posG
 
 
-def get_posG_3D_norm(G, DM, embed):
+def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     '''
     Generate coordinates from embedding. 
     Input:
@@ -2011,7 +2021,7 @@ def get_posG_3D_norm(G, DM, embed):
     theta = pi * (1 + 5**0.5) * indices
 
     xm, ym, zm = max(posG_3Dumap.values())
-    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))+1 # +10 to ensure all colored nodes are within the sphere
+    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))*r_scalingfactor # +10 to ensure all colored nodes are within the sphere
     x, y, z = cx+r*cos(theta) * sin(phi),cy+r*sin(theta) * sin(phi), cz+r*cos(phi)
 
     rest_points = []

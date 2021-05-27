@@ -19,7 +19,8 @@ relationships in large-scale biological networks.
 The structue of the project Github repo is as described below:
 ```
 menchelab/cartoGRAPHs
-├── cartoGRAPHs_main.py ---> main functions used in the jupyter notebook
+- cartoGRAPHs_main.py ---> main functions used in the jupyter notebook
+- cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks (examples are human interactome and yeast interactome, as introduced in the manuscript)
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files
 ├── benchmark ---> benchmark evaluations 
 ├── output_plots ---> folder for saving produced plots during notebook sessions 

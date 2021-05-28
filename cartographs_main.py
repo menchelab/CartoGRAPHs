@@ -2115,7 +2115,7 @@ def get_posG_sphere_norm(G, l_genes, sphere_mapper, d_param, radius_rest_genes =
     Generate coordinates from embedding. 
     Input:
     - G = Graph 
-    - DM = matrix 
+    - l_genes = list of node IDs, either specific or all nodes in the graph 
     - sphere_mapper = embedding from UMAP spherical embedding 
     - d_param = dictionary with nodes as keys and assigned radius as values 
     - radius_rest_genes = int; radius in case of genes e.g. not function associated if genes not all G.nodes()
@@ -2412,6 +2412,7 @@ def plot_3D(data, fname, scheme, annotat=None):
 
 
     return plotly.offline.plot(fig, filename = fname+'.html', auto_open=True)
+
 
 
 # -------------------------------------------------------------------------------------

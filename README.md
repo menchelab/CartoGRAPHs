@@ -88,7 +88,7 @@ scikit-learn==0.24.1
 
 ### **SYSTEM REQUIREMENTS**
 All Visualizations with networks up to 20,000 nodes and ~300,000 links in the main jupyter notebook were carried out on a machine with a 2 GHz Quad-Core Intel Core i5 and 16GB or Memory. 
-Heavier computation, such as performed during benchmarking the framework was calculated on a cluster and stored in the benchmark/netdist_precalc folder. 
+Heavier computation, such as performed during layout benchmarking, was calculated on a cluster and stored in the benchmark/netdist_precalc folder. 
 
 *Please note : This project is work in progress and will be updated/improved frequently.*
 

@@ -1,7 +1,3 @@
-# CartoGRAPHs
-### A Framework for Interpretable Network Visualizations
-
-
 ![cartographs](img/cartographs_img01.png)
 
 ---

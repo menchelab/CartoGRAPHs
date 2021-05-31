@@ -1,8 +1,10 @@
 # CartoGRAPHs
 ### A Framework for Interpretable Network Visualizations
 
-![3D Network Portrait](img/3DNetworkPortrait.png)
 
+![cartographs](img/cartographs_img01.png)
+
+---
 
 Networks offer an intuitive visual representation of complex systems. Important network
 characteristics can often be recognized by eye and, in turn, patterns that stand out
@@ -14,6 +16,7 @@ series of two and three-dimensional layouts, benchmark their efficiency for mode
 networks, and demonstrate their power for elucidating s tructure to function 
 relationships in large-scale biological networks.
 
+---
 
 ### **REPOSITORY STRUCTURE**
 The structue of the project Github repo is as described below:
@@ -27,6 +30,8 @@ menchelab/cartoGRAPHs
 └── .gitignore
 ```
 
+---
+
 ### **HOW TO USE THE FRAMEWORK**
 
 The code can be run using Jupyter Notebook/Lab and will soon be available as a python package. 
@@ -35,6 +40,7 @@ is entitled "cartographs_main.ipynb" with the python functions included in "cart
 [here](https://drive.google.com/file/d/1_FR-It9-h9ZZ1Pn-ErwGqxxIlMCHG_54/view?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
 A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs](https://github.com/menchelab/cartoGRAPHs_app). 
 
+---
 
 ### **NETWORK LAYOUTS**
 Four different Layouts can be produced. 
@@ -44,6 +50,8 @@ Four different Layouts can be produced.
 + importance layout (based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality)
 + functional layout (e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features)
 
+---
+
 ### **NETWORK CATEGORIES**
 
 Four different Layout Categories are implemented. 
@@ -52,15 +60,20 @@ Four different Layout Categories are implemented.
 + 3D Topographic Network Map
 + 3D Geodesic Network Map
 
+---
 
 ### **INTERDISCIPLINARY ENVIRONMENT**
 
 A web-based application was developed to visually inspect networks with different layouts and maps in three dimensions. The repository of the web application can be reached [here](https://github.com/chris-huetter/cartoGRAPHs_app).
 
+---
+
 ### **MODEL NETWORKS FOR BENCHMARKING**
 
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used.
 The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be downloaded [here](https://drive.google.com/file/d/1_Fhc6pbW8TfCB9jYUQGG-8I5qLs1niUZ/view?usp=sharing). Please unzip and place the folder in the directory of the benchmarking scripts (i.e. in the "benchmark" folder). 
+
+---
 
 ### **LIBRARIES / PACKAGE REQUIREMENTS**
 
@@ -85,6 +98,7 @@ scikit-learn==0.24.1
 
 ```
 
+---
 
 ### **SYSTEM REQUIREMENTS**
 All Visualizations with networks up to 20,000 nodes and ~300,000 links in the main jupyter notebook were carried out on a machine with a 2 GHz Quad-Core Intel Core i5 and 16GB or Memory. 

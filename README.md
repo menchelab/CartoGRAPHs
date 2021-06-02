@@ -9,7 +9,7 @@ are difficult to interpret, as they offer no direct connection between node posi
 network structure. Here, we propose an approach for directly encoding arbitrary
 structural or functional network characteristics into node positions. We introduce a
 series of two and three-dimensional layouts, benchmark their efficiency for model
-networks, and demonstrate their power for elucidating s tructure to function 
+networks, and demonstrate their power for elucidating structure to function 
 relationships in large-scale biological networks.
 
 ---

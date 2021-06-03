@@ -1,0 +1,15 @@
+python==3.6
+biopython==1.78
+ipykernel==5.3.4
+numpy==1.20.1
+scipy==1.5.2
+matplotlib==2.2.3
+colormap==1.0.3
+pandas==1.0.1
+colormath==3.0.0
+networkx==2.3
+plotly==4.14.3
+pymysql==1.0.2
+seaborn==0.11.1
+umap-learn==0.5.1
+scikit-learn==0.24.1

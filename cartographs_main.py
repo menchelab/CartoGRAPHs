@@ -982,7 +982,7 @@ def color_edges_from_nodelist_and(G, l_genes, color):
     - l_nodes = list of nodes 
     - color = string; color to hightlight
     
-    Return edge list for selected edges IF ONE node is IN l_genes. 
+    Return edge list for selected edges IF ONE node is in l_genes. 
     '''
     
     edge_lst = [(u,v)for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]

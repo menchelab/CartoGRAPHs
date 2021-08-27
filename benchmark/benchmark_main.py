@@ -25,6 +25,7 @@ from colormath.color_objects import sRGBColor, LabColor
 
 #from igraph import *
 import itertools as it
+import igraph as ig 
 
 import math
 import matplotlib.pyplot as plt

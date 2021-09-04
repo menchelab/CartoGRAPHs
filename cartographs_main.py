@@ -90,7 +90,7 @@ import sys
 
 import time
 
-import umap 
+import umap.umap_ as umap
 
 import warnings
 #warnings.filterwarnings("ignore", category=UserWarning)

@@ -23,9 +23,7 @@ from colormath.color_objects import sRGBColor, LabColor
 
 #from html2image import Html2Image
 
-#from igraph import *
 import itertools as it
-import igraph as ig 
 
 import math
 import matplotlib.pyplot as plt
@@ -87,10 +85,488 @@ import sys
 
 import time
 
-import umap 
+import umap.umap_ as umap
 
 import warnings
 #warnings.filterwarnings("ignore", category=UserWarning)
+
+
+
+
+
+########################################################################################
+#
+# E M B E D D I N G & P L O T T I N G  2D + 3D 
+#
+########################################################################################
+
+
+# -------------------------------------------------------------------------------------
+#
+#      ######     #######
+#    ##     ##    ##    ##
+#           ##    ##     ## 
+#          ##     ##     ##
+#        ##       ##     ##
+#      ##         ##     ##
+#    ##           ##    ##
+#    ##########   #######
+#
+# -------------------------------------------------------------------------------------
+
+
+# -------------------------------------------------------------------------------------
+# E M B E D D I N G 
+# -------------------------------------------------------------------------------------
+
+
+def embed_tsne_2D(Matrix, prplxty, density, l_rate, steps, metric = 'precomputed'):
+    '''
+    Dimensionality reduction from Matrix using t-SNE.
+    Return dict (keys: node IDs, values: x,y).
+    ''' 
+    
+    tsne = TSNE(n_components = 2, random_state = 0, perplexity = prplxty, metric = metric, init='pca',
+                     early_exaggeration = density,  learning_rate = l_rate ,n_iter = steps)
+    
+    embed = tsne.fit_transform(Matrix)
+    
+    return embed
+
+
+def embed_umap_2D(Matrix, n_neigh, spre, m_dist, metric='cosine', learn_rate = 1, n_ep = None):
+    '''
+    Dimensionality reduction from Matrix using UMAP.
+    Return dict (keys: node IDs, values: x,y).
+    ''' 
+    n_comp = 2 
+
+    U = umap.UMAP(
+        n_neighbors = n_neigh,
+        spread = spre,
+        min_dist = m_dist,
+        n_components = n_comp,
+        metric = metric, 
+        random_state=42,
+        learning_rate = learn_rate, 
+        n_epochs = n_ep,
+        )
+    
+    embed = U.fit_transform(Matrix)
+    
+    return embed
+
+
+def get_posG_2D(l_nodes, embed):
+    '''
+    Get 2D coordinates for each node.
+    Return dict with node: x,y coordinates.
+    '''
+    
+    posG = {}
+    cc = 0
+    for entz in l_nodes:
+        # posG[str(entz)] = (embed[cc,0],embed[cc,1])
+        posG[entz] = (embed[cc,0],embed[cc,1])
+        cc += 1
+
+    return posG
+
+
+def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - G = Graph
+    - DM = matrix 
+    - embed = embedding from e.g. tSNE , UMAP ,... 
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D normed. 
+    '''
+    
+    genes = []
+    for i in DM.index:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+
+        
+    posG = {}
+    cc = 0
+    for entz in genes:
+        posG[entz] = (embed[cc,0],embed[cc,1])
+        cc += 1
+
+    #--------------------------------------------------------------
+    # REST (if genes = G.nodes then rest will be ignored / empty)
+    
+    # generate circle coordinates for rest genes (without e.g. GO term or Disease Annotation)
+    t = np.random.uniform(0,2*np.pi,len(genes_rest))
+    
+    xx=[]
+    yy=[]
+    for i in posG.values():
+        xx.append(i[0])
+        yy.append(i[1])
+    
+    cx = np.mean(xx)
+    cy = np.mean(yy)
+
+    xm, ym = max(posG.values())
+    r = (math.sqrt((xm-cx)**2 + (ym-cy)**2))*r_scalingfactor #*1.05 # multiplying with 1.05 makes cirle larger to avoid "outsider nodes/genes"
+        
+    x = r*np.cos(t)
+    y = r*np.sin(t)
+    rest = []
+    for i,j in zip(x,y):
+            rest.append((i,j))
+
+    posG_rest = dict(zip(genes_rest, rest))
+
+    posG_all = {**posG, **posG_rest}
+    posG_complete = {key:posG_all[key] for key in G.nodes()}
+
+    # normalize coordinates 
+    x_list = []
+    y_list = []
+    for k,v in posG_complete.items():
+        x_list.append(v[0])
+        y_list.append(v[1])
+
+    xx_norm = sklearn.preprocessing.minmax_scale(x_list, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm = sklearn.preprocessing.minmax_scale(y_list, feature_range=(0, 1), axis=0, copy=True)
+
+    xx_norm_final=[]
+    for i in xx_norm:
+        xx_norm_final.append(round(i,10))
+
+    yy_norm_final=[]
+    for i in yy_norm:
+        yy_norm_final.append(round(i,10))
+
+    posG_complete_norm = dict(zip(list(G.nodes()),zip(xx_norm_final,yy_norm_final)))
+    
+    return posG_complete_norm
+
+
+
+def labels2D(posG, feature_dict):
+    '''
+    Create Node Labels, based on a dict of coordinates (keys:node ID, values: x,y)
+    Return new dict of node iDs and features for each node.
+    '''
+
+    labels = {} 
+    c = 0
+    for node, xy in sorted(posG.items(), key = lambda x: x[1][0]):
+        labels[node] = ([node,feature_dict[node][0],feature_dict[node][1],feature_dict[node][2],feature_dict[node][3]])   
+        c+=1
+        
+    return labels
+
+
+def position_labels(posG, move_x, move_y):
+    '''
+    Create label position of coordinates dict.
+    Return new dict with label positions. 
+    '''    
+    
+    posG_labels = {}
+    for key,val in posG.items():
+        xx = val[0] + move_x
+        yy = val[1] + move_y
+        posG_labels[key] = (xx,yy)
+        
+    return posG_labels
+
+
+
+# -------------------------------------------------------------------------------------
+#
+#      ######     #######
+#    ##     ##    ##    ##
+#           ##    ##     ## 
+#      #####      ##     ##
+#           ##    ##     ##
+#    ##     ##    ##    ##
+#     ######      #######
+#    
+# -------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------
+# E M B E D D I N G 
+# -------------------------------------------------------------------------------------
+
+def embed_tsne_3D(Matrix, prplxty, density, l_rate, n_iter, metric = 'cosine'):
+    '''
+    Dimensionality reduction from Matrix (t-SNE).
+    Return dict (keys: node IDs, values: x,y,z).
+    '''
+    
+    tsne3d = TSNE(n_components = 3, random_state = 0, perplexity = prplxty,
+                     early_exaggeration = density,  learning_rate = l_rate, n_iter = n_iter, metric = metric)
+    embed = tsne3d.fit_transform(Matrix)
+
+    return embed 
+
+
+def embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric='cosine', learn_rate = 1, n_ep = None):
+    '''
+    Dimensionality reduction from Matrix (UMAP).
+    Return dict (keys: node IDs, values: x,y,z).
+    '''
+
+    n_components = 3 # for 3D
+
+    U_3d = umap.UMAP(
+        n_neighbors = n_neighbors,
+        spread = spread,
+        min_dist = min_dist,
+        n_components = n_components,
+        metric = metric,
+        random_state=42,
+        learning_rate = learn_rate, 
+        n_epochs = n_ep)
+    embed = U_3d.fit_transform(Matrix)
+    
+    return embed
+
+
+def get_posG_3D(l_genes, embed):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - l_genes = list of genes
+    - embed = embedding from e.g. tSNE , UMAP ,... 
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D. 
+    '''
+    
+    posG = {}
+    cc = 0
+    for entz in l_genes:
+        posG[entz] = (embed[cc,0],embed[cc,1],embed[cc,2])
+        cc += 1
+    
+    return posG
+
+
+def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - G = Graph
+    - DM = matrix 
+    - embed = embedding from e.g. tSNE , UMAP ,... 
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D normed. 
+    '''
+    
+    genes = []
+    for i in DM.index:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+
+        
+    posG_3Dumap = {}
+    cc = 0
+    for entz in genes:
+        posG_3Dumap[entz] = (embed[cc,0],embed[cc,1],embed[cc,2])
+        cc += 1
+
+    #--------------------------------------------------------------
+    # REST (if genes = G.nodes then rest will be ignored / empty)
+    
+    # center for sphere to arrange rest gene-datapoints
+    xx=[]
+    yy=[]
+    zz=[]
+    for i in posG_3Dumap.values():
+        xx.append(i[0])
+        yy.append(i[1])
+        zz.append(i[2]) 
+
+    cx = sum(xx)/len(genes)
+    cy = sum(yy)/len(genes)
+    cz = sum(zz)/len(genes)
+
+    # generate spherical coordinates for rest genes (without e.g. GO term or Disease Annotation)
+    indices = arange(0, len(genes_rest))
+    phi = arccos(1 - 2*indices/len(genes_rest)) # 2* --> for both halfs of sphere (upper+lower)
+    theta = pi * (1 + 5**0.5) * indices
+
+    xm, ym, zm = max(posG_3Dumap.values())
+    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))*r_scalingfactor # +10 to ensure all colored nodes are within the sphere
+    x, y, z = cx+r*cos(theta) * sin(phi),cy+r*sin(theta) * sin(phi), cz+r*cos(phi)
+
+    rest_points = []
+    for i,j,k in zip(x,y,z):
+        rest_points.append((i,j,k))
+
+    posG_rest = dict(zip(genes_rest, rest_points))
+
+    posG_all = {**posG_3Dumap, **posG_rest}
+    posG_3D_complete_umap = {key:posG_all[key] for key in G.nodes()}
+
+    # normalize coordinates 
+    x_list3D = []
+    y_list3D = []
+    z_list3D = []
+    for k,v in posG_3D_complete_umap.items():
+        x_list3D.append(v[0])
+        y_list3D.append(v[1])
+        z_list3D.append(v[2])
+
+    xx_norm3D = sklearn.preprocessing.minmax_scale(x_list3D, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm3D = sklearn.preprocessing.minmax_scale(y_list3D, feature_range=(0, 1), axis=0, copy=True)
+    zz_norm3D = sklearn.preprocessing.minmax_scale(z_list3D, feature_range=(0, 1), axis=0, copy=True)
+
+    xx_norm3D_final=[]
+    for i in xx_norm3D:
+        xx_norm3D_final.append(round(i,10))
+
+    yy_norm3D_final=[]
+    for i in yy_norm3D:
+        yy_norm3D_final.append(round(i,10))
+
+    zz_norm3D_final=[]
+    for i in zz_norm3D:
+        zz_norm3D_final.append(round(i,10)) 
+
+    posG_3D_complete_umap_norm = dict(zip(list(G.nodes()), zip(xx_norm3D_final,yy_norm3D_final,zz_norm3D_final)))
+    
+    return posG_3D_complete_umap_norm
+
+
+
+def embed_umap_sphere(Matrix, n_neighbors, spread, min_dist, metric='cosine'):
+    ''' 
+    Generate spherical embedding of nodes in matrix input using UMAP.
+    Input: 
+    - Matrix = Feature Matrix with either all or specific  nodes (rows) and features (columns) or symmetric (nodes = rows and columns)
+    - n_neighbors/spread/min_dist = floats; UMAP parameters.
+    - metric = string; e.g. havervine, euclidean, cosine ,.. 
+    
+    Return sphere embedding. 
+    '''
+    
+    model = umap.UMAP(
+        n_neighbors = n_neighbors, 
+        spread = spread,
+        min_dist = min_dist,
+        metric = metric)
+
+    sphere_mapper = model.fit(Matrix)
+
+    return sphere_mapper
+
+
+
+def get_posG_sphere(l_genes, sphere_mapper):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - l_genes = list of genes
+    - sphere_mapper = embedding from UMAP spherical embedding 
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D. 
+    '''
+    
+    x = np.sin(sphere_mapper.embedding_[:, 0]) * np.cos(sphere_mapper.embedding_[:, 1])
+    y = np.sin(sphere_mapper.embedding_[:, 0]) * np.sin(sphere_mapper.embedding_[:, 1])
+    z = np.cos(sphere_mapper.embedding_[:, 0])
+    
+    posG = {}
+    cc = 0
+    for entz in l_genes:
+        posG[entz] = (x[cc],y[cc], z[cc])
+        cc += 1
+    
+    return posG
+
+
+def get_posG_sphere_norm(G, l_genes, sphere_mapper, d_param, radius_rest_genes = 20):
+    '''
+    Generate coordinates from embedding. 
+    Input:
+    - G = Graph 
+    - l_genes = list of node IDs, either specific or all nodes in the graph 
+    - sphere_mapper = embedding from UMAP spherical embedding 
+    - d_param = dictionary with nodes as keys and assigned radius as values 
+    - radius_rest_genes = int; radius in case of genes e.g. not function associated if genes not all G.nodes()
+    
+    Return dictionary with nodes as keys and coordinates as values in 3D. 
+    '''
+    
+    x = np.sin(sphere_mapper.embedding_[:, 0]) * np.cos(sphere_mapper.embedding_[:, 1])
+    y = np.sin(sphere_mapper.embedding_[:, 0]) * np.sin(sphere_mapper.embedding_[:, 1])
+    z = np.cos(sphere_mapper.embedding_[:, 0])
+    
+    genes = []
+    for i in l_genes:
+        if str(i) in G.nodes():
+            genes.append(str(i))
+
+    genes_rest = [] 
+    for g in G.nodes():
+        if str(g) not in genes:
+            genes_rest.append(g)
+            
+    posG_3Dsphere = {}
+    cc = 0
+    for entz in genes:
+        posG_3Dsphere[entz] = (x[cc],y[cc], z[cc])
+        cc += 1
+
+    posG_3Dsphere_radius = {}
+    for node,rad in d_param.items():
+        for k,v in posG_3Dsphere.items():
+            if k == node:
+                posG_3Dsphere_radius[k] = (v[0]*rad, v[1]*rad, v[2]*rad)
+ 
+    # generate spherical coordinates for rest genes (without e.g. GO term or Disease Annotation)
+    indices = arange(0, len(genes_rest))
+    phi = arccos(1 - 2*indices/len(genes_rest))
+    theta = pi * (1 + 5**0.5) * indices
+
+    r_rest = radius_rest_genes # radius for rest genes (e.g. if functional layout)
+    x, y, z = r_rest*cos(theta) * sin(phi), r_rest*sin(theta) * sin(phi), r_rest*cos(phi)
+
+    rest_points = []
+    for i,j,k in zip(x,y,z):
+        rest_points.append((i,j,k))
+
+    posG_rest = dict(zip(genes_rest, rest_points))
+
+    posG_all = {**posG_3Dsphere_radius, **posG_rest}
+    posG_complete_sphere = {key:posG_all[key] for key in G.nodes()}
+
+    # normalize coordinates 
+    x_list = []
+    y_list = []
+    z_list = []
+    for k,v in posG_complete_sphere.items():
+        x_list.append(v[0])
+        y_list.append(v[1])
+        z_list.append(v[2])
+
+    xx_norm = sklearn.preprocessing.minmax_scale(x_list, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm = sklearn.preprocessing.minmax_scale(y_list, feature_range=(0, 1), axis=0, copy=True)
+    zz_norm = sklearn.preprocessing.minmax_scale(z_list, feature_range=(0, 1), axis=0, copy=True)
+
+    posG_complete_sphere_norm = dict(zip(list(G.nodes()), zip(xx_norm,yy_norm,zz_norm)))
+    
+    return posG_complete_sphere_norm
+
 
 
 ########################################################################################
@@ -98,6 +574,41 @@ import warnings
 # F U N C T I O N S   F O R   B E N C H M A R K I N G   S C R I P T S
 # 
 ########################################################################################
+
+
+def rnd_walk_matrix2(A, r, a, num_nodes):
+    '''
+    Random Walk Operator with restart probability.
+    Input: 
+    - A = Adjanceny matrix (numpy array)
+    - r = restart parameter e.g. 0.9
+    - a = teleportation value e.g. 1.0 for max. teleportation
+    - num_nodes = all nodes included in Adjacency matrix, e.g. amount of all nodes in the graph 
+
+    Return Matrix with visiting probabilites (non-symmetric!!).
+    ''' 
+    n = num_nodes
+    factor = float((1-a)/n)
+
+    E = np.multiply(factor,np.ones([n,n]))              # prepare 2nd scaling term
+    A_tele = np.multiply(a,A) + E  #     print(A_tele)
+    M = normalize(A_tele, norm='l1', axis=0)                                 # column wise normalized MArkov matrix
+
+    # mixture of Markov chains
+    del A_tele
+    del E
+
+    U = np.identity(n,dtype=int) 
+    H = (1-r)*M
+    H1 = np.subtract(U,H)
+    del U
+    del M
+    del H    
+
+    W = r*np.linalg.inv(H1)   
+
+    return W
+
 
 def calc_dist_2D(posG):
     '''
@@ -286,31 +797,55 @@ def springlayout_3D(G, itr):
     return posG_spring3D_norm
 
 
-def pairwise_layout_distance_2D(G,posG):
+    
+def pairwise_layout_distance_3D(G,posG,mode='nx'):
 
     dist_layout = {} 
-    for p1,p2 in it.combinations(G.nodes(),2):
-        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2)
-        
-    return dist_layout
-
-
-def pairwise_layout_distance_3D(G,posG):
-
+    
+    if mode == 'gt': #graph-tool
+        for p1,p2 in it.combinations(G.vertices(),2):
+            dist_layout[(p1,p2)] = np.sqrt(round((posG[p1][0]-posG[p2][0])**2,2) + round((posG[p1][1]-posG[p2][1])**2,2) + round((posG[p1][2]-posG[p2][2])**2),2)
+        return dist_layout
+    
+    elif mode == 'nx': #networkx    
+        for p1,p2 in it.combinations(G.nodes(),2):
+            dist_layout[(p1,p2)] = np.sqrt(round((posG[p1][0]-posG[p2][0])**2,2) + round((posG[p1][1]-posG[p2][1])**2,2) + round((posG[p1][2]-posG[p2][2])**2),2)
+        return dist_layout
+    
+    
+    
+def pairwise_layout_distance_2D(G,posG,mode='nx'):
+    
     dist_layout = {} 
-    for p1,p2 in it.combinations(G.nodes(),2):
-        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][1]-posG[p2][2])**2)
-        
-    return dist_layout
- 
     
-def pairwise_network_distance(G):
+    if mode == 'gt': #graph-tool
+        for p1,p2 in it.combinations(G.vertices(),2):
+            dist_layout[(p1,p2)] = round(np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2),2)
+      
+        return dist_layout
     
-    dist_network = {}
-    for p1,p2 in it.combinations(G.nodes(),2):
-        dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2, method='dijkstra')
+    elif mode == 'nx': #networkx
+        for p1,p2 in it.combinations(G.nodes(),2):
+            dist_layout[(p1,p2)] = round(np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2),2)
 
-    return dist_network
+        return dist_layout
+
+    
+def pairwise_network_distance(G, mode='nx'):
+    
+    if mode == 'gt': #graph-tool
+        dist_network = {}
+        for p1,p2 in it.combinations(G.vertices(),2):
+            dist_network[(p1,p2)] = graph_tool.topology.shortest_distance(G, p1,p2)
+           
+        return dist_network
+    
+    elif mode == 'nx': #networkx
+        dist_network = {}
+        for p1,p2 in it.combinations(G.nodes(),2):
+            dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2, method='dijkstra')  
+            
+        return dist_network
 
 
 def pairwise_network_distance_parts(G,list_of_nodes):
@@ -354,3 +889,36 @@ def pearson_corrcoef(dist_network, dist_layout):
     return r_layout[0][1]
 
 
+
+def pearson_corrcoef_one(dist_network, dist_layout):
+    
+    d_plot_layout = {}
+    for spldist in range(1,int(max(dist_network.values()))+1):
+        l_s = []
+        for k, v in dist_network.items():
+            if v == spldist:
+                l_s.append(k)
+
+        l_xy = []
+        for nodes in l_s:
+            try:
+                dxy = dist_layout[nodes]
+                l_xy.append(dxy)
+            except:
+                pass
+        d_plot_layout[spldist] = l_xy
+
+        return d_plot_layout
+    
+def pearson_corrcoef_two(d_plot_layout):
+    
+    l_medians_layout = []
+    for k, v in d_plot_layout.items():
+        l_medians_layout.append(statistics.median(v))
+    
+    print('calculate pearson correlation coefficient')
+    x = np.array(range(1,int(max(dist_network.values()))+1))
+    y = np.array(l_medians_layout)
+    r_layout = np.corrcoef(x, y)
+        
+    return r_layout[0][1]

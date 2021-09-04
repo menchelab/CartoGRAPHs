@@ -8,7 +8,7 @@
 #
 #####################
 
-from multidimvis_main import *
+from benchmark_main import *
 
 #100
 #G = nx.grid_graph([5,5,5],periodic=False)
@@ -23,7 +23,7 @@ from multidimvis_main import *
 G = nx.grid_graph([18,18,18],periodic=False)
 
 #10k
-#G = nx.grid_graph([22,22,22],periodic=False)
+G = nx.grid_graph([22,22,22],periodic=False)
 
 #20k
 #G = nx.grid_graph([28,28,28],periodic=False)
@@ -34,7 +34,7 @@ print('calculate network distance')
 dist_network = pairwise_network_distance(G)
 print('distances network done')
 
-a_file = open('bench_precalc/dist_network_'+str(len(G.nodes()))+'_cube.pkl', "wb")
+a_file = open('netdist_precalc/dist_network_'+str(len(G.nodes()))+'_cube.pkl', "wb")
 pickle.dump(dist_network, a_file)
 a_file.close()
 print('save done')

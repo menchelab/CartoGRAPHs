@@ -8,7 +8,7 @@
 #
 #####################
 
-from multidimvis_main import *
+from benchmark_main import *
 
 # 100
 #branch=3
@@ -41,10 +41,10 @@ print('calculate network distance')
 dist_network = pairwise_network_distance(G)
 print('distances network done')
 
-a_file = open('dist_network_'+str(i)+'_tree.pkl', "wb")
+a_file = open('netdist_precalc/dist_network_'+str(i)+'_tree.pkl', "wb")
 pickle.dump(dist_network, a_file)
 a_file.close()
 
-b_file = open('dist_network_'+str(i)+'_tree.pkl', "rb")
-dist_network = pickle.load(b_file)
-print(len(dist_network))
+#b_file = open('dist_network_'+str(i)+'_tree.pkl', "rb")
+#dist_network = pickle.load(b_file)
+#print(len(dist_network))

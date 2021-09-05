@@ -21,6 +21,9 @@ from colormath.color_objects import sRGBColor, LabColor
 #from fisher import pvalue
 #from fa2 import ForceAtlas2
 
+from ge import DeepWalk
+from ge import Node2Vec
+
 from html2image import Html2Image
 
 #from igraph import *

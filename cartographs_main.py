@@ -14,36 +14,22 @@ from collections import defaultdict as dd
 from collections import Counter as ct
 from collections import OrderedDict
 import colorsys
-#from colormap import rgb2hex, rgb2hls, hls2rgb
-from colormath.color_objects import sRGBColor, LabColor
-#from colormath.color_conversions import convert_color
-
-#from fisher import pvalue
-#from fa2 import ForceAtlas2
-
-from ge import DeepWalk
-from ge import Node2Vec
+#from colormath.color_objects import sRGBColor, LabColor
 
 from html2image import Html2Image
 
-#from igraph import *
 import itertools as it
 
 import math
 import matplotlib.pyplot as plt
-#%matplotlib inline
-#import multiprocessing
-#import mygene
 
 import networkx as nx
 from networkx.algorithms.flow import shortest_augmenting_path
 from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
 import numpy as np
-from numpy import pi, cos, sin, arccos, arange
+#from numpy import pi, cos, sin, arccos, arange
 import numpy.linalg as la
-#import numba
-#@numba.njit(fastmath=True)
 
 import os
 import os.path
@@ -57,7 +43,6 @@ from plotly.subplots import make_subplots
 from plotly.offline import init_notebook_mode, iplot
 import plotly.io as pio
 import pylab
-#py.init_notebook_mode(connected = True)
 import pymysql as mysql
 
 import random as rd
@@ -93,7 +78,7 @@ import sys
 
 import time
 
-import umap.umap_ as umap
+import umap#.umap_ as umap
 
 import warnings
 #warnings.filterwarnings("ignore", category=UserWarning)

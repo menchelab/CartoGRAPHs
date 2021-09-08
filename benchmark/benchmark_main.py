@@ -797,63 +797,171 @@ def springlayout_3D(G, itr):
     return posG_spring3D_norm
 
 
-    
-def pairwise_layout_distance_3D(G,posG,mode='nx'):
+def pairwise_layout_distance_3D(G,posG):  
+    dist_layout = {}
+    print(len(list(it.combinations(G,2))))
+    for p1,p2 in it.combinations(G.nodes(),2):
+        
+        tenk=1000
+        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2 + (posG[p1][2]-posG[p2][2])**2)
+        
+        if len(dist_layout) == tenk:
+                print('1k done')
+        elif len(dist_layout) == (tenk*10): 
+                print('10k done')
+        elif len(dist_layout) == (tenk*50):
+                print('50k done')
+        elif len(dist_layout) == (tenk*100):
+                print('100k done')
+        elif len(dist_layout) == (tenk*500):
+                print('500k done')
+        elif len(dist_layout) == (tenk*1000):
+                print('1mio done')
+        elif len(dist_layout) == (tenk*2000):
+                print('2mio done')
+        elif len(dist_layout) == (tenk*3000):
+                print('3mio done')
+        elif len(dist_layout) == (tenk*4000):
+                print('4mio done')
+        elif len(dist_layout) == (len(list(it.combinations(G,2)))):
+                print('complete')
+        else:
+            pass
+    return dist_layout
 
+    
+    
+def pairwise_layout_distance_2D(G,posG):
+    
     dist_layout = {} 
-    
-    if mode == 'gt': #graph-tool
-        for p1,p2 in it.combinations(G.vertices(),2):
-            dist_layout[(p1,p2)] = np.sqrt(round((posG[p1][0]-posG[p2][0])**2,2) + round((posG[p1][1]-posG[p2][1])**2,2) + round((posG[p1][2]-posG[p2][2])**2),2)
-        return dist_layout
-    
-    elif mode == 'nx': #networkx    
-        for p1,p2 in it.combinations(G.nodes(),2):
-            dist_layout[(p1,p2)] = np.sqrt(round((posG[p1][0]-posG[p2][0])**2,2) + round((posG[p1][1]-posG[p2][1])**2,2) + round((posG[p1][2]-posG[p2][2])**2),2)
-        return dist_layout
-    
-    
-    
-def pairwise_layout_distance_2D(G,posG,mode='nx'):
-    
-    dist_layout = {} 
-    
-    if mode == 'gt': #graph-tool
-        for p1,p2 in it.combinations(G.vertices(),2):
-            dist_layout[(p1,p2)] = round(np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2),2)
-      
-        return dist_layout
-    
-    elif mode == 'nx': #networkx
-        for p1,p2 in it.combinations(G.nodes(),2):
-            dist_layout[(p1,p2)] = round(np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2),2)
+    print(len(list(it.combinations(G,2))))
+    for p1,p2 in it.combinations(G.nodes(),2):
+        dist_layout[(p1,p2)] = round(np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2),2)
 
-        return dist_layout
+        tenk = 1000
+        if len(dist_layout) == (tenk*10): 
+                print('10k done')
+        elif len(dist_layout) == (tenk*50):
+                print('50k done')
+        elif len(dist_layout) == (tenk*100):
+                print('100k done')
+        elif len(dist_layout) == (tenk*500):
+                print('500k done')
+        elif len(dist_layout) == (tenk*1000):
+                print('1mio done')
+        elif len(dist_layout) == (tenk*2000):
+                print('2mio done')
+        elif len(dist_layout) == (tenk*3000):
+                print('3mio done')
+        elif len(dist_layout) == (tenk*4000):
+                print('4mio done')
+        elif len(dist_layout) == (len(list(it.combinations(G,2)))):
+                print('complete')
+        else:
+            pass
+        
+    return dist_layout
 
     
+def pairwise_layout_distance_2D_(G,posG):
+    
+    dist_layout = {}
+    
+    for p1,p2 in it.combinations(G.nodes(),2):
+        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2)
+        tenk = 1000
+        if len(dist_layout) == (tenk*10): 
+                print('10k done')
+        elif len(dist_layout) == (tenk*50):
+                print('50k done')
+        elif len(dist_layout) == (tenk*100):
+                print('100k done')
+        elif len(dist_layout) == (tenk*500):
+                print('500k done')
+        elif len(dist_layout) == (tenk*1000):
+                print('1mio done')
+        elif len(dist_layout) == (tenk*2000):
+                print('2mio done')
+        elif len(dist_layout) == (tenk*3000):
+                print('3mio done')
+        elif len(dist_layout) == (tenk*4000):
+                print('4mio done')
+        elif len(dist_layout) == (len(list(it.combinations(G,2)))):
+                print('complete')
+        else:
+            pass
+    return dist_network
+
+
+
 def pairwise_network_distance(G, mode='nx'):
-    
+
     if mode == 'gt': #graph-tool
         dist_network = {}
+        print('total to calculate:',(len(list(it.combinations(G.nodes(),2)))))
+              
         for p1,p2 in it.combinations(G.vertices(),2):
+            
+                   
             dist_network[(p1,p2)] = graph_tool.topology.shortest_distance(G, p1,p2)
-           
+            if len(dist_network) == 10000: 
+                print('10k done')
+            elif len(dist_network) == 100000:
+                print('100k done')
+            elif len(dist_network) == 1000000:
+                print('1Mio done')
+            elif len(dist_network) == 10000000:
+                print('10Mio done')
+            else:
+                pass
         return dist_network
     
     elif mode == 'nx': #networkx
         dist_network = {}
+        print('total to calculate:',(len(list(it.combinations(G.nodes(),2)))))
+                    
         for p1,p2 in it.combinations(G.nodes(),2):
+        
             dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2, method='dijkstra')  
-            
-        return dist_network
+            if len(dist_network) == 10000: 
+                print('10k done')
+            elif len(dist_network) == 100000:
+                print('100k done')
+            elif len(dist_network) == 1000000:
+                print('1Mio done')
+            elif len(dist_network) == 10000000:
+                print('10Mio done')
+            else:
+                pass   
+        return dist_network    
+
 
 
 def pairwise_network_distance_parts(G,list_of_nodes):
     
     dist_network = {}
+    print('total to calculate:',(len(list(it.combinations(list_of_nodes,2)))))
     for p1,p2 in it.combinations(list_of_nodes,2):
         dist_network[(p1,p2)] = nx.shortest_path_length(G,p1,p2, method='dijkstra')
-    
+        tenk = 1000
+        if len(dist_network) == (tenk*10): 
+                print('10k done')
+        elif len(dist_network) == (tenk*50):
+                print('50k done')
+        elif len(dist_network) == (tenk*100):
+                print('100k done')
+        elif len(dist_network) == (tenk*500):
+                print('500k done')
+        elif len(dist_network) == (tenk*1000):
+                print('1mio done')
+        elif len(dist_network) == (tenk*1250):
+                print('1mio 250k done')
+        elif len(dist_network) == (tenk*1500):
+                print('1mio 500k done')
+        elif len(dist_network) == (len(list(it.combinations(list_of_nodes,2)))):
+                print('complete')
+        else:
+            pass
     return dist_network
 
 
@@ -909,6 +1017,7 @@ def pearson_corrcoef_one(dist_network, dist_layout):
         d_plot_layout[spldist] = l_xy
 
         return d_plot_layout
+    
     
 def pearson_corrcoef_two(d_plot_layout):
     

@@ -20,7 +20,7 @@ from benchmark_main import *
 #G = nx.grid_graph([10,10,10],periodic=False)
 
 #5k
-G = nx.grid_graph([18,18,18],periodic=False)
+#G = nx.grid_graph([18,18,18],periodic=False)
 
 #10k
 G = nx.grid_graph([22,22,22],periodic=False)

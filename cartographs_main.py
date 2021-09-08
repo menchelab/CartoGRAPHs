@@ -27,8 +27,9 @@ import networkx as nx
 from networkx.algorithms.flow import shortest_augmenting_path
 from networkx.generators.degree_seq import expected_degree_graph
 from networkx.algorithms.community import greedy_modularity_communities
+import numba 
 import numpy as np
-#from numpy import pi, cos, sin, arccos, arange
+from numpy import pi, cos, sin, arccos, arange
 import numpy.linalg as la
 
 import os
@@ -78,7 +79,7 @@ import sys
 
 import time
 
-import umap#.umap_ as umap
+import umap.umap_ as umap
 
 import warnings
 #warnings.filterwarnings("ignore", category=UserWarning)
@@ -1573,7 +1574,8 @@ def embed_tsne_2D(Matrix, prplxty, density, l_rate, steps, metric = 'precomputed
     ''' 
     
     tsne = TSNE(n_components = 2, random_state = 0, perplexity = prplxty, metric = metric, init='pca',
-                     early_exaggeration = density,  learning_rate = l_rate ,n_iter = steps)
+                     early_exaggeration = density,  learning_rate = l_rate ,n_iter = steps,
+                     square_distances=True)
     
     embed = tsne.fit_transform(Matrix)
     
@@ -1818,15 +1820,7 @@ def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
 
     
 def get_trace_edges_from_nodes2D(d_edges_col, posG, linew = 0.75, opac=0.1):
-    '''
-    Get trace of edges for plotting in 3D only for specific edges. 
-    Input: 
-    - G = Graph
-    - posG = dictionary with nodes as keys and coordinates as values.
-    - color = string; specific color to highlight specific edges 
-    
-    Return a trace of specific edges. 
-    '''   
+
     edge_x = []
     edge_y = []
     

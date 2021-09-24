@@ -36,7 +36,7 @@ from ..walker import BiasedWalker
 
 
 class Struc2Vec():
-    def __init__(self, graph, walk_length=10, num_walks=100, workers=1, verbose=0, stay_prob=0.3, opt1_reduce_len=True, opt2_reduce_sim_calc=True, opt3_num_layers=None,temp_path='./temp_struc2vec/', 
+    def __init__(self, graph, walk_length=10, num_walks=100, workers=1, verbose=0, stay_prob=0.3, opt1_reduce_len=True, opt2_reduce_sim_calc=True, opt3_num_layers=None,temp_path='temp_struc2vec/', 
                  reuse=False):
         self.graph = graph
         self.idx2node, self.node2idx = preprocess_nxgraph(graph)
@@ -112,10 +112,10 @@ class Struc2Vec():
         # pd.read_pickle(self.temp_path+'walks.pkl')
         sentences = self.sentences
 
-        print("Learning representation...")
+        #print("Learning representation...")
         model = Word2Vec(sentences, size=embed_size, window=window_size, min_count=0, hs=1, sg=1, workers=workers,
                          iter=iter)
-        print("Learning representation done!")
+        #print("Learning representation done!")
         self.w2v_model = model
 
         return model
@@ -297,7 +297,10 @@ class Struc2Vec():
                     e_list.append(w)
                     sum_w += w
 
-                e_list = [x / sum_w for x in e_list]
+                #original:
+                #e_list = [x / sum_w for x in e_list]
+                # modified by C:
+                e_list = [0 if sum_w == 0 else x / sum_w for x in e_list]
                 norm_weights[v] = e_list
                 accept, alias = create_alias_table(e_list)
                 node_alias_dict[v] = alias

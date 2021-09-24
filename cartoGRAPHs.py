@@ -460,22 +460,23 @@ def layout_topographic(posG2D, d_z):
 
 def layout_geodesic(G, d_radius, n_neighbors, spread, min_dist, DM=None):
     
-    radius_list_norm = preprocessing.minmax_scale((list(d_radius.values())), feature_range=(0, 1.0), axis=0, copy=True)
-    d_radius_norm = dict(zip(list(G.nodes()), radius_list_norm))
+    #radius_list_norm = preprocessing.minmax_scale((list(d_radius.values())), feature_range=(0, 1.0), axis=0, copy=True)
+    #d_radius_norm = dict(zip(list(G.nodes()), radius_list_norm))
     
-    if DM.all != None:
-        #print('DM precalc')
-        pass 
-    
-    else:
+    if DM == None:
         r=0.9
         alpha=1.0
         A = nx.adjacency_matrix(G)
         FM_m_array = rnd_walk_matrix2(A, r, alpha, len(G.nodes()))
         DM = pd.DataFrame(FM_m_array).T
+    
+    elif DM.all != None:
+        #print('DM precalc')
+        pass 
 
     umap_geodesic = embed_umap_sphere(DM, n_neighbors, spread, min_dist)
-    posG_geodesic = get_posG_sphere_norm(G, DM, umap_geodesic, d_radius_norm, radius_rest_genes = 20)
+    posG_geodesic = get_posG_sphere_norm(G, DM, umap_geodesic, d_radius, #d_radius_norm,
+                                         radius_rest_genes = 20)
 
     return posG_geodesic
 

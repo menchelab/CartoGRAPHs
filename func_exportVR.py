@@ -7,6 +7,8 @@
 #
 ########################################################################################
 
+from func_visual_properties import *
+
 import pandas as pd
 
 ########################################################################################
@@ -39,10 +41,10 @@ def export_to_csv2D(path, layout_namespace, posG, colours):
     df_2D['G'] = colours_g
     df_2D['B'] = colours_b
     df_2D['A'] = colours_a
-
+    
     df_2D[layout_namespace] = layout_namespace
     df_2D['ID'] = list(posG.keys())
-
+    
     cols = df_2D.columns.tolist()
     cols = cols[-1:] + cols[:-1]
     df_2D_final = df_2D[cols]

@@ -18,22 +18,34 @@ relationships in large-scale biological networks.
 The structue of the project Github repo is as described below:
 ```
 menchelab/cartoGRAPHs
-- cartoGRAPHs_main.py ---> main functions used in the jupyter notebook
-- cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks (examples are human interactome and yeast interactome, as introduced in the manuscript)
+- cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks 
+- cartoGRAPHs_organism.ipynb ---> network visualization examples with the human interactome and the yeast interactome
+
+Python files including functions to execute the notebooks and produce Network Layouts and Visualizations
+- cartoGRAPHs.py ---> contains the actual layout functions
+- func_load_data.py ---> loading precalculated data, to be found in /input/
+- func_calculations.py ---> contains functions for calculations 
+- func_embed_plot.py ---> contains spatial embedding and visualization functions 
+- func_visual_properties.py ---> contains additional node- and edge visual property settings/functions
+- func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature communications, 2021
+
+Folders / directories for input and output : 
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files
 ├── benchmark ---> benchmark evaluations 
-├── output_plots ---> folder for saving produced plots during notebook sessions 
-└── .gitignore
+├── output_plots ---> folder for saving produced plots during notebook sessions
+├── ge ---> a node embedding repo containing functions for embeddings such as node2vec, struc2vec etc. from github.com/shenweichen/GraphEmbedding
+└── img ---> contains images other than layouts
 ```
 
 ---
 
 ### **HOW TO USE THE FRAMEWORK**
 
-The code can be run using Jupyter Notebook/Lab and will soon be available as a python package. 
-The main script for producing Layouts for the Protein-Protein Interaction Network (*homo sapiens* or *saccharomyces cerevisiae*) 
-is entitled "cartographs_main.ipynb" with the python functions included in "cartographs_main.py". Input files essential to run the scripts can be downloaded
+The code can be run using Jupyter Notebook/Lab. To use an individual graph (networkx graph) use the "cartoGRAPHs_main.ipynb", to work with a precalculated network, such as the human interactome / yeast interactome use
+"cartoGRAPHs_organisms.ipynb". 
+Input files essential to run the scripts can be downloaded
 [here](https://drive.google.com/file/d/1_FR-It9-h9ZZ1Pn-ErwGqxxIlMCHG_54/view?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
+
 A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs](https://github.com/menchelab/cartoGRAPHs_app). 
 
 ---

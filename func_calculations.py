@@ -7,8 +7,10 @@
 ########################################################################################
 
 import numpy as np 
+
 from Bio import Entrez
 import pymysql as mysql
+
 from sklearn.preprocessing import normalize
 from sklearn import preprocessing
 

@@ -13,34 +13,34 @@ import pandas as pd
 
 ########################################################################################
 
-def export_to_csv2D(path, layout_namespace, posG, colours):
+def export_to_csv2D(path, layout_namespace, posG, colors):
     '''
     Generate csv for upload to VRnetzer plaform for 2D layouts. 
     Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
     '''
     
-    colours_hex2rgb = []
-    for j in colours: 
+    colors_hex2rgb = []
+    for j in colors: 
         k = hex_to_rgb(j)
-        colours_hex2rgb.append(k)
+        colors_hex2rgb.append(k)
         
-    colours_r = []
-    colours_g = []
-    colours_b = []
-    colours_a = []
-    for i in colours_hex2rgb:
-        colours_r.append(int(i[0]))#*255)) # colour values should be integers within 0-255
-        colours_g.append(int(i[1]))#*255))
-        colours_b.append(int(i[2]))#*255))
-        colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
+    colors_r = []
+    colors_g = []
+    colors_b = []
+    colors_a = []
+    for i in colors_hex2rgb:
+        colors_r.append(int(i[0]))#*255)) # color values should be integers within 0-255
+        colors_g.append(int(i[1]))#*255))
+        colors_b.append(int(i[2]))#*255))
+        colors_a.append(100) # 0-100 shows normal colors in VR, 128-200 is glowing mode
         
     df_2D = pd.DataFrame(posG).T
     df_2D.columns=['X','Y']
     df_2D['Z'] = 0
-    df_2D['R'] = colours_r
-    df_2D['G'] = colours_g
-    df_2D['B'] = colours_b
-    df_2D['A'] = colours_a
+    df_2D['R'] = colors_r
+    df_2D['G'] = colors_g
+    df_2D['B'] = colors_b
+    df_2D['A'] = colors_a
     
     df_2D[layout_namespace] = layout_namespace
     df_2D['ID'] = list(posG.keys())
@@ -52,33 +52,33 @@ def export_to_csv2D(path, layout_namespace, posG, colours):
     return df_2D_final.to_csv(r''+path+layout_namespace+'_layout.csv',index=False, header=False)
     
 
-def export_to_csv3D(path, layout_namespace, posG, colours):
+def export_to_csv3D(path, layout_namespace, posG, colors):
     '''
     Generate csv for upload to VRnetzer plaform for 3D layouts. 
     Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
     '''
     
-    colours_hex2rgb = []
-    for j in colours: 
+    colors_hex2rgb = []
+    for j in colors: 
         k = hex_to_rgb(j)
-        colours_hex2rgb.append(k)
+        colors_hex2rgb.append(k)
         
-    colours_r = []
-    colours_g = []
-    colours_b = []
-    colours_a = []
-    for i in colours_hex2rgb:
-        colours_r.append(int(i[0]))#*255)) # colour values should be integers within 0-255
-        colours_g.append(int(i[1]))#*255))
-        colours_b.append(int(i[2]))#*255))
-        colours_a.append(100) # 0-100 shows normal colours in VR, 128-200 is glowing mode
+    colors_r = []
+    colors_g = []
+    colors_b = []
+    colors_a = []
+    for i in colors_hex2rgb:
+        colors_r.append(int(i[0]))#*255)) # color values should be integers within 0-255
+        colors_g.append(int(i[1]))#*255))
+        colors_b.append(int(i[2]))#*255))
+        colors_a.append(100) # 0-100 shows normal colors in VR, 128-200 is glowing mode
         
     df_3D = pd.DataFrame(posG).T
     df_3D.columns=['X','Y','Z']
-    df_3D['R'] = colours_r
-    df_3D['G'] = colours_g
-    df_3D['B'] = colours_b
-    df_3D['A'] = colours_a
+    df_3D['R'] = colors_r
+    df_3D['G'] = colors_g
+    df_3D['B'] = colors_b
+    df_3D['A'] = colors_a
 
     df_3D[layout_namespace] = layout_namespace
     df_3D['ID'] = list(posG.keys())

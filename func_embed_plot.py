@@ -9,13 +9,15 @@
 import plotly
 import plotly.graph_objs as pgo
 import umap.umap_ as umap
+
 from sklearn.manifold import TSNE
 from sklearn.manifold import MDS
 from sklearn import preprocessing
+
 import numpy as np 
 from numpy import pi, cos, sin, arccos, arange
+
 import math 
-import umap.umap_ as umap
 
 ########################################################################################
 
@@ -500,7 +502,7 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25):
     Input: 
     - G = Graph
     - posG = dictionary with nodes as keys and coordinates as values.
-    - color_list = list of colours obtained from any color function (see above sections).
+    - color_list = list of colors obtained from any color function (see above sections).
     - opacity = transparency of edges e.g. 0.2
     
     Return a trace for plotly graph objects plot. 
@@ -525,13 +527,34 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25):
     return trace
 
 
-def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
+
+def color_edges_from_nodelist_specific(G, l_nodes, color):
+    '''
+    Color (highlight) edges from specific node list exclusively.
+    Input:
+    - G = Graph 
+    - l_nodes = list of nodes 
+    - color = string; color to hightlight
+    
+    Return edge list for selected edges IF BOTH nodes are in l_nodes. 
+    '''
+    
+    edge_lst = [(u,v)for u,v in G.edges(l_nodes) if u in l_nodes and v in l_nodes]
+
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color
+    return d_col_edges
+
+
+
+def get_trace_edges_2D(G, posG, color, opac = 0.2):
     '''
     Get trace of edges for plotting in 2D. 
     Input: 
     - G = Graph
     - posG = dictionary with nodes as keys and coordinates as values.
-    - color_list = list of colours obtained from any color function (see above sections).
+    - color = string; hex color
     - opacity = transparency of edges e.g. 0.2
     
     Return a trace for plotly graph objects plot. 
@@ -553,14 +576,14 @@ def get_trace_edges_2D(G, posG, color_list, opac = 0.2):
                         x = edge_x, 
                         y = edge_y, 
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.2, color = color_list),
+                        line = dict(width = 0.2, color = color),
                         opacity = opac
                 )
     
     return trace_edges
 
-    
-def get_trace_edges_from_nodes2D(d_edges_col, posG, linew = 0.75, opac=0.1):
+
+def get_trace_edges_specific2D(d_edges_col, posG, linew = 0.75, opac=0.1):
 
     edge_x = []
     edge_y = []
@@ -589,17 +612,17 @@ def get_trace_edges_from_nodes2D(d_edges_col, posG, linew = 0.75, opac=0.1):
 
 
 
-def get_trace_edges_from_nodelist2D(G, l_genes, posG, col,linew = 0.75, opac=0.1):
+def get_trace_edges_from_nodelist2D(G, l_nodes, posG, color, linew = 0.75, opac=0.1):
     '''
     Get trace of edges for plotting in 3D only for specific edges. 
     Input: 
     - G = Graph
     - posG = dictionary with nodes as keys and coordinates as values.
-    - color = string; specific color to highlight specific edges 
+    - color = string; specific color to highlight specific edges; hex color
     
     Return a trace of specific edges. 
     '''
-    l_spec_edges = [(u,v)for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]
+    l_spec_edges = [(u,v) for u,v in G.edges(l_nodes) if u in l_nodes and v in l_nodes]
    
     edge_x = []
     edge_y = []
@@ -619,7 +642,7 @@ def get_trace_edges_from_nodelist2D(G, l_genes, posG, col,linew = 0.75, opac=0.1
                         x = edge_x, 
                         y = edge_y, 
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = linew, color = col),
+                        line = dict(width = linew, color = color),
                         opacity = opac
                 )
     
@@ -934,30 +957,18 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 # -------------------------------------------------------------------------------------
 # P L O T T I N G 
 # -------------------------------------------------------------------------------------
 
 
-def get_trace_nodes_3D(posG, info_list, color_list, size, opac=0.9):
+def get_trace_nodes_3D(posG, info_list, color, size, opac=0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
     - posG = dictionary with nodes as keys and coordinates as values.
     - info_list = hover information for each node, e.g. a list sorted according to the initial graph/posG keys
-    - color_list = list of colours obtained from any color function (see above sections).
+    - color = string; hex color
     - opac = transparency of edges e.g. 0.2
     
     Return a trace for plotly graph objects plot. 
@@ -976,7 +987,7 @@ def get_trace_nodes_3D(posG, info_list, color_list, size, opac=0.9):
                 size = size,
                 symbol = 'circle',
                 line = dict(width = 1.0,
-                        color = color_list),
+                        color = color),
                 opacity = opac,
             ),
         )
@@ -984,13 +995,13 @@ def get_trace_nodes_3D(posG, info_list, color_list, size, opac=0.9):
     return trace
 
 
-def get_trace_edges_3D(G, posG, color_list, opac = 0.2, linewidth=0.2):
+def get_trace_edges_3D(G, posG, color, opac = 0.2, linewidth=0.2):
     '''
     Get trace of edges for plotting in 3D. 
     Input: 
     - G = Graph
     - posG = dictionary with nodes as keys and coordinates as values.
-    - color_list = list of colours obtained from any color function (see above sections).
+    - color = string; hex color
     - opac = transparency of edges e.g. 0.2
     
     Return a trace for plotly graph objects plot. 
@@ -1012,30 +1023,30 @@ def get_trace_edges_3D(G, posG, color_list, opac = 0.2, linewidth=0.2):
             edge_z.append(z1)
             edge_z.append(None)
 
-
     trace_edges = pgo.Scatter3d(
-                            x = edge_x, 
-                            y = edge_y, 
-                            z = edge_z,
-                            mode = 'lines', hoverinfo='none',
-                            line = dict(width = linewidth, color = color_list),
-                            opacity = opac
-                    )
+                                x = edge_x, 
+                                y = edge_y, 
+                                z = edge_z,
+                                mode = 'lines', hoverinfo='none',
+                                line = dict(width = linewidth, color = color),
+                                opacity = opac
+                        )
+
     return trace_edges
 
 
-def get_trace_edges_from_nodelist3D(l_genes, posG, col, opac=0.2):
+
+def get_trace_edges_from_nodelist3D(G, l_genes, posG, color, linew = 0.75, opac=0.1):
     '''
     Get trace of edges for plotting in 3D only for specific edges. 
     Input: 
     - G = Graph
     - posG = dictionary with nodes as keys and coordinates as values.
-    - color = string; specific color to highlight specific edges 
+    - color = string; specific color to highlight specific edges; hex color
     
     Return a trace of specific edges. 
     '''
     l_spec_edges = [(u,v)for u,v in G.edges(l_genes) if u in l_genes and v in l_genes]
-    #l_spec_edges = [(u,v)for u,v in G.edges(l_genes) if u in l_genes or v in l_genes]
     
     edge_x = []
     edge_y = []
@@ -1058,7 +1069,7 @@ def get_trace_edges_from_nodelist3D(l_genes, posG, col, opac=0.2):
                         y = edge_y, 
                         z = edge_z,
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 1.0, color = [col]*len(edge_x)),
+                        line = dict(width = linew, color = color),
                         opacity = opac
                 )
     return trace_edges

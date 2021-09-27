@@ -463,7 +463,7 @@ def layout_geodesic(G, d_radius, n_neighbors, spread, min_dist, DM=None):
     #radius_list_norm = preprocessing.minmax_scale((list(d_radius.values())), feature_range=(0, 1.0), axis=0, copy=True)
     #d_radius_norm = dict(zip(list(G.nodes()), radius_list_norm))
     
-    if DM == None:
+    if DM.empty is True:
         r=0.9
         alpha=1.0
         A = nx.adjacency_matrix(G)
@@ -471,7 +471,6 @@ def layout_geodesic(G, d_radius, n_neighbors, spread, min_dist, DM=None):
         DM = pd.DataFrame(FM_m_array).T
     
     elif DM.all != None:
-        #print('DM precalc')
         pass 
 
     umap_geodesic = embed_umap_sphere(DM, n_neighbors, spread, min_dist)

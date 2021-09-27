@@ -548,7 +548,7 @@ def color_edges_from_nodelist_specific(G, l_nodes, color):
 
 
 
-def get_trace_edges_2D(G, posG, color, opac = 0.2):
+def get_trace_edges_2D(G, posG, color, opac = 0.2, linewidth = 0.2):
     '''
     Get trace of edges for plotting in 2D. 
     Input: 
@@ -576,7 +576,7 @@ def get_trace_edges_2D(G, posG, color, opac = 0.2):
                         x = edge_x, 
                         y = edge_y, 
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.2, color = color),
+                        line = dict(width = linewidth, color = color),
                         opacity = opac
                 )
     
@@ -875,7 +875,8 @@ def embed_umap_sphere(Matrix, n_neighbors, spread, min_dist):
         n_neighbors = n_neighbors, 
         spread = spread,
         min_dist = min_dist,
-        output_metric = 'haversine')
+        output_metric = 'haversine',
+        random_state=42)
     sphere_mapper = model.fit(Matrix)
 
     return sphere_mapper

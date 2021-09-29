@@ -176,12 +176,13 @@ def get_posG_2D(l_nodes, embed):
     return posG
 
 
+
 def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     '''
     Generate coordinates from embedding. 
     Input:
     - G = Graph
-    - DM = matrix 
+    - DM = matrix; index and columns must be same as G.nodes
     - embed = embedding from e.g. tSNE , UMAP ,... 
     
     Return dictionary with nodes as keys and coordinates as values in 3D normed. 
@@ -189,14 +190,16 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     
     genes = []
     for i in DM.index:
-        if str(i) in G.nodes():
-            genes.append(str(i))
+        if str(i) in G.nodes() or int(i) in G.nodes():
+            genes.append(i)
 
     genes_rest = [] 
-    for g in G.nodes():
-        if str(g) not in genes:
-            genes_rest.append(g)
+    for i in G.nodes():
+        if i not in genes:
+            genes_rest.append(i)
 
+    #print(len(genes))
+    #print(len(genes_rest))
         
     posG = {}
     cc = 0
@@ -231,7 +234,9 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     posG_rest = dict(zip(genes_rest, rest))
 
     posG_all = {**posG, **posG_rest}
-    posG_complete = {key:posG_all[key] for key in G.nodes()}
+    
+    #G_nodes_str = [str(i) for i in list(G.nodes())]
+    posG_complete = {key:posG_all[key] for key in list(G.nodes())}
 
     # normalize coordinates 
     x_list = []
@@ -240,8 +245,8 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
         x_list.append(v[0])
         y_list.append(v[1])
 
-    xx_norm = sklearn.preprocessing.minmax_scale(x_list, feature_range=(0, 1), axis=0, copy=True)
-    yy_norm = sklearn.preprocessing.minmax_scale(y_list, feature_range=(0, 1), axis=0, copy=True)
+    xx_norm = preprocessing.minmax_scale(x_list, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm = preprocessing.minmax_scale(y_list, feature_range=(0, 1), axis=0, copy=True)
 
     xx_norm_final=[]
     for i in xx_norm:
@@ -254,6 +259,7 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     posG_complete_norm = dict(zip(list(G.nodes()),zip(xx_norm_final,yy_norm_final)))
     
     return posG_complete_norm
+
 
 
 
@@ -358,6 +364,7 @@ def get_posG_3D(l_genes, embed):
     return posG
 
 
+
 def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     '''
     Generate coordinates from embedding. 
@@ -368,18 +375,17 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     
     Return dictionary with nodes as keys and coordinates as values in 3D normed. 
     '''
-    
+
     genes = []
     for i in DM.index:
-        if str(i) in G.nodes():
-            genes.append(str(i))
+        if str(i) in G.nodes() or int(i) in G.nodes():
+            genes.append(i)
 
     genes_rest = [] 
-    for g in G.nodes():
-        if str(g) not in genes:
-            genes_rest.append(g)
-
-        
+    for i in G.nodes():
+        if i not in genes:
+            genes_rest.append(i)
+            
     posG_3Dumap = {}
     cc = 0
     for entz in genes:
@@ -408,7 +414,7 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     theta = pi * (1 + 5**0.5) * indices
 
     xm, ym, zm = max(posG_3Dumap.values())
-    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))*r_scalingfactor # +10 to ensure all colored nodes are within the sphere
+    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))*r_scalingfactor # +10 > ensure colored nodes within sphere
     x, y, z = cx+r*cos(theta) * sin(phi),cy+r*sin(theta) * sin(phi), cz+r*cos(phi)
 
     rest_points = []
@@ -429,9 +435,9 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
         y_list3D.append(v[1])
         z_list3D.append(v[2])
 
-    xx_norm3D = sklearn.preprocessing.minmax_scale(x_list3D, feature_range=(0, 1), axis=0, copy=True)
-    yy_norm3D = sklearn.preprocessing.minmax_scale(y_list3D, feature_range=(0, 1), axis=0, copy=True)
-    zz_norm3D = sklearn.preprocessing.minmax_scale(z_list3D, feature_range=(0, 1), axis=0, copy=True)
+    xx_norm3D = preprocessing.minmax_scale(x_list3D, feature_range=(0, 1), axis=0, copy=True)
+    yy_norm3D = preprocessing.minmax_scale(y_list3D, feature_range=(0, 1), axis=0, copy=True)
+    zz_norm3D = preprocessing.minmax_scale(z_list3D, feature_range=(0, 1), axis=0, copy=True)
 
     xx_norm3D_final=[]
     for i in xx_norm3D:
@@ -1001,7 +1007,7 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
         
 
         
-def minmaxscaling_posG(posG):
+def minmaxscaling_posG(G,posG):
     df_posG = pd.DataFrame(posG).T
     x = df_posG.values 
     min_max_scaler = preprocessing.MinMaxScaler()

@@ -87,6 +87,7 @@ import sys
 import time
 
 import umap.umap_ as umap
+from node2vec import Node2Vec
 
 import warnings
 #warnings.filterwarnings("ignore", category=UserWarning)
@@ -966,72 +967,34 @@ def pearson_corrcoef(dist_network, dist_layout):
 
 
 
+#################
 
-############### O L D ############### 
-
-
-'''def pairwise_layout_distance_3D(G,posG):  
-    dist_layout = {}
-    print(len(list(it.combinations(G.nodes(),2))))
-    for p1,p2 in it.combinations(G.nodes(),2):
-        
-        tenk=1000
-        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2+(posG[p1][1]-posG[p2][1])**2+(posG[p1][2]-posG[p2][2])**2)
-        
-        if len(dist_layout) == tenk:
-            print('1k done')
-        elif len(dist_layout) == (tenk*10): 
-            print('10k done')
-        elif len(dist_layout) == (tenk*50):
-            print('50k done')
-        elif len(dist_layout) == (tenk*100):
-            print('100k done')
-        elif len(dist_layout) == (tenk*500):
-            print('500k done')
-        elif len(dist_layout) == (tenk*1000):
-            print('1mio done')
-        elif len(dist_layout) == (tenk*2000):
-            print('2mio done')
-        elif len(dist_layout) == (tenk*3000):
-            print('3mio done')
-        elif len(dist_layout) == (tenk*4000):
-            print('4mio done')
-        elif len(dist_layout) == (len(list(it.combinations(G.nodes(),2)))):
-            print('complete')
-        else:
-            pass
-    return dist_layout
-
+def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
     
-def pairwise_layout_distance_2D(G,posG):
+    walk_lngth = 50
+    num_wlks = 10
+    wrks = 1
+    dmns = 50 
     
-    dist_layout = {} 
-    print(len(list(it.combinations(G.nodes(),2))))
-    for p1,p2 in it.combinations(G.nodes(),2):
-        dist_layout[(p1,p2)] = np.sqrt((posG[p1][0]-posG[p2][0])**2 + (posG[p1][1]-posG[p2][1])**2)
-
-        tenk = 1000
-        if len(dist_layout) == (tenk): 
-            print('1k done')
-        elif len(dist_layout) == (tenk*10): 
-            print('10k done')
-        elif len(dist_layout) == (tenk*50):
-            print('50k done')
-        elif len(dist_layout) == (tenk*100):
-            print('100k done')
-        elif len(dist_layout) == (tenk*500):
-            print('500k done')
-        elif len(dist_layout) == (tenk*1000):
-            print('1mio done')
-        elif len(dist_layout) == (tenk*2000):
-            print('2mio done')
-        elif len(dist_layout) == (tenk*3000):
-            print('3mio done')
-        elif len(dist_layout) == (tenk*4000):
-            print('4mio done')
-        elif len(dist_layout) == (len(list(it.combinations(G.nodes(),2)))):
-            print('complete')
-        else:
-            pass
+    node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
+    model = node2vec.fit(window=10, min_count=1)
+    arr = np.array([model.wv[str(x)] for x in G.nodes()])
+    DM = pd.DataFrame(arr)
+    DM.index = list(G.nodes())
+    
+    if dim == 2:
+        r_scale = 1.2
+        umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_2D_norm(G, DM, umap2D) #r_scale
         
-    return dist_layout'''
+        return posG
+    
+    elif dim == 3: 
+        umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_3D_norm(G, DM, umap_3D) #r_scale
+
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+        

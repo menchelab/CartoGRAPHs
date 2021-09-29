@@ -7,8 +7,6 @@ _MyUsefulSnippets/
 # available via link in read-me
 input/ 
 benchmark/netdist_precalc/
-output_plots/manuscript/
-
 
 # Mac files 
 *.DS_Store

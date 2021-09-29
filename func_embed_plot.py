@@ -548,7 +548,7 @@ def color_edges_from_nodelist_specific(G, l_nodes, color):
 
 
 
-def get_trace_edges_2D(G, posG, color, opac = 0.2):
+def get_trace_edges_2D(G, posG, color, opac = 0.2, linewidth = 0.2):
     '''
     Get trace of edges for plotting in 2D. 
     Input: 
@@ -576,7 +576,7 @@ def get_trace_edges_2D(G, posG, color, opac = 0.2):
                         x = edge_x, 
                         y = edge_y, 
                         mode = 'lines', hoverinfo='none',
-                        line = dict(width = 0.2, color = color),
+                        line = dict(width = linewidth, color = color),
                         opacity = opac
                 )
     
@@ -817,7 +817,7 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     theta = pi * (1 + 5**0.5) * indices
 
     xm, ym, zm = max(posG_3Dumap.values())
-    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))*r_scalingfactor # +10 to ensure all colored nodes are within the sphere
+    r = (math.sqrt((cx - xm)**2 + (cy - ym)**2 + (cz - zm)**2))*r_scalingfactor # +10 > ensure colored nodes within sphere
     x, y, z = cx+r*cos(theta) * sin(phi),cy+r*sin(theta) * sin(phi), cz+r*cos(phi)
 
     rest_points = []
@@ -875,7 +875,8 @@ def embed_umap_sphere(Matrix, n_neighbors, spread, min_dist):
         n_neighbors = n_neighbors, 
         spread = spread,
         min_dist = min_dist,
-        output_metric = 'haversine')
+        output_metric = 'haversine',
+        random_state=42)
     sphere_mapper = model.fit(Matrix)
 
     return sphere_mapper
@@ -983,7 +984,7 @@ def get_trace_nodes_3D(posG, info_list, color, size, opac=0.9):
                            hoverinfo = 'text',
                            #textposition='middle center',
                            marker = dict(
-                color = color_list,
+                color = color,
                 size = size,
                 symbol = 'circle',
                 line = dict(width = 1.0,
@@ -1072,6 +1073,38 @@ def get_trace_edges_from_nodelist3D(G, l_genes, posG, color, linew = 0.75, opac=
                         line = dict(width = linew, color = color),
                         opacity = opac
                 )
+    return trace_edges
+
+
+def get_trace_edges_specific3D(d_edges_col, posG, linew = 0.75, opac=0.1):
+
+    edge_x = []
+    edge_y = []
+    edge_z = []
+    for edge, col in d_edges_col.items():
+            x0, y0,z0 = posG[edge[0]]
+            x1, y1,z1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            edge_z.append(z0)
+            edge_z.append(z1)
+            edge_z.append(None)
+            
+    color = list(d_edges_col.values())[0]
+    
+    trace_edges = pgo.Scatter3d(
+                        x = edge_x, 
+                        y = edge_y, 
+                        z = edge_z,
+                        mode = 'lines', hoverinfo='none',
+                        line = dict(width = linew, color = color),
+                        opacity = opac
+                )
+    
     return trace_edges
 
 

@@ -25,6 +25,7 @@ from colormath.color_objects import sRGBColor, LabColor
 #from html2image import Html2Image
 
 import itertools as it
+import igraph as ig
 
 import math
 import matplotlib.pyplot as plt
@@ -998,3 +999,17 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
         
+
+        
+def minmaxscaling_posG(posG):
+    df_posG = pd.DataFrame(posG).T
+    x = df_posG.values 
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    
+    df_posG_norm = pd.DataFrame(x_scaled)
+    
+    posG_norm = dict(zip(list(G.nodes()),zip(df_posG_norm[0].values,df_posG_norm[1].values)))
+
+    return posG_norm 
+

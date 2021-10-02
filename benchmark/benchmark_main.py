@@ -857,6 +857,49 @@ def pairwise_layout_distance_linalg(pairs,posG):
     return dist_layout
 
 
+def pairwise_layout_distance_linalg_parts(pairs,posG):  
+    dist_layout = {}
+    print(len(pairs))
+    for p1,p2 in pairs:
+        start = np.array(posG[p1])
+        end = np.array(posG[p2])
+        dist_layout[(p1,p2)]=np.linalg.norm(start-end)
+        
+        tenk = 1000
+        if len(dist_layout) == (tenk): 
+            print('1k done')
+        elif len(dist_layout) == (tenk*10): 
+            print('10k done')
+        elif len(dist_layout) == (tenk*50):
+            print('50k done')
+        elif len(dist_layout) == (tenk*100):
+            print('100k done')
+        elif len(dist_layout) == (tenk*500):
+            print('500k done')
+        elif len(dist_layout) == (tenk*1000):
+            print('1mio done')
+        elif len(dist_layout) == (tenk*5000):
+            print('5mio done')
+        elif len(dist_layout) == (tenk*10000):
+            print('10mio done')
+        elif len(dist_layout) == (tenk*15000):
+            print('15mio done')
+        elif len(dist_layout) == (tenk*20000):
+            print('20mio done')
+        elif len(dist_layout) == (tenk*25000):
+            print('25mio done')
+        elif len(dist_layout) == (tenk*30000):
+            print('30mio done')
+        elif len(dist_layout) == (tenk*40000):
+            print('40mio done')
+        elif len(dist_layout) == len(pairs):
+            print('complete')
+        else:
+            pass
+        
+    return dist_layout
+            
+
 def pairwise_network_distance(G):
     dist_network = {}
     print('total to calculate:',(len(list(it.combinations(G.nodes(),2)))))

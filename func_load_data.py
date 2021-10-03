@@ -296,7 +296,8 @@ def load_datamatrix(G,organism,netlayout):
         
         DM_BP = pd.read_csv(path+'DistanceMatrix_goBP_Dataframe_human_cosine.csv', index_col=0)
         DM_BP_round = DM_BP.round(decimals=6)
-        
+        DM_BP_round.index = DM_BP_round.index.map(str)
+
         return DM_BP_round
     
     
@@ -304,6 +305,7 @@ def load_datamatrix(G,organism,netlayout):
         
         DM_MF = pd.read_csv('input/DistanceMatrix_goMF_Dataframe_Human_cosine.csv', index_col=0)
         DM_MF_round = DM_MF.round(decimals=6)
+        DM_MF_round.index = DM_MF_round.index.map(str)
         
         return DM_MF_round
     
@@ -311,14 +313,16 @@ def load_datamatrix(G,organism,netlayout):
         
         DM_CC = pd.read_csv('input/DistanceMatrix_goCC_Dataframe_Human_cosine.csv', index_col=0)
         DM_CC_round = DM_CC.round(decimals=6)
-
+        DM_CC_round.index = DM_CC_round.index.map(str)
+        
         return DM_CC_round
     
     elif netlayout == 'funct-dis' and organism == 'human':
 
         DM_Disease = pd.read_csv('input/DistanceMatrix_Disease_Dataframe_Human_cosine.csv', index_col=0)
         DM_Disease_round= DM_Disease.round(decimals=6)
-
+        DM_Disease_round.index = DM_Disease_round.index.map(str)
+        
         return DM_Disease_round
     
     else: 

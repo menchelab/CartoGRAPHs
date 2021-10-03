@@ -892,6 +892,26 @@ def pairwise_layout_distance_linalg_parts(pairs,posG):
             print('30mio done')
         elif len(dist_layout) == (tenk*40000):
             print('40mio done')
+        elif len(dist_layout) == (tenk*50000):
+            print('50mio done')
+        elif len(dist_layout) == (tenk*60000):
+            print('60mio done')
+        elif len(dist_layout) == (tenk*70000):
+            print('70mio done')
+        elif len(dist_layout) == (tenk*80000):
+            print('80mio done')
+        elif len(dist_layout) == (tenk*90000):
+            print('90mio done')
+        elif len(dist_layout) == (tenk*100000):
+            print('100mio done')
+        elif len(dist_layout) == (tenk*120000):
+            print('120mio done')
+        elif len(dist_layout) == (tenk*1400000):
+            print('140mio done')
+        elif len(dist_layout) == (tenk*160000):
+            print('160mio done')
+        elif len(dist_layout) == (tenk*180000):
+            print('180mio done')
         elif len(dist_layout) == len(pairs):
             print('complete')
         else:

@@ -1,9 +1,4 @@
 
-# folders
-_archivdata/
-_VR_layouts/
-_MyUsefulSnippets/
-
 # available via link in read-me
 input/ 
 benchmark/netdist_precalc/
@@ -148,7 +143,3 @@ dmypy.json
 .pyre/
 #*.txt
 *.rtf
-bench_precalc/dist_network_19531_tree.pkl
-bench_precalc/dist_network_5461_tree.pkl
-bench_precalc/dist_network_9841_tree.pkl
-_ALOCALREADME.txt

@@ -204,6 +204,24 @@ def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def
     return  d_edges_all
 
 
+def color_edges_from_node(G, node, color):
+    '''
+    Color (highlight) edges from specific node list exclusively.
+    Input:
+    - G = Graph 
+    - l_nodes = list of nodes 
+    - color = string; color to hightlight
+    
+    Return edge list for selected edges IF ONE node is IN l_genes. 
+    '''
+    
+    edge_lst = [(u,v)for u,v in G.edges(node) if u in node or v in node]
+
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color
+    return d_col_edges
+
 
 def color_edges_from_nodelist_specific(G, l_nodes, color):
     '''

@@ -326,7 +326,7 @@ def load_datamatrix(G,organism,netlayout):
         return DM_Disease_round
     
     else: 
-        print('Please type one of the following: "local", "global", "importance", "functional"')
+        print('Please type one of the following: "local", "global", "importance", "funct-dis/bio/cel/mol"')
 
         
         

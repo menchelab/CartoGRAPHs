@@ -6,15 +6,18 @@
 # 
 ########################################################################################
 
-from func_calculations import *
-from func_embed_plot import *
 
 import os
 import networkx as nx
+import numpy as np
 import pandas as pd
 from node2vec import Node2Vec
 #from ge import Struc2Vec
 import umap.umap_ as umap
+
+
+from func_calculations import *
+from func_embed_plot import *
 
 ########################################################################################
 

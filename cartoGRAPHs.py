@@ -12,7 +12,7 @@ from func_embed_plot import *
 import os
 import networkx as nx
 import pandas as pd
-from node2vec import Node2Vec
+#from node2vec import Node2Vec
 #from ge import Struc2Vec
 import umap.umap_ as umap
 

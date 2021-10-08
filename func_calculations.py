@@ -7,6 +7,7 @@
 ########################################################################################
 
 import numpy as np 
+import networkx as nx 
 
 from Bio import Entrez
 import pymysql as mysql

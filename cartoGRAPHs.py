@@ -12,7 +12,6 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
-# replaced by stellargraph library 
 #from node2vec import Node2Vec
 #from ge import Struc2Vec
 
@@ -26,6 +25,11 @@ from stellargraph.data import UnsupervisedSampler
 from stellargraph.mapper import Attri2VecLinkGenerator, Attri2VecNodeGenerator
 from stellargraph.layer import Attri2Vec, link_classification
 from stellargraph.mapper import GraphWaveGenerator
+from stellargraph.data import UniformRandomMetaPathWalk
+from stellargraph.data import UnsupervisedSampler
+from stellargraph.mapper import GraphSAGELinkGenerator
+from stellargraph.layer import GraphSAGE
+from stellargraph.mapper import GraphSAGENodeGenerator
 
 import umap.umap_ as umap
 
@@ -278,11 +282,9 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
 
 def layout_importance_tsne(G,dim,prplxty, density, l_rate, steps, metric):
     
-    feature_dict_sorted = compute_centralities(G) 
+    feature_dict_sorted = compute_centralityfeatures(G) 
     
-    DM = pd.DataFrame.from_dict(feature_dict_sorted, 
-                                orient = 'index', 
-                                columns = ['degs','clos','betw','eigen'])
+    DM = pd.DataFrame.from_dict(feature_dict_sorted,orient = 'index',columns = ['degs','clos','betw','eigen'])
     DM.index = list(G.nodes())
     
     if dim == 2:
@@ -305,88 +307,11 @@ def layout_importance_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         
 def layout_importance_umap(G,dim,n_neighbors, spread, min_dist, metric):
     
-        feature_dict_sorted = compute_centralities(G) 
+    feature_dict_sorted = compute_centralityfeatures(G) 
 
-    DM = pd.DataFrame.from_dict(feature_dict_sorted, 
-                                orient = 'index', 
-                                columns = ['degs','clos','betw','eigen'])
+    DM = pd.DataFrame.from_dict(feature_dict_sorted,orient = 'index',columns = ['degs','clos','betw','eigen'])
     DM.index = list(G.nodes())
 
-    if dim == 2:
-        r_scale = 1.2
-        umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
-        posG = get_posG_2D_norm(G, DM, umap2D) #r_scale
-        
-        return posG
-    
-    elif dim == 3: 
-        umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
-        posG = get_posG_3D_norm(G, DM, umap_3D) #r_scale
-
-        return posG
-        
-    else:
-        print('Please choose dimensions, by either setting dim=2 or dim=3.')
-
-    
-#--------------------
-#
-# S T R U C 2 V E C 
-#
-#--------------------
-
-def layout_strucvec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
-    
-    nx.write_edgelist(G, 'temp.txt')
-    G_ = nx.read_edgelist('temp.txt')
-    os.remove('temp.txt')
-    
-    walk_lngth = 50
-    num_wlks = 10
-    wrks = 1
-    dmns = 50 # len(G.nodes())
-
-    model = model = Struc2Vec(G_, walk_length=walk_lngth , num_walks=num_wlks, workers=wrks , verbose=False) #init model
-    model.train(window_size = 5, iter = 3)# train model
-    embeddings = model.get_embeddings()
-    DM = pd.DataFrame(embeddings).T
-    DM.index = list(G.nodes())
-    
-    if dim == 2:
-        r_scale = 1.2
-        tsne2D = embed_tsne_2D(DM, prplxty, density, l_rate, steps, metric)
-        posG = get_posG_2D_norm(G, DM, tsne2D) #, r_scale)
-        
-        return posG
-    
-    elif dim == 3: 
-        r_scale = 1.2
-        tsne3D = embed_tsne_3D(DM, prplxty, density, l_rate, steps, metric)
-        posG = get_posG_3D_norm(G, DM, tsne3D) #, r_scale)
-
-        return posG
-        
-    else:
-        print('Please choose dimensions, by either setting dim=2 or dim=3.')
-
-        
-def layout_strucvec_umap(G,dim,n_neighbors, spread, min_dist, metric):
-   
-    nx.write_edgelist(G, 'temp.txt')
-    G_ = nx.read_edgelist('temp.txt')
-    os.remove('temp.txt')
-    
-    walk_lngth = 50
-    num_wlks = 10
-    wrks = 1
-    dmns = 50 # len(G.nodes())
-
-    model = model = Struc2Vec(G_, walk_length=walk_lngth , num_walks=num_wlks, workers=wrks , verbose=False) #init model
-    model.train(window_size = 5, iter = 3)# train model
-    embeddings = model.get_embeddings()
-    DM = pd.DataFrame(embeddings).T
-    DM.index = list(G.nodes())
-    
     if dim == 2:
         r_scale = 1.2
         umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
@@ -410,12 +335,8 @@ def layout_strucvec_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #
 #--------------------
 
-def layout_attrivec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_attrivec_tsne(G,d_features,dim,prplxty, density, l_rate, steps, metric):
     
-    features = compute_centralityfeatures(G)
-    d_features = pd.DataFrame(features).T
-    d_features.index = list(G.nodes())
-
     stellarG = StellarGraph.from_networkx(G, node_features=d_features)
     nodes = list(stellarG.nodes())
     number_of_walks = 4
@@ -467,11 +388,8 @@ def layout_attrivec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_attrivec_umap(G,dim,n_neighbors, spread, min_dist, metric):
-    
-    features = compute_centralityfeatures(G)
-    d_features = pd.DataFrame(features).T
-    d_features.index = list(G.nodes())
+        
+def layout_attrivec_umap(G,d_features,dim,n_neighbors, spread, min_dist, metric):
 
     stellarG = StellarGraph.from_networkx(G, node_features=d_features)
     nodes = list(stellarG.nodes())
@@ -533,11 +451,11 @@ def layout_attrivec_umap(G,dim,n_neighbors, spread, min_dist, metric):
 
 def layout_graphwave_tsne(G,dim,prplxty, density, l_rate, steps, metric):
     
-    features = compute_centralityfeatures(G)
-    d_features = pd.DataFrame(features).T
-    d_features.index = list(G.nodes())
+    #features = compute_centralityfeatures(G)
+    #d_features = pd.DataFrame(features).T
+    #d_features.index = list(G.nodes())
 
-    stellarG = StellarGraph.from_networkx(G, node_features=d_features)
+    stellarG = StellarGraph.from_networkx(G)#, node_features=d_features)
     
     sample_points = np.linspace(0, 100, 50).astype(np.float32)
     degree = 20
@@ -576,7 +494,11 @@ def layout_graphwave_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         
 def layout_graphwave_umap(G,dim,n_neighbors, spread, min_dist, metric):
     
-    stellarG = StellarGraph.from_networkx(G, node_features=d_features)
+    #features = compute_centralityfeatures(G)
+    #d_features = pd.DataFrame(features).T
+    #d_features.index = list(G.nodes())
+    
+    stellarG = StellarGraph.from_networkx(G)#, node_features=d_features)
     
     sample_points = np.linspace(0, 100, 50).astype(np.float32)
     degree = 20
@@ -610,8 +532,119 @@ def layout_graphwave_umap(G,dim,n_neighbors, spread, min_dist, metric):
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
+        
+    
+#--------------------
+#
+# M E T A P A T H 2 V E C 
+#
+#--------------------
+        
+        
+def layout_metapathvec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+    
+    A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
+    A_array = A.toarray()
+    DM = pd.DataFrame(A_array, columns = list(G.nodes()), index=list(G.nodes()))
+    
+    stellarG = StellarGraph.from_networkx(G, node_features=DM)
+    nodes = list(stellarG.nodes())
+    number_of_walks = 1
+    length = 5
+    
+    unsupervised_samples = UnsupervisedSampler(stellarG, nodes=nodes, length=length, number_of_walks=number_of_walks)
+    batch_size = 50
+    epochs = 4
+    num_samples = [10, 5]
+    
+    generator = GraphSAGELinkGenerator(stellarG, batch_size, num_samples)
+    train_gen = generator.flow(unsupervised_samples)
+    
+    layer_sizes = [50, 50]
+    graphsage = GraphSAGE(layer_sizes=layer_sizes, generator=generator, bias=True, dropout=0.0, normalize="l2")
+    
+    x_inp, x_out = graphsage.in_out_tensors()
+    x_inp_src = x_inp[0::2]
+    x_out_src = x_out[0]
+    embedding_model = keras.Model(inputs=x_inp_src, outputs=x_out_src)
+    
+    node_ids = list(G.nodes())
+    node_gen = GraphSAGENodeGenerator(stellarG, batch_size, num_samples).flow(node_ids)
+    
+    embeddings = embedding_model.predict(node_gen, workers=4, verbose=0)
+    DM = pd.DataFrame(embeddings)
+    DM.index = list(G.nodes())
 
+    if dim == 2:
+        r_scale = 1.2
+        tsne2D = embed_tsne_2D(DM, prplxty, density, l_rate, steps, metric)
+        posG = get_posG_2D_norm(G, DM, tsne2D) #, r_scale)
+        
+        return posG
+    
+    elif dim == 3: 
+        r_scale = 1.2
+        tsne3D = embed_tsne_3D(DM, prplxty, density, l_rate, steps, metric)
+        posG = get_posG_3D_norm(G, DM, tsne3D) #, r_scale)
 
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
+        
+        
+def layout_metapathvec_umap(G,dim,n_neighbors, spread, min_dist, metric):
+
+    A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
+    A_array = A.toarray()
+    DM = pd.DataFrame(A_array, columns = list(G.nodes()), index=list(G.nodes()))
+    
+    stellarG = StellarGraph.from_networkx(G, node_features=DM)
+    nodes = list(stellarG.nodes())
+    number_of_walks = 1
+    length = 5
+    
+    unsupervised_samples = UnsupervisedSampler(stellarG, nodes=nodes, length=length, number_of_walks=number_of_walks)
+    batch_size = 50
+    epochs = 4
+    num_samples = [10, 5]
+    
+    generator = GraphSAGELinkGenerator(stellarG, batch_size, num_samples)
+    train_gen = generator.flow(unsupervised_samples)
+    
+    layer_sizes = [50, 50]
+    graphsage = GraphSAGE(layer_sizes=layer_sizes, generator=generator, bias=True, dropout=0.0, normalize="l2")
+    
+    x_inp, x_out = graphsage.in_out_tensors()
+    x_inp_src = x_inp[0::2]
+    x_out_src = x_out[0]
+    embedding_model = keras.Model(inputs=x_inp_src, outputs=x_out_src)
+    
+    node_ids = list(G.nodes())
+    node_gen = GraphSAGENodeGenerator(stellarG, batch_size, num_samples).flow(node_ids)
+    
+    embeddings = embedding_model.predict(node_gen, workers=4, verbose=0)
+    DM = pd.DataFrame(embeddings)
+    DM.index = list(G.nodes())
+    
+    if dim == 2:
+        r_scale = 1.2
+        umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_2D_norm(G, DM, umap2D) #r_scale
+        
+        return posG
+    
+    elif dim == 3: 
+        umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_3D_norm(G, DM, umap_3D) #r_scale
+
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
+        
         
 #--------------------
 #

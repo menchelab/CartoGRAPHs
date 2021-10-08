@@ -16,6 +16,47 @@ from sklearn import preprocessing
 
 ########################################################################################
 
+def compute_centralityfeatures(G):
+    '''
+    Compute degree,betweenness,closeness and eigenvector centrality
+    Input: 
+    - G: networkx Graph 
+    
+    Return a dictionary sorted according to G.nodes with nodeID as keys and four centrality values. 
+    ''' 
+    
+    degs = dict(G.degree())
+    d_deghubs = {}
+    for node, de in sorted(degs.items(),key = lambda x: x[1], reverse = 1):
+        d_deghubs[node] = round(float(de/max(degs.values())),4)
+
+    closeness = nx.closeness_centrality(G)
+    d_clos = {}
+    for node, cl in sorted(closeness.items(), key = lambda x: x[1], reverse = 1):
+        d_clos[node] = round(cl,4)
+
+    betweens = nx.betweenness_centrality(G)
+    d_betw = {}
+    for node, be in sorted(betweens.items(), key = lambda x: x[1], reverse = 1):
+         d_betw[node] = round(be,4)
+
+    eigen = nx.eigenvector_centrality(G)
+    d_eigen = {}
+    for node, eig in sorted(eigen.items(), key = lambda x: x[1], reverse = 1):
+         d_eigen[node] = round(eig,4)
+
+    d_deghubs_sorted = {key:d_deghubs[key] for key in sorted(d_deghubs.keys())}
+    d_clos_sorted = {key:d_clos[key] for key in sorted(d_clos.keys())}
+    d_betw_sorted = {key:d_betw[key] for key in sorted(d_betw.keys())}
+    d_eigen_sorted = {key:d_eigen[key] for key in sorted(d_eigen.keys())}
+
+    feature_dict = dict(zip(d_deghubs_sorted.keys(), zip(d_deghubs_sorted.values(),d_clos_sorted.values(),d_betw_sorted.values(),d_eigen_sorted.values())))
+
+    feature_dict_sorted = {key:feature_dict[key] for key in G.nodes()}
+    
+    return feature_dict_sorted
+
+
 
 def rnd_walk_matrix2(A, r, a, num_nodes):
     '''

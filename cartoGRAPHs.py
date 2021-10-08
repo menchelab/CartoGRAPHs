@@ -11,10 +11,23 @@ import os
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+# replaced by stellargraph library 
 #from node2vec import Node2Vec
 #from ge import Struc2Vec
-import umap.umap_ as umap
 
+import stellargraph as sg
+from stellargraph import StellarGraph 
+from tensorflow import keras
+import gensim
+from gensim.models import Word2Vec
+from stellargraph.data import BiasedRandomWalk
+from stellargraph.data import UnsupervisedSampler
+from stellargraph.mapper import Attri2VecLinkGenerator, Attri2VecNodeGenerator
+from stellargraph.layer import Attri2Vec, link_classification
+from stellargraph.mapper import GraphWaveGenerator
+
+import umap.umap_ as umap
 
 from func_calculations import *
 from func_embed_plot import *
@@ -153,9 +166,34 @@ def layout_nodevec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
     wrks = 1
     dmns = 50 
     
-    node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
-    model = node2vec.fit(window=10, min_count=1)
-    arr = np.array([model.wv[str(x)] for x in G.nodes()])
+    # old version of Node2Vec library (by shenweichen "Graph Embeddings" on github)
+    #node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
+    #model = node2vec.fit(window=10, min_count=1)
+    
+    # using Stellargraph Library instead 
+    walk_length = 100  # maximum length of a random walk to use throughout this notebook
+    stellarG = StellarGraph.from_networkx(G)
+
+    rw = BiasedRandomWalk(stellarG)
+
+    weighted_walks = rw.run(
+        nodes=G.nodes(),  # root nodes
+        length=walk_length,  # maximum length of a random walk
+        n=10,  # number of random walks per root node
+        p=0.5,  # Defines (unormalised) probability, 1/p, of returning to source node
+        q=2.0,  # Defines (unormalised) probability, 1/q, for moving away from source node
+        weighted=True,  # for weighted random walks
+        seed=42,  # random seed fixed for reproducibility
+    )
+    weighted_model = gensim.models.Word2Vec(weighted_walks, 
+                                            vector_size=128, 
+                                            window=5, 
+                                            min_count=0, 
+                                            sg=1, 
+                                            workers=1, 
+                                            epochs=1)
+    
+    arr = np.array([weighted_model.wv[x] for x in G.nodes()])
     DM = pd.DataFrame(arr)
     DM.index = list(G.nodes())
 
@@ -184,9 +222,34 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
     wrks = 1
     dmns = 50 
     
-    node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
-    model = node2vec.fit(window=10, min_count=1)
-    arr = np.array([model.wv[str(x)] for x in G.nodes()])
+    # old version of Node2Vec library (by shenweichen "Graph Embeddings" on github)
+    #node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
+    #model = node2vec.fit(window=10, min_count=1)
+    
+    # using Stellargraph Library instead 
+    walk_length = 100  # maximum length of a random walk to use throughout this notebook
+    stellarG = StellarGraph.from_networkx(G)
+
+    rw = BiasedRandomWalk(stellarG)
+
+    weighted_walks = rw.run(
+        nodes=G.nodes(),  # root nodes
+        length=walk_length,  # maximum length of a random walk
+        n=10,  # number of random walks per root node
+        p=0.5,  # Defines (unormalised) probability, 1/p, of returning to source node
+        q=2.0,  # Defines (unormalised) probability, 1/q, for moving away from source node
+        weighted=True,  # for weighted random walks
+        seed=42,  # random seed fixed for reproducibility
+    )
+    weighted_model = gensim.models.Word2Vec(weighted_walks, 
+                                            vector_size=128, 
+                                            window=5, 
+                                            min_count=0, 
+                                            sg=1, 
+                                            workers=1, 
+                                            epochs=1)
+    
+    arr = np.array([weighted_model.wv[x] for x in G.nodes()])
     DM = pd.DataFrame(arr)
     DM.index = list(G.nodes())
     
@@ -215,35 +278,11 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
 
 def layout_importance_tsne(G,dim,prplxty, density, l_rate, steps, metric):
     
-    degs = dict(G.degree())
-    d_deghubs = {}
-    for node, de in sorted(degs.items(),key = lambda x: x[1], reverse = 1):
-        d_deghubs[node] = round(float(de/max(degs.values())),4)
-
-    closeness = nx.closeness_centrality(G)
-    d_clos = {}
-    for node, cl in sorted(closeness.items(), key = lambda x: x[1], reverse = 1):
-        d_clos[node] = round(cl,4)
-
-    betweens = nx.betweenness_centrality(G)
-    d_betw = {}
-    for node, be in sorted(betweens.items(), key = lambda x: x[1], reverse = 1):
-         d_betw[node] = round(be,4)
-
-    eigen = nx.eigenvector_centrality(G)
-    d_eigen = {}
-    for node, eig in sorted(eigen.items(), key = lambda x: x[1], reverse = 1):
-         d_eigen[node] = round(eig,4)
-
-    d_deghubs_sorted = {key:d_deghubs[key] for key in sorted(d_deghubs.keys())}
-    d_clos_sorted = {key:d_clos[key] for key in sorted(d_clos.keys())}
-    d_betw_sorted = {key:d_betw[key] for key in sorted(d_betw.keys())}
-    d_eigen_sorted = {key:d_eigen[key] for key in sorted(d_eigen.keys())}
-
-    feature_dict = dict(zip(d_deghubs_sorted.keys(), zip(d_deghubs_sorted.values(),d_clos_sorted.values(),d_betw_sorted.values(),d_eigen_sorted.values())))
-
-    feature_dict_sorted = {key:feature_dict[key] for key in G.nodes()}
-    DM = pd.DataFrame.from_dict(feature_dict_sorted, orient = 'index', columns = ['degs','clos','betw','eigen'])
+    feature_dict_sorted = compute_centralities(G) 
+    
+    DM = pd.DataFrame.from_dict(feature_dict_sorted, 
+                                orient = 'index', 
+                                columns = ['degs','clos','betw','eigen'])
     DM.index = list(G.nodes())
     
     if dim == 2:
@@ -266,35 +305,11 @@ def layout_importance_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         
 def layout_importance_umap(G,dim,n_neighbors, spread, min_dist, metric):
     
-    degs = dict(G.degree())
-    d_deghubs = {}
-    for node, de in sorted(degs.items(),key = lambda x: x[1], reverse = 1):
-        d_deghubs[node] = round(float(de/max(degs.values())),4)
+        feature_dict_sorted = compute_centralities(G) 
 
-    closeness = nx.closeness_centrality(G)
-    d_clos = {}
-    for node, cl in sorted(closeness.items(), key = lambda x: x[1], reverse = 1):
-        d_clos[node] = round(cl,4)
-
-    betweens = nx.betweenness_centrality(G)
-    d_betw = {}
-    for node, be in sorted(betweens.items(), key = lambda x: x[1], reverse = 1):
-         d_betw[node] = round(be,4)
-
-    eigen = nx.eigenvector_centrality(G)
-    d_eigen = {}
-    for node, eig in sorted(eigen.items(), key = lambda x: x[1], reverse = 1):
-         d_eigen[node] = round(eig,4)
-
-    d_deghubs_sorted = {key:d_deghubs[key] for key in sorted(d_deghubs.keys())}
-    d_clos_sorted = {key:d_clos[key] for key in sorted(d_clos.keys())}
-    d_betw_sorted = {key:d_betw[key] for key in sorted(d_betw.keys())}
-    d_eigen_sorted = {key:d_eigen[key] for key in sorted(d_eigen.keys())}
-
-    feature_dict = dict(zip(d_deghubs_sorted.keys(), zip(d_deghubs_sorted.values(),d_clos_sorted.values(),d_betw_sorted.values(),d_eigen_sorted.values())))
-
-    feature_dict_sorted = {key:feature_dict[key] for key in G.nodes()}
-    DM = pd.DataFrame.from_dict(feature_dict_sorted, orient = 'index', columns = ['degs','clos','betw','eigen'])
+    DM = pd.DataFrame.from_dict(feature_dict_sorted, 
+                                orient = 'index', 
+                                columns = ['degs','clos','betw','eigen'])
     DM.index = list(G.nodes())
 
     if dim == 2:
@@ -387,6 +402,214 @@ def layout_strucvec_umap(G,dim,n_neighbors, spread, min_dist, metric):
         
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
+        
+#--------------------
+#
+# A T T R I 2 V E C 
+#
+#--------------------
+
+def layout_attrivec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+    
+    features = compute_centralityfeatures(G)
+    d_features = pd.DataFrame(features).T
+    d_features.index = list(G.nodes())
+
+    stellarG = StellarGraph.from_networkx(G, node_features=d_features)
+    nodes = list(stellarG.nodes())
+    number_of_walks = 4
+    length = 5
+
+    unsupervised_samples = UnsupervisedSampler(stellarG, 
+                                               nodes=nodes, 
+                                               length=length, 
+                                               number_of_walks=number_of_walks)
+
+    batch_size = 50
+    epochs = 4
+    
+    generator = Attri2VecLinkGenerator(stellarG, batch_size)
+    train_gen = generator.flow(unsupervised_samples)
+    layer_sizes = [128]
+    attri2vec = Attri2Vec(layer_sizes=layer_sizes, 
+                          generator=generator, 
+                          bias=False, 
+                          normalize=None)
+
+    # Build the model and expose input and output sockets of attri2vec, for node pair inputs:
+    x_inp, x_out = attri2vec.in_out_tensors()
+
+    x_inp_src = x_inp[0]
+    x_out_src = x_out[0]
+    
+    embedding_model = keras.Model(inputs=x_inp_src, outputs=x_out_src)
+    node_gen = Attri2VecNodeGenerator(stellarG, batch_size).flow(stellarG.nodes())
+    embeddings = embedding_model.predict(node_gen, workers=1, verbose=0)
+    DM = pd.DataFrame(embeddings)
+    DM.index = list(G.nodes())
+    
+    if dim == 2:
+        r_scale = 1.2
+        tsne2D = embed_tsne_2D(DM, prplxty, density, l_rate, steps, metric)
+        posG = get_posG_2D_norm(G, DM, tsne2D) #, r_scale)
+        
+        return posG
+    
+    elif dim == 3: 
+        r_scale = 1.2
+        tsne3D = embed_tsne_3D(DM, prplxty, density, l_rate, steps, metric)
+        posG = get_posG_3D_norm(G, DM, tsne3D) #, r_scale)
+
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
+        
+def layout_attrivec_umap(G,dim,n_neighbors, spread, min_dist, metric):
+    
+    features = compute_centralityfeatures(G)
+    d_features = pd.DataFrame(features).T
+    d_features.index = list(G.nodes())
+
+    stellarG = StellarGraph.from_networkx(G, node_features=d_features)
+    nodes = list(stellarG.nodes())
+    number_of_walks = 4
+    length = 5
+
+    unsupervised_samples = UnsupervisedSampler(stellarG, 
+                                               nodes=nodes, 
+                                               length=length, 
+                                               number_of_walks=number_of_walks)
+
+    batch_size = 50
+    epochs = 4
+    
+    generator = Attri2VecLinkGenerator(stellarG, batch_size)
+    train_gen = generator.flow(unsupervised_samples)
+    layer_sizes = [128]
+    attri2vec = Attri2Vec(layer_sizes=layer_sizes, 
+                          generator=generator, 
+                          bias=False, 
+                          normalize=None)
+
+    # Build the model and expose input and output sockets of attri2vec, for node pair inputs:
+    x_inp, x_out = attri2vec.in_out_tensors()
+
+    x_inp_src = x_inp[0]
+    x_out_src = x_out[0]
+    
+    embedding_model = keras.Model(inputs=x_inp_src, outputs=x_out_src)
+    node_gen = Attri2VecNodeGenerator(stellarG, batch_size).flow(stellarG.nodes())
+    embeddings = embedding_model.predict(node_gen, workers=1, verbose=0)
+    DM = pd.DataFrame(embeddings)
+    DM.index = list(G.nodes())
+    
+    if dim == 2:
+        r_scale = 1.2
+        umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_2D_norm(G, DM, umap2D) #r_scale
+        
+        return posG
+    
+    elif dim == 3: 
+        umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_3D_norm(G, DM, umap_3D) #r_scale
+
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
+        
+        
+#--------------------
+#
+# G R A P H W A V E 
+#
+#--------------------
+
+
+def layout_graphwave_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+    
+    features = compute_centralityfeatures(G)
+    d_features = pd.DataFrame(features).T
+    d_features.index = list(G.nodes())
+
+    stellarG = StellarGraph.from_networkx(G, node_features=d_features)
+    
+    sample_points = np.linspace(0, 100, 50).astype(np.float32)
+    degree = 20
+    scales = [5, 10]
+
+    generator = GraphWaveGenerator(stellarG, scales=scales, degree=degree)
+
+    embeddings_dataset = generator.flow(
+        node_ids=G.nodes(), 
+        sample_points=sample_points, 
+        batch_size=1, repeat=False)
+
+    embeddings_notstacked = [x.numpy() for x in embeddings_dataset]
+    embeddings = np.vstack(embeddings_notstacked)
+    DM = pd.DataFrame(embeddings)
+    DM.index = list(G.nodes())
+    
+    if dim == 2:
+        r_scale = 1.2
+        tsne2D = embed_tsne_2D(DM, prplxty, density, l_rate, steps, metric)
+        posG = get_posG_2D_norm(G, DM, tsne2D) #, r_scale)
+        
+        return posG
+    
+    elif dim == 3: 
+        r_scale = 1.2
+        tsne3D = embed_tsne_3D(DM, prplxty, density, l_rate, steps, metric)
+        posG = get_posG_3D_norm(G, DM, tsne3D) #, r_scale)
+
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
+
+        
+def layout_graphwave_umap(G,dim,n_neighbors, spread, min_dist, metric):
+    
+    stellarG = StellarGraph.from_networkx(G, node_features=d_features)
+    
+    sample_points = np.linspace(0, 100, 50).astype(np.float32)
+    degree = 20
+    scales = [5, 10]
+
+    generator = GraphWaveGenerator(stellarG, scales=scales, degree=degree)
+
+    embeddings_dataset = generator.flow(
+        node_ids=G.nodes(), 
+        sample_points=sample_points, 
+        batch_size=1, repeat=False)
+
+    embeddings_notstacked = [x.numpy() for x in embeddings_dataset]
+    embeddings = np.vstack(embeddings_notstacked)
+    DM = pd.DataFrame(embeddings)
+    DM.index = list(G.nodes())
+    
+    if dim == 2:
+        r_scale = 1.2
+        umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_2D_norm(G, DM, umap2D) #r_scale
+        
+        return posG
+    
+    elif dim == 3: 
+        umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
+        posG = get_posG_3D_norm(G, DM, umap_3D) #r_scale
+
+        return posG
+        
+    else:
+        print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
 
 
         

@@ -22,6 +22,12 @@ from colormath.color_objects import sRGBColor, LabColor
 #from fa2 import ForceAtlas2
 #from fastdist import fastdist
 
+import gensim 
+from gensim.models import Word2Vec
+import stellargraph as sg
+from stellargraph import StellarGraph
+from stellargraph.data import BiasedRandomWalk
+
 #from html2image import Html2Image
 
 import itertools as it
@@ -1039,16 +1045,44 @@ def pearson_corrcoef(dist_network, dist_layout):
 
 #################
 
+
+
 def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
+    
     
     walk_lngth = 50
     num_wlks = 10
     wrks = 1
     dmns = 50 
     
-    node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
-    model = node2vec.fit(window=10, min_count=1)
-    arr = np.array([model.wv[str(x)] for x in G.nodes()])
+    # old version of Node2Vec library (by shenweichen "Graph Embeddings" on github)
+    #node2vec = Node2Vec(G, dimensions=dmns, walk_length=walk_lngth, num_walks=num_wlks, workers=wrks, quiet=True)
+    #model = node2vec.fit(window=10, min_count=1)
+    
+    # using Stellargraph Library instead 
+    walk_length = 100  # maximum length of a random walk to use throughout this notebook
+    stellarG = StellarGraph.from_networkx(G)
+
+    rw = BiasedRandomWalk(stellarG)
+
+    weighted_walks = rw.run(
+        nodes=G.nodes(),  # root nodes
+        length=walk_length,  # maximum length of a random walk
+        n=10,  # number of random walks per root node
+        p=0.5,  # Defines (unormalised) probability, 1/p, of returning to source node
+        q=2.0,  # Defines (unormalised) probability, 1/q, for moving away from source node
+        weighted=True,  # for weighted random walks
+        seed=42,  # random seed fixed for reproducibility
+    )
+    weighted_model = gensim.models.Word2Vec(weighted_walks, 
+                                            vector_size=128, 
+                                            window=5, 
+                                            min_count=0, 
+                                            sg=1, 
+                                            workers=1, 
+                                            epochs=1)
+    
+    arr = np.array([weighted_model.wv[x] for x in G.nodes()])
     DM = pd.DataFrame(arr)
     DM.index = list(G.nodes())
     
@@ -1068,7 +1102,6 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
         
-
         
 def minmaxscaling_posG(G,posG):
     df_posG = pd.DataFrame(posG).T

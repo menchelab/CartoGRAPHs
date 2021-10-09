@@ -7,8 +7,13 @@
 ########################################################################################
 
 import colorsys
+
 import seaborn as sns
+import matplotlib as mpl
+
+import numpy as np 
 import networkx as nx
+
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
@@ -16,6 +21,12 @@ from sklearn.cluster import SpectralClustering
 from sklearn.metrics import pairwise_distances
 
 ########################################################################################
+
+def colorFader(c1,c2,mix=0): #fade (linear interpolate) from color c1 (at mix=0) to c2 (mix=1)
+    c1=np.array(mpl.colors.to_rgb(c1))
+    c2=np.array(mpl.colors.to_rgb(c2))
+    return mpl.colors.to_hex((1-mix)*c1 + mix*c2)
+
 
 def color_nodes(l_genes, color):
     ''' 

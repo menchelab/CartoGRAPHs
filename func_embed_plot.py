@@ -497,7 +497,7 @@ def position_labels(posG, move_x, move_y):
 # P L O T T I N G 
 # -------------------------------------------------------------------------------------
 
-def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25):
+def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac = 0.8):
     '''
     Get trace of nodes for plotting in 2D. 
     Input: 
@@ -521,7 +521,8 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25):
                 size = size,
                 symbol = 'circle',
                 line = dict(width = linewidth,
-                        color = 'dimgrey')
+                        color = 'dimgrey'),
+                opacity = opac
             ),
         )
     

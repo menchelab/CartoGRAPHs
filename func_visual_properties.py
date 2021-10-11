@@ -253,6 +253,25 @@ def color_edges_from_nodelist_specific(G, l_nodes, color):
     return d_col_edges
 
 
+def color_edges_from_nodelist_specific_or(G, l_nodes, color):
+    '''
+    Color (highlight) edges from specific node list exclusively.
+    Input:
+    - G = Graph 
+    - l_nodes = list of nodes 
+    - color = string; color to hightlight
+    
+    Return edge list for selected edges IF ONE node is IN l_genes. 
+    '''
+    
+    edge_lst = [(u,v)for u,v in G.edges(l_nodes) if u in l_nodes or v in l_nodes]
+
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color
+    return d_col_edges
+
+
 def colors_spectralclustering(G, posG, n_clus, n_comp, pal ='gist_rainbow'):
     '''
     Generate node colors based on clustering.

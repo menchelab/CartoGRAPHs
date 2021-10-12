@@ -814,14 +814,14 @@ def layout_portrait_umap(G, DM, dim, n_neighbors, spread, min_dist, metric):
     if dim == 2:
         r_scale = 1.2
         umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
-        posG = get_posG_2D_norm(G, DM, umap2D) #r_scale
+        posG = get_posG_2D_norm(G, DM, umap2D,r_scale)
         
         return posG
     
     elif dim == 3:
         r_scale = 1.2
         umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
-        posG = get_posG_3D_norm(G, DM, umap_3D) #r_scale
+        posG = get_posG_3D_norm(G, DM, umap_3D,r_scale)
 
         return posG
         

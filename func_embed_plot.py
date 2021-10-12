@@ -373,7 +373,7 @@ def get_posG_2D(l_nodes, embed):
     return posG
 
 
-def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
+def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 1.2):
     '''
     Generate coordinates from embedding. 
     Input:
@@ -387,12 +387,12 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 5):
     genes = []
     for i in DM.index:
         if str(i) in G.nodes() or int(i) in G.nodes():
-            genes.append(i)
+            genes.append(str(i))
 
     genes_rest = [] 
     for i in G.nodes():
         if i not in genes:
-            genes_rest.append(i)
+            genes_rest.append(str(i))
 
     #print(len(genes))
     #print(len(genes_rest))

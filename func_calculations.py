@@ -15,6 +15,8 @@ import pymysql as mysql
 from sklearn.preprocessing import normalize
 from sklearn import preprocessing
 
+from shapely import geometry
+
 ########################################################################################
 
 def compute_centralityfeatures(G):

@@ -18,9 +18,16 @@ relationships in large-scale biological networks.
 The structue of the project Github repo is as described below:
 ```
 menchelab/cartoGRAPHs
-- cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks 
-- cartoGRAPHs_organism.ipynb ---> network visualization examples with the human interactome and the yeast interactome
+  - NOTEBOOKS TO USE THE FRAMEWORK
+    - cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks, with one exemplary toy graph included 
+    - cartoGRAPHs_LayoutOverview.ipynb ---> jupyter notebook to run with exemplary networks, as an overview of layouts 
+    - cartoGRAPHs_organism.ipynb ---> network visualization examples with the human interactome
+  - NOTEBOOKS TO REPRODUCE FIGURES SHOWN IN THE MANUSCRIPT "CartoGRAPHs: A Framework for Interpretable Network Visualizations". 
+    - cartoGRAPHs_organisms_ManuscriptFigure*.ipynb
 
+  - NOTEBOOKS TO REPRODUCE THE CALCULATIONS DONE IN THE BENCHMARKING PROCESSES
+    are to be found in the /benchmark-folder
+    
 Python files including functions to execute the notebooks and produce Network Layouts and Visualizations
 - cartoGRAPHs.py ---> contains the actual layout functions
 - func_load_data.py ---> loading precalculated data, to be found in /input/

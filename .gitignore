@@ -2,6 +2,7 @@
 # available via link in read-me
 input/ 
 benchmark/netdist_precalc/
+archiv/ 
 
 # Mac files 
 *.DS_Store

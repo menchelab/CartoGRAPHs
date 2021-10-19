@@ -36,10 +36,9 @@ Python files including functions to execute the notebooks and produce Network La
 - func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature communications, 2021
 
 Folders / directories for input and output : 
-├── input ---> all input data required to reproduce figures in jupyter notebook and python files
+├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
 ├── benchmark ---> benchmark evaluations 
 ├── output_plots ---> folder for saving produced plots during notebook sessions
-├── ge ---> a node embedding repo containing functions for embeddings such as node2vec, struc2vec etc. from github.com/shenweichen/GraphEmbedding
 └── img ---> contains images other than layouts
 ```
 

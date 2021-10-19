@@ -24,7 +24,6 @@ menchelab/cartoGRAPHs
     - cartoGRAPHs_organism.ipynb ---> network visualization examples with the human interactome
   - NOTEBOOKS TO REPRODUCE FIGURES SHOWN IN THE MANUSCRIPT "CartoGRAPHs: A Framework for Interpretable Network Visualizations". 
     - cartoGRAPHs_organisms_ManuscriptFigure*.ipynb
-
   - NOTEBOOKS TO REPRODUCE THE CALCULATIONS DONE IN THE BENCHMARKING PROCESSES
     are to be found in the /benchmark-folder
     

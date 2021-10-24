@@ -49,7 +49,7 @@ Folders / directories for input and output :
 The code can be run using Jupyter Notebook/Lab. To use an individual graph (networkx graph) use the "cartoGRAPHs_main.ipynb", to work with a precalculated network, such as the human interactome / yeast interactome use
 "cartoGRAPHs_organisms.ipynb". 
 Input files essential to run the scripts can be downloaded
-[here](https://drive.google.com/file/d/1_FR-It9-h9ZZ1Pn-ErwGqxxIlMCHG_54/view?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
+[here](https://drive.google.com/drive/folders/1gaMc3cQLFzzFQtYWey7J0uFaXOMuGnWe?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
 
 A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs](https://github.com/menchelab/cartoGRAPHs_app). 
 
@@ -84,7 +84,7 @@ A web-based application was developed to visually inspect networks with differen
 ### **MODEL NETWORKS FOR BENCHMARKING**
 
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used.
-The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be downloaded [here](https://drive.google.com/file/d/1_Fhc6pbW8TfCB9jYUQGG-8I5qLs1niUZ/view?usp=sharing). Please unzip and place the folder in the directory of the benchmarking scripts (i.e. in the "benchmark" folder). 
+The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be downloaded [here](https://drive.google.com/drive/folders/1VFjPqTzy7JbWXCM_fYu2nAzo6DpeIrfH?usp=sharing). Please unzip and place the folder in the directory of the benchmarking scripts (i.e. in the "benchmark" folder). 
 
 ---
 

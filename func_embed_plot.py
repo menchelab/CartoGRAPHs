@@ -965,13 +965,13 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
 # -------------------------------------------------------------------------------------
 
 
-def get_trace_nodes_3D(posG, info_list, color, size, opac=0.9):
+def get_trace_nodes_3D(posG, info_list, color_list, size, linewidth=0.25, opac = 0.8):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
     - posG = dictionary with nodes as keys and coordinates as values.
     - info_list = hover information for each node, e.g. a list sorted according to the initial graph/posG keys
-    - color = string; hex color
+    - color_list = string; hex color
     - opac = transparency of edges e.g. 0.2
     
     Return a trace for plotly graph objects plot. 
@@ -986,12 +986,12 @@ def get_trace_nodes_3D(posG, info_list, color, size, opac=0.9):
                            hoverinfo = 'text',
                            #textposition='middle center',
                            marker = dict(
-                color = color,
+                color = color_list,
                 size = size,
                 symbol = 'circle',
-                line = dict(width = 1.0,
-                        color = color),
-                opacity = opac,
+                line = dict(width = linewidth,
+                        color = 'dimgrey'),
+                opacity = opac
             ),
         )
     

@@ -387,12 +387,14 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 1.2):
     genes = []
     for i in DM.index:
         if str(i) in G.nodes() or int(i) in G.nodes():
-            genes.append(str(i))
+            #genes.append(str(i))
+            genes.append(i)
 
     genes_rest = [] 
     for i in G.nodes():
         if i not in genes:
-            genes_rest.append(str(i))
+            #genes_rest.append(str(i))
+            genes_rest.append(i)
 
     #print(len(genes))
     #print(len(genes_rest))
@@ -668,7 +670,8 @@ def plot_2D(data,path,fname):
         fig.add_trace(i)
         
     fig.update_layout(template= 'plotly_white', 
-                      showlegend=False, width=1200, height=1200,
+                      showlegend=False, 
+                      width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',

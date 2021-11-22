@@ -552,7 +552,7 @@ def color_edges_from_nodelist_specific(G, l_nodes, color):
 
 
 
-def get_trace_edges_2D(G, posG, color, opac = 0.2, linewidth = 0.2):
+def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.2):
     '''
     Get trace of edges for plotting in 2D. 
     Input: 
@@ -654,12 +654,13 @@ def get_trace_edges_from_nodelist2D(G, l_nodes, posG, color, linew = 0.75, opac=
 
 
 
-def plot_2D(data,path,fname):
+def plot_2D(data,path,fname,scheme='light'):
     '''
     Create a 2D plot from traces using plotly.
     Input: 
     - data = list of traces
     - filename = string
+    - scheme = 'light' or 'dark'
     
     Return plot in 2D and file, saved as png.
     '''
@@ -668,18 +669,36 @@ def plot_2D(data,path,fname):
     
     for i in data:
         fig.add_trace(i)
+       
+    if scheme == 'light':
+        fig.update_layout(template= 'plotly_white', 
+                          showlegend=False, 
+                          width=1200, height=1200,
+                              scene=dict(
+                                  xaxis_title='',
+                                  yaxis_title='',
+                                  xaxis=dict(nticks=0,tickfont=dict(
+                                        color='white')),
+                                  yaxis=dict(nticks=0,tickfont=dict(
+                                        color='white')),
+                            ))  
         
-    fig.update_layout(template= 'plotly_white', 
-                      showlegend=False, 
-                      width=1200, height=1200,
-                          scene=dict(
-                              xaxis_title='',
-                              yaxis_title='',
-                              xaxis=dict(nticks=0,tickfont=dict(
-                                    color='white')),
-                              yaxis=dict(nticks=0,tickfont=dict(
-                                    color='white')),
-                        ))    
+    elif scheme == 'dark':
+        fig.update_layout(template= 'plotly_dark', 
+                          showlegend=False, 
+                          width=1200, height=1200,
+                              scene=dict(
+                                  xaxis_title='',
+                                  yaxis_title='',
+                                  xaxis=dict(nticks=0,tickfont=dict(
+                                        color='black')),
+                                  yaxis=dict(nticks=0,tickfont=dict(
+                                        color='black')),
+                            ))  
+    else:
+        print('Oops, something went wrong. Please check input parameters.')
+
+    
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     
@@ -698,7 +717,7 @@ def plot_2D(data,path,fname):
     
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 
-        
+
 ########################################################################################
 
 # -------------------------------------------------------------------------------------
@@ -968,13 +987,13 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
 # -------------------------------------------------------------------------------------
 
 
-def get_trace_nodes_3D(posG, info_list, color_list, size, linewidth=0.25, opac = 0.8):
+def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.25, opac = 0.8):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
     - posG = dictionary with nodes as keys and coordinates as values.
     - info_list = hover information for each node, e.g. a list sorted according to the initial graph/posG keys
-    - color_list = string; hex color
+    - color = string; hex color
     - opac = transparency of edges e.g. 0.2
     
     Return a trace for plotly graph objects plot. 
@@ -989,7 +1008,7 @@ def get_trace_nodes_3D(posG, info_list, color_list, size, linewidth=0.25, opac =
                            hoverinfo = 'text',
                            #textposition='middle center',
                            marker = dict(
-                color = color_list,
+                color = color,
                 size = size,
                 symbol = 'circle',
                 line = dict(width = linewidth,
@@ -1001,7 +1020,7 @@ def get_trace_nodes_3D(posG, info_list, color_list, size, linewidth=0.25, opac =
     return trace
 
 
-def get_trace_edges_3D(G, posG, color, opac = 0.2, linewidth=0.2):
+def get_trace_edges_3D(G, posG, color = '#ACACAC', opac = 0.2, linewidth=0.2):
     '''
     Get trace of edges for plotting in 3D. 
     Input: 
@@ -1222,7 +1241,9 @@ def plot_3D(data,path,fname, scheme='light',annotat=None):
                             dragmode="turntable",
                             annotations = annotat
                         ))    
-
+    else: 
+        print('Oops, something went wrong. Please check input parameters.')
+    
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     

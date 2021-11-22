@@ -561,14 +561,10 @@ def draw_node_degree(G, scalef):
     Return list of radii for each node (2D). 
     '''
     
-    #x = 20
-    #ring_frac = np.sqrt((x-1.)/x)
-    #ring_frac = (x-1.)/x
-
     l_size = {}
     for node in G.nodes():
         k = nx.degree(G, node)
-        R = scalef * (1 + k**1.1) 
+        R = math.log(k) * scalef
 
         l_size[node] = R
         

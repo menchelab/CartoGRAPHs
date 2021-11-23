@@ -34,6 +34,57 @@ from func_embed_plot import *
 
 ########################################################################################
 
+
+def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
+    '''
+    Generates a layout of choice.
+    
+    Input: 
+    G - A networkx Graph
+    dim - int; 2 or 3 dimensions
+    layouttype - string; for layout type > 'local','global','importance','functional'
+    dimred_method - string; optional > choose between e.g. tsne or umap 
+    
+    Result: 
+    A generated layout of choice to be input to a plot function e.g. plot_2Dfigure, plot_3Dfigure
+    '''
+    
+    if layoutmethod == 'local':
+        if dimred_method == 'tsne':
+            return layout_local_tsne(G, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine')
+        elif dimred_method == 'umap':
+            return layout_local_umap(G, dim, n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine')
+            
+    elif layoutmethod == 'global':
+        if dimred_method == 'tsne':
+            return layout_global_tsne(G, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine')
+        elif dimred_method == 'umap':
+            return layout_global_umap(G, dim, n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine')
+        
+    elif layoutmethod == 'importance':
+        if dimred_method == 'tsne':
+            return layout_importance_tsne(G, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine')
+        elif dimred_method == 'umap':
+            return layout_importance_umap(G, dim, n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine')
+        
+    elif layoutmethod == 'functional':
+        if Matrix is None: 
+            print('Please specify a functional matrix of choice with N x rows with G.nodes and M x feature columns.')
+            
+        elif dimred_method == 'tsne' and Matrix is not None:
+            return layout_functional_tsne(G, Matrix, dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine')
+        elif dimred_method == 'umap' and Matrix is not None:
+            return layout_functional_umap(G, Matrix,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine')  
+        else: 
+            print('Something went wrong. Please enter a valid layout type.')
+        
+        
+    else: 
+        print('Something went wrong. Please enter a valid layout type.')
+        
+        
+        
+    
 #--------------------
 #
 # L O C A L 
@@ -300,8 +351,8 @@ def layout_importance_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, 
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
-        
-def layout_importance_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+
+        def layout_importance_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     feature_dict_sorted = compute_centralityfeatures(G) 
 

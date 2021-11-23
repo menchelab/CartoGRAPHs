@@ -112,6 +112,7 @@ def color_nodes_from_dict_unsort(d_to_be_colored, palette):
     return d_node_color # colors
 
 
+
 def color_nodes_from_dict(G, d_to_be_colored, palette): 
     ''' 
     Generate node colors based on dictionary.

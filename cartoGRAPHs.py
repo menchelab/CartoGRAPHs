@@ -352,7 +352,7 @@ def layout_importance_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, 
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
 
-        def layout_importance_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_importance_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     feature_dict_sorted = compute_centralityfeatures(G) 
 

@@ -1054,12 +1054,7 @@ def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
     
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
-    
-    # --- show figure ---
-    #py.iplot(fig)
-    
-    # --- get html file ---  
-    #fig.write_html(path+fname+'.html')
+    fig.write_html(path+fname+'.html')
     
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 
@@ -1195,12 +1190,7 @@ def plot_3Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname, 
     
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
-    
-    # --- show figure ---
-    #py.iplot(fig)
-    
-    # --- get html file ---  
-    #fig.write_html(path+fname+'.html')
+    fig.write_html(path+fname+'.html')
     
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 

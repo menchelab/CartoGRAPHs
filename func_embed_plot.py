@@ -815,7 +815,7 @@ def plot_2D(data,path,fname,scheme='light'):
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 
 
-def plot_2Dfigure(G, posG, d_feature, d_colors, d_size, d_legend, path, fname,scheme='light'):
+def plot_2Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname,scheme='light'):
     
     umap_nodes = get_trace_nodes_2D_legend(posG, d_features, d_colors, d_size, d_legend)
     umap_edges = get_trace_edges_2D(G, posG)

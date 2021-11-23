@@ -430,7 +430,7 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac = 0.8):
+def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac = 0.9):
     '''
     Get trace of nodes for plotting in 2D. 
     Input: 
@@ -462,7 +462,7 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac =
     return trace
 
 
-def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.25, opac = 0.8):
+def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.25, opac = 0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -496,8 +496,8 @@ def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.25, opac = 0.8)
     return trace
 
 
-    
-def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.8):
+
+def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.9):
     '''
     Get trace of nodes for plotting in 2D. 
     Input: 
@@ -508,7 +508,6 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
     
     Return a trace for plotly graph objects plot including a legend. 
     '''
-    
     # dividing traces based on unique colors > for legend
     color_dict = {}
     for i in set(color.values()):
@@ -523,7 +522,8 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
         sub = {}
         for ix,(k,v) in enumerate(posG.items()):
             if k in j_list:
-                sub[ix] = v
+                #sub[ix] = v
+                sub[k] = v
             d_col_pos[i] = sub
     
     # creating traces 
@@ -535,14 +535,15 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
         d_col_pos = d_col_pos_sorted
 
         for elem,(col, dct) in enumerate(d_col_pos.items()):
+            
             ids = list(dct.keys())
             coords = list(dct.values())
             
-            info_sorted_to_ids = {key:info[key] for key in ids}
-            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
-            
-            size_sorted_to_ids = {key:size[key] for key in ids}
-            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            l_info_sorted_to_ids = [(info[key]) for key in ids] #{key:info[key] for key in ids}            
+            #l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+
+            l_size_sorted_to_ids = [(size[key]) for key in ids] #{key:size[key] for key in ids}
+            #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
             
             trace = pgo.Scatter(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
@@ -561,18 +562,18 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
                     )
             traces.append(trace)
         return traces 
-        
     else:
     
         for elem,(col, dct) in enumerate(d_col_pos.items()):
+            
             ids = list(dct.keys())
             coords = list(dct.values())
             
-            info_sorted_to_ids = {key:info[key] for key in ids}
-            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
-            
-            size_sorted_to_ids = {key:size[key] for key in ids}
-            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            l_info_sorted_to_ids = [(info[key]) for key in ids] #{key:info[key] for key in ids}            
+            #l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+
+            l_size_sorted_to_ids = [(size[key]) for key in ids] #{key:size[key] for key in ids}
+            #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
             
             trace = pgo.Scatter(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
@@ -593,8 +594,7 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
         return traces 
 
 
-
-def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.8):
+def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -620,7 +620,8 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
         sub = {}
         for ix,(k,v) in enumerate(posG.items()):
             if k in j_list:
-                sub[ix] = v
+                #sub[ix] = v
+                sub[k] = v
             d_col_pos[i] = sub
     
     # creating traces 
@@ -631,14 +632,15 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
         d_col_pos = d_col_pos_sorted
 
         for elem,(col, dct) in enumerate(d_col_pos.items()):
+            
             ids = list(dct.keys())
             coords = list(dct.values())
             
-            info_sorted_to_ids = {key:info[key] for key in ids}
-            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
-            
-            size_sorted_to_ids = {key:size[key] for key in ids}
-            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            l_info_sorted_to_ids = [(info[key]) for key in ids] #{key:info[key] for key in ids}            
+            #l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+
+            l_size_sorted_to_ids = [(size[key]) for key in ids] #{key:size[key] for key in ids}
+            #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
             
             trace = pgo.Scatter3d(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
@@ -661,14 +663,15 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
     
     else:      
         for elem,(col, dct) in enumerate(d_col_pos.items()):
+            
             ids = list(dct.keys())
             coords = list(dct.values())
             
-            info_sorted_to_ids = {key:info[key] for key in ids}
-            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
-            
-            size_sorted_to_ids = {key:size[key] for key in ids}
-            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            l_info_sorted_to_ids = [(info[key]) for key in ids] #{key:info[key] for key in ids}            
+            #l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+
+            l_size_sorted_to_ids = [(size[key]) for key in ids] #{key:size[key] for key in ids}
+            #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
             
             trace = pgo.Scatter3d(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
@@ -691,7 +694,7 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
     
 
 
-def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.5):
+def get_trace_edges_2D(G, posG, color = '#C7C7C7', opac = 0.1, linewidth = 0.25):
     '''
     Get trace of edges for plotting in 2D. 
     Input: 
@@ -702,6 +705,7 @@ def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.5):
     
     Return a trace for plotly graph objects plot. 
     '''
+    
     
     edge_x = []
     edge_y = []
@@ -714,7 +718,20 @@ def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.5):
         edge_y.append(y0)
         edge_y.append(y1)
         edge_y.append(None)
- 
+    
+    
+    if len(edge_x) < 500: 
+        linewidth = 1.0
+        opac = 0.5
+        
+    elif len(edge_x) >= 500 and len(edge_x) < 2000:
+        linewidth = 1.0
+        opac = 0.35
+    
+    elif len(edge_x) >= 2000:
+        linewidth = 0.75
+        opac = 0.1
+            
     trace_edges = pgo.Scatter(
                         x = edge_x, 
                         y = edge_y, 
@@ -727,7 +744,7 @@ def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.5):
     return trace_edges
 
 
-def get_trace_edges_3D(G, posG, color = '#ACACAC', opac = 0.2, linewidth=0.5):
+def get_trace_edges_3D(G, posG, color = '#C7C7C7', opac = 0.1, linewidth=0.25):
     '''
     Get trace of edges for plotting in 3D. 
     Input: 
@@ -754,7 +771,19 @@ def get_trace_edges_3D(G, posG, color = '#ACACAC', opac = 0.2, linewidth=0.5):
             edge_z.append(z0)
             edge_z.append(z1)
             edge_z.append(None)
-
+            
+    if len(edge_x) < 500: 
+        linewidth = 1.0
+        opac = 0.5
+        
+    elif len(edge_x) >= 500 and len(edge_x) < 2000:
+        linewidth = 1.0
+        opac = 0.35
+    
+    elif len(edge_x) >= 2000:
+        linewidth = 0.75
+        opac = 0.1
+        
     trace_edges = pgo.Scatter3d(
                                 x = edge_x, 
                                 y = edge_y, 
@@ -1060,12 +1089,15 @@ def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
 
 
 
-def plot_2Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname,scheme='light'):
-    
+def plot_2Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname,scheme='light', with_edges = True):
     umap_nodes = get_trace_nodes_2D_legend(posG, d_features, d_colors, d_size, d_legend)
     umap_edges = get_trace_edges_2D(G, posG)
-    data = [umap_edges,*umap_nodes]
-
+    
+    if with_edges == True:
+        data = [umap_edges, *umap_nodes]
+    else: 
+        data = [*umap_nodes]
+        
     fig = pgo.Figure()
     
     for i in data:
@@ -1108,12 +1140,14 @@ def plot_2Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname,s
 
 
 
-def plot_3Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname, scheme='light',annotat=None):
-    
+def plot_3Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname, scheme='light', with_edges = True, annotat=None):
     umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
     umap_edges = get_trace_edges_3D(G, posG)
-    data = [umap_edges,*umap_nodes]
     
+    if with_edges == True:
+        data = [umap_edges, *umap_nodes]
+    else: 
+        data = [*umap_nodes]
     
     fig = pgo.Figure()
     

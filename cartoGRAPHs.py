@@ -78,7 +78,14 @@ def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
             return layout_functional_umap(G, Matrix,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine')  
         else: 
             print('Something went wrong. Please enter a valid layout type.')
-        
+    
+    elif layoutmethod == 'precalculated':
+        if Matrix is None: 
+            print('Please specify a precalculated matrix of choice with N x rows of G.nodes and M x columns of features.')
+        elif dimred_method == 'tsne':
+            return layout_portrait_tsne(G,Matrix,dim,prplxty=50, density=1, l_rate=200, steps=250, metric='cosine') 
+        elif dimred_method == 'umap':
+            return layout_portrait_umap(G,Matrix,dim,n_neighbors=8, spread=1, min_dist=0.0, metric='cosine')
     else: 
         print('Something went wrong. Please enter a valid layout type.')
         
@@ -838,6 +845,7 @@ def springlayout_3D(G, itr):
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
 
+
 def layout_portrait_tsne(G, DM, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     if dim == 2:
@@ -877,3 +885,4 @@ def layout_portrait_umap(G, DM, dim, n_neighbors=20, spread=1.0, min_dist=0.0, m
         
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
+        

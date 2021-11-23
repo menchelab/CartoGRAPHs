@@ -44,7 +44,7 @@ from func_embed_plot import *
 #
 #--------------------
 
-def layout_local_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_local_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
     A_array = A.toarray()
@@ -70,7 +70,7 @@ def layout_local_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
 
-def layout_local_umap(G,dim,n_neighbors, spread, min_dist, metric):
+def layout_local_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
     A_array = A.toarray()
@@ -102,7 +102,7 @@ def layout_local_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #
 #--------------------
 
-def layout_global_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_global_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     r=0.9
     alpha=1.0
@@ -130,7 +130,7 @@ def layout_global_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_global_umap(G,dim,n_neighbors, spread, min_dist, metric):
+def layout_global_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     r=0.9
     alpha=1.0
@@ -163,7 +163,7 @@ def layout_global_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #
 #--------------------
 
-def layout_nodevec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_nodevec_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     walk_lngth = 50
     num_wlks = 10
@@ -219,7 +219,7 @@ def layout_nodevec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
+def layout_nodevec_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     walk_lngth = 50
     num_wlks = 10
@@ -280,7 +280,7 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #
 #--------------------
 
-def layout_importance_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_importance_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     feature_dict_sorted = compute_centralityfeatures(G) 
     
@@ -305,7 +305,7 @@ def layout_importance_tsne(G,dim,prplxty, density, l_rate, steps, metric):
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_importance_umap(G,dim,n_neighbors, spread, min_dist, metric):
+def layout_importance_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     feature_dict_sorted = compute_centralityfeatures(G) 
 
@@ -335,7 +335,7 @@ def layout_importance_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #
 #--------------------
 
-def layout_attrivec_tsne(G,d_features,dim,prplxty, density, l_rate, steps, metric):
+def layout_attrivec_tsne(G,d_features,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     stellarG = StellarGraph.from_networkx(G, node_features=d_features)
     nodes = list(stellarG.nodes())
@@ -389,7 +389,7 @@ def layout_attrivec_tsne(G,d_features,dim,prplxty, density, l_rate, steps, metri
 
         
         
-def layout_attrivec_umap(G,d_features,dim,n_neighbors, spread, min_dist, metric):
+def layout_attrivec_umap(G,d_features,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
 
     stellarG = StellarGraph.from_networkx(G, node_features=d_features)
     nodes = list(stellarG.nodes())
@@ -449,7 +449,7 @@ def layout_attrivec_umap(G,d_features,dim,n_neighbors, spread, min_dist, metric)
 #--------------------
 
 
-def layout_graphwave_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_graphwave_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     #features = compute_centralityfeatures(G)
     #d_features = pd.DataFrame(features).T
@@ -492,7 +492,7 @@ def layout_graphwave_tsne(G,dim,prplxty, density, l_rate, steps, metric):
 
 
         
-def layout_graphwave_umap(G,dim,n_neighbors, spread, min_dist, metric):
+def layout_graphwave_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     #features = compute_centralityfeatures(G)
     #d_features = pd.DataFrame(features).T
@@ -541,7 +541,7 @@ def layout_graphwave_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #--------------------
         
         
-def layout_metapathvec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
+def layout_metapathvec_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
     A_array = A.toarray()
@@ -594,7 +594,7 @@ def layout_metapathvec_tsne(G,dim,prplxty, density, l_rate, steps, metric):
 
         
         
-def layout_metapathvec_umap(G,dim,n_neighbors, spread, min_dist, metric):
+def layout_metapathvec_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
 
     A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
     A_array = A.toarray()
@@ -652,7 +652,7 @@ def layout_metapathvec_umap(G,dim,n_neighbors, spread, min_dist, metric):
 #
 #--------------------
 
-def layout_functional_tsne(G, Matrix,dim,prplxty, density, l_rate, steps, metric):
+def layout_functional_tsne(G, Matrix,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     if dim == 2:
         r_scale = 1.2
@@ -672,7 +672,7 @@ def layout_functional_tsne(G, Matrix,dim,prplxty, density, l_rate, steps, metric
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_functional_umap(G, Matrix,dim,n_neighbors, spread, min_dist, metric):
+def layout_functional_umap(G, Matrix,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     if dim == 2:
         r_scale = 1.2
@@ -788,7 +788,7 @@ def springlayout_3D(G, itr):
 #
 #--------------------
 
-def layout_portrait_tsne(G, DM, dim, prplxty, density, l_rate, steps, metric):
+def layout_portrait_tsne(G, DM, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     
     if dim == 2:
         r_scale = 1.2
@@ -809,7 +809,7 @@ def layout_portrait_tsne(G, DM, dim, prplxty, density, l_rate, steps, metric):
 
 
 
-def layout_portrait_umap(G, DM, dim, n_neighbors, spread, min_dist, metric):
+def layout_portrait_umap(G, DM, dim, n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     if dim == 2:
         r_scale = 1.2

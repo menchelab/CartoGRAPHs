@@ -531,6 +531,102 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac =
     return trace
 
 
+    
+def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.8):
+    '''
+    Get trace of nodes for plotting in 2D. 
+    Input: 
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - info = hover information for each node, e.g. a dictionary with node IDs and values = hover information
+    - color = a dictionary of key = association name for each color (for legend) and value = hex color  
+    - opac = transparency of edges e.g. 0.2
+    
+    Return a trace for plotly graph objects plot including a legend. 
+    '''
+    
+    # dividing traces based on unique colors > for legend
+    color_dict = {}
+    for i in set(color.values()):
+        sublist = []
+        for k,v in color.items():
+            if v == i: 
+                sublist.append(k)
+        color_dict[i]= sublist
+
+    d_col_pos = {}
+    for i,j_list in color_dict.items(): 
+        sub = {}
+        for ix,(k,v) in enumerate(posG.items()):
+            if k in j_list:
+                sub[ix] = v
+            d_col_pos[i] = sub
+    
+    # creating traces 
+    traces = []
+    
+    if legend_names is not None and len(legend_names) == len(set(color.values())): 
+        
+        d_col_pos_sorted = {key:d_col_pos[key] for key in legend_names}
+        d_col_pos = d_col_pos_sorted
+
+        for elem,(col, dct) in enumerate(d_col_pos.items()):
+            ids = list(dct.keys())
+            coords = list(dct.values())
+            
+            info_sorted_to_ids = {key:info[key] for key in ids}
+            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+            
+            size_sorted_to_ids = {key:size[key] for key in ids}
+            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            
+            trace = pgo.Scatter(x=[i[0] for i in coords],
+                                  y=[i[1] for i in coords],
+                                  mode = 'markers',
+                                  text = l_info_sorted_to_ids,
+                                  hoverinfo = 'text',
+                                       marker = dict(
+                            color = col,
+                            size = l_size_sorted_to_ids,
+                            symbol = 'circle',
+                            line = dict(width = linewidth,
+                                    color = 'dimgrey'),
+                            opacity = opac,
+                        ),
+                    name = "Group: "+str(list(legend_names.values())[elem])
+                    )
+            traces.append(trace)
+        return traces 
+        
+    else:
+    
+        for elem,(col, dct) in enumerate(d_col_pos.items()):
+            ids = list(dct.keys())
+            coords = list(dct.values())
+            
+            info_sorted_to_ids = {key:info[key] for key in ids}
+            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+            
+            size_sorted_to_ids = {key:size[key] for key in ids}
+            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            
+            trace = pgo.Scatter(x=[i[0] for i in coords],
+                                  y=[i[1] for i in coords],
+                                  mode = 'markers',
+                                  text = l_info_sorted_to_ids,
+                                  hoverinfo = 'text',
+                                       marker = dict(
+                            color = col,
+                            size = l_size_sorted_to_ids,
+                            symbol = 'circle',
+                            line = dict(width = linewidth,
+                                    color = 'dimgrey'),
+                            opacity = opac,
+                        ),
+                    name = "Group: "+str(elem)
+                    )
+            traces.append(trace)
+        return traces 
+
 
 def color_edges_from_nodelist_specific(G, l_nodes, color):
     '''
@@ -552,7 +648,7 @@ def color_edges_from_nodelist_specific(G, l_nodes, color):
 
 
 
-def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.2):
+def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.5):
     '''
     Get trace of edges for plotting in 2D. 
     Input: 
@@ -581,7 +677,8 @@ def get_trace_edges_2D(G, posG, color = '#ACACAC', opac = 0.2, linewidth = 0.2):
                         y = edge_y, 
                         mode = 'lines', hoverinfo='none',
                         line = dict(width = linewidth, color = color),
-                        opacity = opac
+                        opacity = opac,
+        name='Links'
                 )
     
     return trace_edges
@@ -672,7 +769,7 @@ def plot_2D(data,path,fname,scheme='light'):
        
     if scheme == 'light':
         fig.update_layout(template= 'plotly_white', 
-                          showlegend=False, 
+                          showlegend=True, #False, 
                           width=1200, height=1200,
                               scene=dict(
                                   xaxis_title='',
@@ -685,7 +782,7 @@ def plot_2D(data,path,fname,scheme='light'):
         
     elif scheme == 'dark':
         fig.update_layout(template= 'plotly_dark', 
-                          showlegend=False, 
+                          showlegend=True, #False, 
                           width=1200, height=1200,
                               scene=dict(
                                   xaxis_title='',
@@ -1013,14 +1110,111 @@ def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.25, opac = 0.8)
                 symbol = 'circle',
                 line = dict(width = linewidth,
                         color = 'dimgrey'),
-                opacity = opac
+                opacity = opac,
             ),
+        name = "Nodes"
         )
     
     return trace
 
 
-def get_trace_edges_3D(G, posG, color = '#ACACAC', opac = 0.2, linewidth=0.2):
+def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.8):
+    '''
+    Get trace of nodes for plotting in 3D. 
+    Input: 
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - info = hover information for each node, e.g. a dictionary with node IDs and values = hover information
+    - color = a dictionary of key = association name for each color (for legend) and value = hex color  
+    - opac = transparency of edges e.g. 0.2
+    
+    Return a trace for plotly graph objects plot including a legend. 
+    '''
+    
+    # dividing traces based on unique colors > for legend
+    color_dict = {}
+    for i in set(color.values()):
+        sublist = []
+        for k,v in color.items():
+            if v == i: 
+                sublist.append(k)
+        color_dict[i]= sublist
+
+    d_col_pos = {}
+    for i,j_list in color_dict.items(): 
+        sub = {}
+        for ix,(k,v) in enumerate(posG.items()):
+            if k in j_list:
+                sub[ix] = v
+            d_col_pos[i] = sub
+    
+    # creating traces 
+    traces = []
+    
+    if legend_names is not None and len(legend_names) == len(set(color.values())): 
+        d_col_pos_sorted = {key:d_col_pos[key] for key in legend_names}
+        d_col_pos = d_col_pos_sorted
+
+        for elem,(col, dct) in enumerate(d_col_pos.items()):
+            ids = list(dct.keys())
+            coords = list(dct.values())
+            
+            info_sorted_to_ids = {key:info[key] for key in ids}
+            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+            
+            size_sorted_to_ids = {key:size[key] for key in ids}
+            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            
+            trace = pgo.Scatter3d(x=[i[0] for i in coords],
+                                  y=[i[1] for i in coords],
+                                  z=[i[2] for i in coords],
+                                  mode = 'markers',
+                                  text = l_info_sorted_to_ids,
+                                  hoverinfo = 'text',
+                                       marker = dict(
+                            color = col,
+                            size = l_size_sorted_to_ids,
+                            symbol = 'circle',
+                            line = dict(width = linewidth,
+                                    color = 'dimgrey'),
+                            opacity = opac,
+                        ),
+                    name = "Group: "+str(list(legend_names.values())[elem])
+                    )
+            traces.append(trace)
+        return traces 
+    
+    else:      
+        for elem,(col, dct) in enumerate(d_col_pos.items()):
+            ids = list(dct.keys())
+            coords = list(dct.values())
+            
+            info_sorted_to_ids = {key:info[key] for key in ids}
+            l_info_sorted_to_ids = list(info_sorted_to_ids.values())
+            
+            size_sorted_to_ids = {key:size[key] for key in ids}
+            l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+            
+            trace = pgo.Scatter3d(x=[i[0] for i in coords],
+                                  y=[i[1] for i in coords],
+                                  z=[i[2] for i in coords],
+                                  mode = 'markers',
+                                  text = l_info_sorted_to_ids,
+                                  hoverinfo = 'text',
+                                       marker = dict(
+                            color = col,
+                            size = l_size_sorted_to_ids,
+                            symbol = 'circle',
+                            line = dict(width = linewidth,
+                                    color = 'dimgrey'),
+                            opacity = opac,
+                        ),
+                    name = "Group: "+str(elem)
+                    )
+            traces.append(trace)
+        return traces 
+    
+    
+def get_trace_edges_3D(G, posG, color = '#ACACAC', opac = 0.2, linewidth=0.5):
     '''
     Get trace of edges for plotting in 3D. 
     Input: 
@@ -1054,7 +1248,8 @@ def get_trace_edges_3D(G, posG, color = '#ACACAC', opac = 0.2, linewidth=0.2):
                                 z = edge_z,
                                 mode = 'lines', hoverinfo='none',
                                 line = dict(width = linewidth, color = color),
-                                opacity = opac
+                                opacity = opac,
+                                name = "Links"
                         )
 
     return trace_edges
@@ -1163,7 +1358,7 @@ def get_trace_edges_landscape(x,y,z0,z):
     return trace_edge
 
 
-def plot_3D(data,path,fname, scheme='light',annotat=None):
+def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
     '''
     Create a 3D plot from traces using plotly.
     Input: 
@@ -1181,7 +1376,8 @@ def plot_3D(data,path,fname, scheme='light',annotat=None):
         fig.add_trace(i)
       
     if scheme == 'dark' and annotat==None:
-        fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
+        fig.update_layout(template='plotly_dark', 
+                          showlegend=show_leg, autosize = True,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',
@@ -1196,7 +1392,8 @@ def plot_3D(data,path,fname, scheme='light',annotat=None):
                         )) 
         
     elif scheme == 'dark':    
-        fig.update_layout(template='plotly_dark', showlegend=False, autosize = True,
+        fig.update_layout(template='plotly_dark', 
+                          showlegend=show_leg, autosize = True,
                                   scene=dict(
                                       xaxis_title='',
                                       yaxis_title='',
@@ -1212,7 +1409,8 @@ def plot_3D(data,path,fname, scheme='light',annotat=None):
                                 ))
 
     elif scheme == 'light' and annotat==None:
-        fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
+        fig.update_layout(template='plotly_white', 
+                          showlegend=show_leg, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',
@@ -1227,7 +1425,8 @@ def plot_3D(data,path,fname, scheme='light',annotat=None):
                         ))    
         
     elif scheme == 'light':
-        fig.update_layout(template='plotly_white', showlegend=False, width=1200, height=1200,
+        fig.update_layout(template='plotly_white', 
+                          showlegend=show_leg, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',

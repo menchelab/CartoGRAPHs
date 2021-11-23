@@ -10,6 +10,7 @@ import colorsys
 
 import seaborn as sns
 import matplotlib as mpl
+import math 
 
 import numpy as np 
 import networkx as nx
@@ -171,7 +172,7 @@ def color_nodes_from_list(G, l_nodes, col):
     d_restnodes = {}
     for i in G.nodes():
         if i not in d_nodes.keys():
-            d_restnodes[i] = 'lightgrey'
+            d_restnodes[i] = '#d3d3d3'
 
     d_all_nodes = {**d_nodes, **d_restnodes}
     d_all_nodes_sorted = {key:d_all_nodes[key] for key in G.nodes()}   
@@ -242,7 +243,7 @@ def color_edges_from_nodelist_specific(G, l_nodes, color):
     - l_nodes = list of nodes 
     - color = string; color to hightlight
     
-    Return edge list for selected edges IF ONE node is IN l_genes. 
+    Return edge list for selected edges IF BOTH nodes IN l_genes. 
     '''
     
     edge_lst = [(u,v)for u,v in G.edges(l_nodes) if u in l_nodes and v in l_nodes]
@@ -564,7 +565,7 @@ def draw_node_degree(G, scalef):
     l_size = {}
     for node in G.nodes():
         k = nx.degree(G, node)
-        R = math.log(k) * scalef
+        R = math.log(k) * scalef + 2
 
         l_size[node] = R
         

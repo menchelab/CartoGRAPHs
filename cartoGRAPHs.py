@@ -79,7 +79,6 @@ def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
         else: 
             print('Something went wrong. Please enter a valid layout type.')
         
-        
     else: 
         print('Something went wrong. Please enter a valid layout type.')
         

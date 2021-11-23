@@ -19,6 +19,20 @@ from shapely import geometry
 
 ########################################################################################
 
+
+def feature_modulation(Struct_matrix, Funct_matrix, scalar_value):
+    
+    df_max = Struct_matrix.max()
+    l_max_visprob = max(list(df_max.values))
+    
+    scalar = (1-l_max_visprob)*scalar_value
+    Funct_matrix_scal = Funct_matrix*scalar
+    
+    Matrix_merged = pd.concat([Struct_matrix*(1-scalar), Funct_matrix_scal]).T
+    return Matrix_merged
+    
+    
+    
 def compute_centralityfeatures(G):
     '''
     Compute degree,betweenness,closeness and eigenvector centrality

@@ -717,12 +717,12 @@ def layout_topographic(posG2D, d_z):
 #
 #--------------------
 
-def layout_geodesic(G, d_radius, n_neighbors, spread, min_dist, DM=None):
+def layout_geodesic(G, d_radius, n_neighbors=20, spread=1.0, min_dist=0.0, DM=None):
     
     #radius_list_norm = preprocessing.minmax_scale((list(d_radius.values())), feature_range=(0, 1.0), axis=0, copy=True)
     #d_radius_norm = dict(zip(list(G.nodes()), radius_list_norm))
     
-    if DM.empty is True:
+    if DM is None or DM.empty is True:
         r=0.9
         alpha=1.0
         A = nx.adjacency_matrix(G)

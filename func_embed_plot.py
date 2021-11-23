@@ -815,6 +815,67 @@ def plot_2D(data,path,fname,scheme='light'):
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 
 
+def plot_2Dfigure(G, posG, d_feature, d_colors, d_size, d_legend, path, fname,scheme='light'):
+    
+    umap_nodes = get_trace_nodes_2D_legend(posG, d_features, d_colors, d_size, d_legend)
+    umap_edges = get_trace_edges_2D(G, posG)
+    data = [umap_edges,*umap_nodes]
+
+    fig = pgo.Figure()
+    
+    for i in data:
+        fig.add_trace(i)
+       
+    if scheme == 'light':
+        fig.update_layout(template= 'plotly_white', 
+                          showlegend=True, #False, 
+                          width=1200, height=1200,
+                              scene=dict(
+                                  xaxis_title='',
+                                  yaxis_title='',
+                                  xaxis=dict(nticks=0,tickfont=dict(
+                                        color='white')),
+                                  yaxis=dict(nticks=0,tickfont=dict(
+                                        color='white')),
+                            ))  
+        
+    elif scheme == 'dark':
+        fig.update_layout(template= 'plotly_dark', 
+                          showlegend=True, #False, 
+                          width=1200, height=1200,
+                              scene=dict(
+                                  xaxis_title='',
+                                  yaxis_title='',
+                                  xaxis=dict(nticks=0,tickfont=dict(
+                                        color='black')),
+                                  yaxis=dict(nticks=0,tickfont=dict(
+                                        color='black')),
+                            ))  
+    else:
+        print('Oops, something went wrong. Please check input parameters.')
+
+    
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)
+    
+    # --- show figure ---
+    #py.iplot(fig)
+    
+    # --- get html file ---  
+    fig.write_html(path+fname+'.html')
+    
+    # --- get screenshot image (png) from html --- 
+    #hti = Html2Image(output_path=path)
+    #hti.screenshot(html_file = path+fname+'.html', save_as = fname+'.png')
+    
+    #not working with large file / time ! 
+    #fig.write_image(fname+'.png') 
+    
+    return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
+
+
+
+
 ########################################################################################
 
 # -------------------------------------------------------------------------------------
@@ -1427,6 +1488,99 @@ def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
     elif scheme == 'light':
         fig.update_layout(template='plotly_white', 
                           showlegend=show_leg, width=1200, height=1200,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),    
+                            dragmode="turntable",
+                            annotations = annotat
+                        ))    
+    else: 
+        print('Oops, something went wrong. Please check input parameters.')
+    
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)
+    
+    # --- show figure ---
+    #py.iplot(fig)
+    
+    # --- get html file ---  
+    #fig.write_html(path+fname+'.html')
+    
+    return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
+
+
+
+def plot_3Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname, scheme='light',annotat=None):
+    
+    umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
+    umap_edges = get_trace_edges_3D(G, posG)
+    data = [umap_edges,*umap_nodes]
+    
+    
+    fig = pgo.Figure()
+    
+    for i in data:
+        fig.add_trace(i)
+      
+    if scheme == 'dark' and annotat==None:
+        fig.update_layout(template='plotly_dark', 
+                          showlegend=True, autosize = True,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='black')),
+                            dragmode="turntable"
+                        )) 
+        
+    elif scheme == 'dark':    
+        fig.update_layout(template='plotly_dark', 
+                          showlegend=True, autosize = True,
+                                  scene=dict(
+                                      xaxis_title='',
+                                      yaxis_title='',
+                                      zaxis_title='',
+                                      xaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                      yaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                      zaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                    dragmode="turntable",
+                                    annotations=annotat,
+                                ))
+
+    elif scheme == 'light' and annotat==None:
+        fig.update_layout(template='plotly_white', 
+                          showlegend=True, width=1200, height=1200,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),    
+                            dragmode="turntable",
+                        ))    
+        
+    elif scheme == 'light':
+        fig.update_layout(template='plotly_white', 
+                          showlegend=True, width=1200, height=1200,
                           scene=dict(
                               xaxis_title='',
                               yaxis_title='',

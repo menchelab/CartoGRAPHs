@@ -35,6 +35,7 @@ from func_embed_plot import *
 ########################################################################################
 
 
+
 def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
     '''
     Generates a layout of choice.
@@ -83,8 +84,7 @@ def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
         print('Something went wrong. Please enter a valid layout type.')
         
         
-        
-    
+
 #--------------------
 #
 # L O C A L 

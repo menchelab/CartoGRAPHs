@@ -35,7 +35,6 @@ from func_embed_plot import *
 ########################################################################################
 
 
-
 def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
     '''
     Generates a layout of choice.
@@ -49,7 +48,6 @@ def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
     Result: 
     A generated layout of choice to be input to a plot function e.g. plot_2Dfigure, plot_3Dfigure
     '''
-    
     if layoutmethod == 'local':
         if dimred_method == 'tsne':
             return layout_local_tsne(G, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine')
@@ -71,7 +69,6 @@ def generate_layout(G, dim, layoutmethod, dimred_method='umap', Matrix = None):
     elif layoutmethod == 'functional':
         if Matrix is None: 
             print('Please specify a functional matrix of choice with N x rows with G.nodes and M x feature columns.')
-            
         elif dimred_method == 'tsne' and Matrix is not None:
             return layout_functional_tsne(G, Matrix, dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine')
         elif dimred_method == 'umap' and Matrix is not None:
@@ -844,7 +841,6 @@ def springlayout_3D(G, itr):
 #
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
-
 
 def layout_portrait_tsne(G, DM, dim, prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
     

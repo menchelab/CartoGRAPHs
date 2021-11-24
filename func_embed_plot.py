@@ -8,17 +8,22 @@
 
 import plotly
 import plotly.graph_objs as pgo
+import pandas as pd 
+
 import umap.umap_ as umap
 
 from sklearn.manifold import TSNE
 from sklearn.manifold import MDS
 from sklearn import preprocessing
 
+import networkx as nx
 import numpy as np 
 from numpy import pi, cos, sin, arccos, arange
 
 import math 
 import matplotlib.pyplot as plt
+
+from func_visual_properties import * 
 
 ########################################################################################
 
@@ -183,6 +188,17 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 1.2):
     Return dictionary with nodes as keys and coordinates as values in 3D normed. 
     '''
     
+    if isinstance(DM, np.ndarray):
+        df_DM = pd.DataFrame(DM, index=list(G.nodes()), columns=list(G.nodes()))
+        DM = df_DM
+        
+    elif isinstance(DM, pd.DataFrame):
+        DM = DM 
+    
+    else: 
+        print('Please enter a Matrix of type pd.DataFrame with any number, up to len(G.nodes()) rows and columns or a numpy array with len(G.nodes()) rows and columns in the same order of G.nodes().')
+        
+        
     genes = []
     for i in DM.index:
         if str(i) in G.nodes() or int(i) in G.nodes():
@@ -265,7 +281,17 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     
     Return dictionary with nodes as keys and coordinates as values in 3D normed. 
     '''
-
+    
+    if isinstance(DM, np.ndarray):
+        df_DM = pd.DataFrame(DM, index=list(G.nodes()), columns=list(G.nodes()))
+        DM = df_DM
+        
+    elif isinstance(DM, pd.DataFrame):
+        DM = DM 
+    
+    else: 
+        print('Please enter a Matrix of type pd.DataFrame with any number, up to len(G.nodes()) rows and columns or a numpy array with len(G.nodes()) rows and columns in the same order of G.nodes().')
+        
     genes = []
     for i in DM.index:
         if str(i) in G.nodes() or int(i) in G.nodes():
@@ -462,7 +488,7 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac =
     return trace
 
 
-def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.25, opac = 0.9):
+def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -594,7 +620,7 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
         return traces 
 
 
-def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.25, opac = 0.9):
+def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.000001, opac = 0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -1089,13 +1115,39 @@ def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
 
 
 
-def plot_2Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname,scheme='light', with_edges = True):
-    umap_nodes = get_trace_nodes_2D_legend(posG, d_features, d_colors, d_size, d_legend)
-    umap_edges = get_trace_edges_2D(G, posG)
+def plot_2Dfigure(G, posG, 
+                  d_features = None, 
+                  d_colors = None, 
+                  d_size = None, 
+                  d_legend  = None, 
+                  path = '',
+                  fname ='testplot',
+                  scheme = 'light', with_edges = True):
+    
+    if d_features == None:
+        d_features = dict(zip(list(G.nodes()),list(G.nodes())))
+    else:
+        pass
+    
+    if d_colors == None:
+        col_pal = 'YlOrRd'
+        d_degree = dict(nx.degree(G))
+        d_colors = color_nodes_from_dict(G, d_degree, palette = col_pal)
+    else: 
+        pass 
+    
+    if d_size == None:
+        scale_factor = 0.75
+        d_size = dict(draw_node_degree(G, scale_factor))
+    else:
+        pass
     
     if with_edges == True:
+        umap_nodes = get_trace_nodes_2D_legend(posG, d_features, d_colors, d_size, d_legend)
+        umap_edges = get_trace_edges_2D(G, posG)
         data = [umap_edges, *umap_nodes]
     else: 
+        umap_nodes = get_trace_nodes_2D_legend(posG, d_features, d_colors, d_size, d_legend)
         data = [*umap_nodes]
         
     fig = pgo.Figure()
@@ -1140,13 +1192,42 @@ def plot_2Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname,s
 
 
 
-def plot_3Dfigure(G, posG, d_features, d_colors, d_size, d_legend, path, fname, scheme='light', with_edges = True, annotat=None):
-    umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
-    umap_edges = get_trace_edges_3D(G, posG)
+def plot_3Dfigure(G, posG, 
+                  d_features = None, 
+                  d_colors = None, 
+                  d_size = None, 
+                  d_legend  = None, 
+                  path = '',
+                  fname ='testplot',
+                  scheme = 'light', 
+                  with_edges = True,
+                  annotat=None):
+    
+    if d_features == None:
+        d_features = dict(zip(list(G.nodes()),list(G.nodes())))
+    else:
+        pass
+    
+    if d_colors == None:
+        col_pal = 'YlOrRd'
+        d_degree = dict(nx.degree(G))
+        d_colors = color_nodes_from_dict(G, d_degree, palette = col_pal)
+    else: 
+        pass 
+    
+    if d_size == None:
+        scale_factor = 0.75
+        d_size = dict(draw_node_degree(G, scale_factor))
+    else:
+        pass
+    
     
     if with_edges == True:
+        umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
+        umap_edges = get_trace_edges_3D(G, posG)
         data = [umap_edges, *umap_nodes]
     else: 
+        umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
         data = [*umap_nodes]
     
     fig = pgo.Figure()

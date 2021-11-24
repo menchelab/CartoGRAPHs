@@ -1,4 +1,4 @@
-![cartographs](img/cartographs_img01.png)
+![cartographs](img/cartographs_img02.png)
 
 ---
 

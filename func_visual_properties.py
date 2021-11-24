@@ -173,7 +173,7 @@ def color_nodes_from_list(G, l_nodes, col):
     d_restnodes = {}
     for i in G.nodes():
         if i not in d_nodes.keys():
-            d_restnodes[i] = '#d3d3d3'
+            d_restnodes[i] = '#A0A0A0' #'#d3d3d3'
 
     d_all_nodes = {**d_nodes, **d_restnodes}
     d_all_nodes_sorted = {key:d_all_nodes[key] for key in G.nodes()}   

@@ -13,8 +13,17 @@ import pandas as pd
 
 import umap.umap_ as umap
 
-from func_calculations import *
-from func_embed_plot import *
+#from func_calculations import *
+#from func_embed_plot import *
+
+
+
+from func_load_data import *
+from func_visual_properties import *
+from func_calculations import * 
+from func_embed_plot import * 
+from func_exportVR import * 
+
 
 ########################################################################################
 
@@ -104,7 +113,7 @@ def layout_local_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metri
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
 
-def layout_local_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_local_umap(G,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
     
     A = nx.adjacency_matrix(G, nodelist=list(G.nodes()))
     A_array = A.toarray()
@@ -164,7 +173,7 @@ def layout_global_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, metr
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_global_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_global_umap(G,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
     
     r=0.9
     alpha=1.0
@@ -223,7 +232,7 @@ def layout_importance_tsne(G,dim,prplxty=50, density=12, l_rate=200, steps=250, 
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
 
-def layout_importance_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_importance_umap(G,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
     
     feature_dict_sorted = compute_centralityfeatures(G) 
 
@@ -275,7 +284,7 @@ def layout_functional_tsne(G, Matrix,dim,prplxty=50, density=12, l_rate=200, ste
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
         
-def layout_functional_umap(G, Matrix,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_functional_umap(G, Matrix,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
     
     if dim == 2:
         r_scale = 1.2
@@ -320,7 +329,7 @@ def layout_topographic(posG2D, d_z):
 #
 #--------------------
 
-def layout_geodesic(G, d_radius, n_neighbors=20, spread=1.0, min_dist=0.0, DM=None):
+def layout_geodesic(G, d_radius, n_neighbors=8, spread=1.0, min_dist=0.0, DM=None):
     
     #radius_list_norm = preprocessing.minmax_scale((list(d_radius.values())), feature_range=(0, 1.0), axis=0, copy=True)
     #d_radius_norm = dict(zip(list(G.nodes()), radius_list_norm))
@@ -416,7 +425,7 @@ def layout_portrait_tsne(G, DM, dim, prplxty=50, density=12, l_rate=200, steps=2
 
 
 
-def layout_portrait_umap(G, DM, dim, n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_portrait_umap(G, DM, dim, n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
     
     if dim == 2:
         r_scale = 1.2

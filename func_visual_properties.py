@@ -149,7 +149,7 @@ def color_nodes_from_dict(G, d_to_be_colored, palette):
                 d_node_color[y[0]]=x[1]
 
     # SORT dict based on G.nodes
-    d_node_color_sorted = dict([(key, d_node_color[key]) for key in G.nodes()])
+    d_node_color_sorted = {key:d_node_color[key] for key in G.nodes()} #dict([(key, d_node_color[key]) for key in G.nodes()])
     
     return d_node_color_sorted
 

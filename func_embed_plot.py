@@ -527,10 +527,13 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
     '''
     Get trace of nodes for plotting in 2D. 
     Input: 
-    - posG = dictionary with nodes as keys and coordinates as values.
+     - posG = dictionary with nodes as keys and coordinates as values.
     - info = hover information for each node, e.g. a dictionary with node IDs and values = hover information
     - color = a dictionary of key = association name for each color (for legend) and value = hex color  
-    - opac = transparency of edges e.g. 0.2
+    - size = a dictionary with node Ids and values=sizes of nodes 
+    - legend_names = list of values e.g. strings for each color 
+    - linewidth = float; contour of nodes
+    - opac = transparency of nodes
     
     Return a trace for plotly graph objects plot including a legend. 
     '''
@@ -542,7 +545,9 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
             if v == i: 
                 sublist.append(k)
         color_dict[i]= sublist
-
+        
+    # assigning colors to each positioned node 
+    # creating a dictionary with {color: {id:coords}}
     d_col_pos = {}
     for i,j_list in color_dict.items(): 
         sub = {}
@@ -551,16 +556,12 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
                 #sub[ix] = v
                 sub[k] = v
             d_col_pos[i] = sub
+    d_col_pos_ordered = dict(sorted(d_col_pos.items(),reverse=True))
     
     # creating traces 
     traces = []
-    
-    if legend_names is not None and len(legend_names) == len(set(color.values())): 
-        
-        d_col_pos_sorted = {key:d_col_pos[key] for key in legend_names}
-        d_col_pos = d_col_pos_sorted
-
-        for elem,(col, dct) in enumerate(d_col_pos.items()):
+    if legend_names is not None and color is not None and len(legend_names) == len(set(color.values())): 
+        for elem,(col, dct) in enumerate(d_col_pos_ordered.items()):
             
             ids = list(dct.keys())
             coords = list(dct.values())
@@ -588,10 +589,14 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
                     )
             traces.append(trace)
         return traces 
-    else:
     
-        for elem,(col, dct) in enumerate(d_col_pos.items()):
-            
+    elif legend_names is not None and len(legend_names) != len(set(color.values())):
+        print('Please select a legend which matches the amount of color (i.e. each color shall correspond to an element in the list of legend items).')
+        
+    else:
+        for elem,(col, dct) in enumerate(d_col_pos_ordered.items()):
+        #for col, dct in d_col_pos_ordered.items():
+        
             ids = list(dct.keys())
             coords = list(dct.values())
             
@@ -614,7 +619,7 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
                                     color = 'dimgrey'),
                             opacity = opac,
                         ),
-                    name = "Group: "+str(elem)
+                    name = "Group: "+str(elem) #ids)
                     )
             traces.append(trace)
         return traces 
@@ -627,7 +632,10 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
     - posG = dictionary with nodes as keys and coordinates as values.
     - info = hover information for each node, e.g. a dictionary with node IDs and values = hover information
     - color = a dictionary of key = association name for each color (for legend) and value = hex color  
-    - opac = transparency of edges e.g. 0.2
+    - size = a dictionary with node Ids and values=sizes of nodes
+    - legend_names = list of values e.g. strings for each color 
+    - linewidth = float; contour of nodes
+    - opac = transparency of nodes
     
     Return a trace for plotly graph objects plot including a legend. 
     '''
@@ -649,16 +657,15 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
                 #sub[ix] = v
                 sub[k] = v
             d_col_pos[i] = sub
-    
+    d_col_pos_ordered = dict(sorted(d_col_pos.items(),reverse=True))
+
     # creating traces 
     traces = []
     
     if legend_names is not None and len(legend_names) == len(set(color.values())): 
-        d_col_pos_sorted = {key:d_col_pos[key] for key in legend_names}
-        d_col_pos = d_col_pos_sorted
-
-        for elem,(col, dct) in enumerate(d_col_pos.items()):
-            
+        
+        for elem,(col, dct) in enumerate(d_col_pos_ordered.items()):
+           
             ids = list(dct.keys())
             coords = list(dct.values())
             
@@ -688,7 +695,7 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
         return traces 
     
     else:      
-        for elem,(col, dct) in enumerate(d_col_pos.items()):
+        for elem,(col, dct) in enumerate(d_col_pos_ordered.items()):
             
             ids = list(dct.keys())
             coords = list(dct.values())
@@ -1130,7 +1137,7 @@ def plot_2Dfigure(G, posG,
         pass
     
     if d_colors == None:
-        col_pal = 'YlOrRd'
+        col_pal = 'YlOrRd' #'gnuplot'
         d_degree = dict(nx.degree(G))
         d_colors = color_nodes_from_dict(G, d_degree, palette = col_pal)
     else: 

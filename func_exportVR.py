@@ -13,17 +13,21 @@ import pandas as pd
 
 ########################################################################################
 
-def export_to_csv2D(path, layout_namespace, posG, colors):
+def export_to_csv2D(path, layout_namespace, posG, colors = None):
     '''
     Generate csv for upload to VRnetzer plaform for 2D layouts. 
     Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
     '''
     
-    colors_hex2rgb = []
-    for j in colors: 
-        k = hex_to_rgb(j)
-        colors_hex2rgb.append(k)
-        
+    if colors is None: 
+        colors_hex2rgb = list((255,0,0) for i in list(posG.keys()))
+    
+    else: 
+        colors_hex2rgb = []
+        for j in colors: 
+            k = hex_to_rgb(j)
+            colors_hex2rgb.append(k)
+
     colors_r = []
     colors_g = []
     colors_b = []
@@ -33,7 +37,7 @@ def export_to_csv2D(path, layout_namespace, posG, colors):
         colors_g.append(int(i[1]))#*255))
         colors_b.append(int(i[2]))#*255))
         colors_a.append(100) # 0-100 shows normal colors in VR, 128-200 is glowing mode
-        
+
     df_2D = pd.DataFrame(posG).T
     df_2D.columns=['X','Y']
     df_2D['Z'] = 0
@@ -41,10 +45,10 @@ def export_to_csv2D(path, layout_namespace, posG, colors):
     df_2D['G'] = colors_g
     df_2D['B'] = colors_b
     df_2D['A'] = colors_a
-    
+
     df_2D[layout_namespace] = layout_namespace
     df_2D['ID'] = list(posG.keys())
-    
+
     cols = df_2D.columns.tolist()
     cols = cols[-1:] + cols[:-1]
     df_2D_final = df_2D[cols]
@@ -52,17 +56,21 @@ def export_to_csv2D(path, layout_namespace, posG, colors):
     return df_2D_final.to_csv(r''+path+layout_namespace+'_layout.csv',index=False, header=False)
     
 
-def export_to_csv3D(path, layout_namespace, posG, colors):
+def export_to_csv3D(path, layout_namespace, posG, colors = None):
     '''
     Generate csv for upload to VRnetzer plaform for 3D layouts. 
     Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
     '''
     
-    colors_hex2rgb = []
-    for j in colors: 
-        k = hex_to_rgb(j)
-        colors_hex2rgb.append(k)
-        
+    if colors is None: 
+        colors_hex2rgb = list((255,0,0) for i in list(posG.keys()))
+    
+    else: 
+        colors_hex2rgb = []
+        for j in colors: 
+            k = hex_to_rgb(j)
+            colors_hex2rgb.append(k)
+            
     colors_r = []
     colors_g = []
     colors_b = []

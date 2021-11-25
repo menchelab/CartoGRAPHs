@@ -56,6 +56,14 @@ A Notebook with more detailed steps including diverse examples and descriptions:
 Input files essential to run the scripts can be downloaded
 [here](https://drive.google.com/drive/folders/1gaMc3cQLFzzFQtYWey7J0uFaXOMuGnWe?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
 
+---
+
+A diagrammatic overview of functions included within the framework: 
+![cartographs](img/Codestructure_diagram.png)
+![cartographs](img/Codestructure_diagram.pdf)
+
+---
+
 A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs](https://github.com/menchelab/cartoGRAPHs_app). 
 
 ---

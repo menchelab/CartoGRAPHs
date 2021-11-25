@@ -1,3 +1,7 @@
+# cartoGRAPHs 
+### Visual Network Exploration in two and three dimensions.
+
+
 ![cartographs](img/cartographs_img02.png)
 
 ---
@@ -19,9 +23,9 @@ The structue of the project Github repo is as described below:
 ```
 menchelab/cartoGRAPHs
   - NOTEBOOKS TO USE THE FRAMEWORK
-    - cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks, with one exemplary toy graph included 
-    - cartoGRAPHs_LayoutOverview.ipynb ---> jupyter notebook to run with exemplary networks, as an overview of layouts 
-    - cartoGRAPHs_organism.ipynb ---> network visualization examples with the human interactome
+    - cartoGRAPHs_Main.ipynb ---> jupyter notebook to visualize networks, with one exemplary toy graph included 
+    - cartoGRAPHs_AQuickStarter.ipynb ---> jupyter notebook to get familiar with the framework
+    - cartoGRAPHs_ModulatingFeatures.ipynb ---> feature modulation step by step
   - NOTEBOOKS TO REPRODUCE FIGURES SHOWN IN THE MANUSCRIPT "CartoGRAPHs: A Framework for Interpretable Network Visualizations". 
     - cartoGRAPHs_organisms_ManuscriptFigure*.ipynb
   - NOTEBOOKS TO REPRODUCE THE CALCULATIONS DONE IN THE BENCHMARKING PROCESSES
@@ -33,7 +37,8 @@ Python files including functions to execute the notebooks and produce Network La
 - func_calculations.py ---> contains functions for calculations 
 - func_embed_plot.py ---> contains spatial embedding and visualization functions 
 - func_visual_properties.py ---> contains additional node- and edge visual property settings/functions
-- func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature communications, 2021
+- func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature 
+communications, 2021
 
 Folders / directories for input and output : 
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
@@ -46,8 +51,8 @@ Folders / directories for input and output :
 
 ### **HOW TO USE THE FRAMEWORK**
 
-The code can be run using Jupyter Notebook/Lab. To use an individual graph (networkx graph) use the "cartoGRAPHs_main.ipynb", to work with a precalculated network, such as the human interactome / yeast interactome use
-"cartoGRAPHs_organisms.ipynb". 
+A Quickstarter Notebook: "cartoGRAPHs_AQuickStarter.ipynb"
+A Notebook with more detailed steps including diverse examples and descriptions: "cartoGRAPHs_main.ipynb"
 Input files essential to run the scripts can be downloaded
 [here](https://drive.google.com/drive/folders/1gaMc3cQLFzzFQtYWey7J0uFaXOMuGnWe?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
 

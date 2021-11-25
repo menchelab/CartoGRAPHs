@@ -51,8 +51,8 @@ Folders / directories for input and output :
 
 ### **HOW TO USE THE FRAMEWORK**
 
-The code can be run using Jupyter Notebook/Lab. To use an individual graph (networkx graph) use the "cartoGRAPHs_main.ipynb", to work with a precalculated network, such as the human interactome / yeast interactome use
-"cartoGRAPHs_organisms.ipynb". 
+A Quickstarter Notebook: "cartoGRAPHs_AQuickStarter.ipynb"
+A Notebook with more detailed steps including diverse examples and descriptions: "cartoGRAPHs_main.ipynb"
 Input files essential to run the scripts can be downloaded
 [here](https://drive.google.com/drive/folders/1gaMc3cQLFzzFQtYWey7J0uFaXOMuGnWe?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
 

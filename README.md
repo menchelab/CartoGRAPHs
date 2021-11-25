@@ -59,8 +59,8 @@ Input files essential to run the scripts can be downloaded
 ---
 
 A diagrammatic overview of functions included within the framework: 
+
 ![cartographs](img/Codestructure_diagram.png)
-![cartographs](img/Codestructure_diagram.pdf)
 
 ---
 

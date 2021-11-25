@@ -19,9 +19,9 @@ The structue of the project Github repo is as described below:
 ```
 menchelab/cartoGRAPHs
   - NOTEBOOKS TO USE THE FRAMEWORK
-    - cartoGRAPHs_main.ipynb ---> jupyter notebook to visualize networks, with one exemplary toy graph included 
-    - cartoGRAPHs_LayoutOverview.ipynb ---> jupyter notebook to run with exemplary networks, as an overview of layouts 
-    - cartoGRAPHs_organism.ipynb ---> network visualization examples with the human interactome
+    - cartoGRAPHs_Main.ipynb ---> jupyter notebook to visualize networks, with one exemplary toy graph included 
+    - cartoGRAPHs_AQuickStarter.ipynb ---> jupyter notebook to get familiar with the framework
+    - cartoGRAPHs_ModulatingFeatures.ipynb ---> feature modulation step by step
   - NOTEBOOKS TO REPRODUCE FIGURES SHOWN IN THE MANUSCRIPT "CartoGRAPHs: A Framework for Interpretable Network Visualizations". 
     - cartoGRAPHs_organisms_ManuscriptFigure*.ipynb
   - NOTEBOOKS TO REPRODUCE THE CALCULATIONS DONE IN THE BENCHMARKING PROCESSES
@@ -33,7 +33,8 @@ Python files including functions to execute the notebooks and produce Network La
 - func_calculations.py ---> contains functions for calculations 
 - func_embed_plot.py ---> contains spatial embedding and visualization functions 
 - func_visual_properties.py ---> contains additional node- and edge visual property settings/functions
-- func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature communications, 2021
+- func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature 
+communications, 2021
 
 Folders / directories for input and output : 
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)

@@ -274,7 +274,7 @@ def color_edges_from_nodelist_specific_or(G, l_nodes, color):
     return d_col_edges
 
 
-def colors_spectralclustering(G, posG, n_clus, n_comp, pal ='gist_rainbow'):
+def colors_spectralclustering(G, posG, DM=None, n_clus=20, n_comp=10, pal ='gist_rainbow'):
     '''
     Generate node colors based on clustering.
     Input:
@@ -286,25 +286,99 @@ def colors_spectralclustering(G, posG, n_clus, n_comp, pal ='gist_rainbow'):
 
     Returns a dictionary with nodes as keys and color values based on clustering method. 
     '''
+    if DM is not None:
+        genes = []
+        for i in DM.index:
+            if str(i) in G.nodes():
+                genes.append(str(i))
+
+        genes_rest = [] 
+        for g in G.nodes():
+            if str(g) not in genes:
+                genes_rest.append(g)
+
+        df_posG = pd.DataFrame(posG).T 
+
+        model = SpectralClustering(n_clusters=n_clus,n_components = n_comp, affinity='nearest_neighbors',random_state=0)
+        clusterid = model.fit(df_posG)
+        d_node_clusterid = dict(zip(genes, clusterid.labels_))
+
+        colors_unsort = color_nodes_from_dict_unsort(d_node_clusterid, pal) #'ocean'
+        genes_val = ['#696969']*len(genes_rest)
+        colors_rest = dict(zip(genes_rest, genes_val))
+        colors_all = {**colors_rest, **colors_unsort}
+
+        d_colors = {key:colors_all[key] for key in G.nodes}
+            
+        return d_colors
     
-    df_posG = pd.DataFrame(posG).T 
+    else:
+        df_posG = pd.DataFrame(posG).T 
 
-    model = SpectralClustering(n_clusters=n_clus,n_components = n_comp, affinity='nearest_neighbors',random_state=0)
-    clusterid = model.fit(df_posG)
-    d_node_clusterid = dict(zip(genes, clusterid.labels_))
+        model = SpectralClustering(n_clusters=n_clus,n_components = n_comp, affinity='nearest_neighbors',random_state=0)
+        clusterid = model.fit(df_posG)
+        d_node_clusterid = dict(zip(list(G.nodes()), clusterid.labels_))
+        colors_all = color_nodes_from_dict_unsort(d_node_clusterid, pal) #'ocean'
 
-    colors_unsort = color_nodes_from_dict_unsort(d_node_clusterid, pal) #'ocean'
-    genes_val = ['#696969']*len(genes_rest)
-    colors_rest = dict(zip(genes_rest, genes_val))
-    colors_all = {**colors_rest, **colors_unsort}
-
-    d_colors = {key:colors_all[key] for key in G.nodes}
+        d_colors = {key:colors_all[key] for key in G.nodes}
+        return d_colors
     
-    return d_colors
+    
+def colors_dbscanclustering(G, posG, DM=None, epsi=0.5, min_sam=5, pal = 'gist_rainbow', col_rest = '#696969'):
+    '''
+    Generate node colors based on clustering.
+    Input:
+    - G = Graph
+    - posG = dictionary with nodes as keys and xy(z) coordinates
+    - epsi = float; The maximum distance between two samples for one to be considered as in the neighborhood of the other
+    - min_sam = int; The number of samples in a neighborhood
+    - palette(optional) = string; sns color palette e.g. "gist_rainbow"
+
+    Returns a dictionary with nodes as keys and color values based on clustering method. 
+    '''
+    
+    if DM is not None:
+        genes = []
+        for i in DM.index:
+            if str(i) in G.nodes():
+                genes.append(str(i))
+
+        genes_rest = [] 
+        for g in G.nodes():
+            if str(g) not in genes:
+                genes_rest.append(g)
+
+        df_posG = pd.DataFrame(posG).T 
+        dbscan = DBSCAN(eps=epsi, min_samples=min_sam) 
+        clusterid = dbscan.fit(df_posG)
+        d_node_clusterid = dict(zip(genes, clusterid.labels_))
+
+        colors_unsort = color_nodes_from_dict_unsort(d_node_clusterid, pal)
+        genes_val = [col_rest]*len(genes_rest)
+        colors_rest = dict(zip(genes_rest, genes_val))
+        colors_all = {**colors_rest, **colors_unsort}
+    
+        d_colors_sorted = {key:colors_all[key] for key in G.nodes}
+        print('Number of Clusters (dbscan): ', len(set(clusterid.labels_)))
+
+        return d_colors_sorted
+    
+    else:
+        
+        df_posG = pd.DataFrame(posG).T 
+        dbscan = DBSCAN(eps=epsi, min_samples=min_sam) 
+        clusterid = dbscan.fit(df_posG)
+        d_node_clusterid = dict(zip(list(G.nodes()), clusterid.labels_))
+        colors_all = color_nodes_from_dict_unsort(d_node_clusterid, pal)
+        
+        d_colors_sorted = {key:colors_all[key] for key in G.nodes}
+        print('Number of Clusters: ', len(set(clusterid.labels_)))
+
+        return d_colors_sorted
+    
 
 
-
-def colors_dbscanclustering(G, DM, posG, epsi, min_sam, pal = 'gist_rainbow', col_rest = '#696969'):
+def colors_dbscanclustering_old(G, DM, posG, epsi, min_sam, pal = 'gist_rainbow', col_rest = '#696969'):
     '''
     Generate node colors based on clustering.
     Input:

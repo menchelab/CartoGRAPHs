@@ -488,7 +488,8 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac =
     return trace
 
 
-def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 0.9):
+
+def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 0.9, legendname = "Nodes"):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -516,10 +517,11 @@ def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 
                         color = 'dimgrey'),
                 opacity = opac,
             ),
-        name = "Nodes"
+        name = legendname
         )
     
     return trace
+
 
 
 
@@ -1316,6 +1318,42 @@ def plot_3Dfigure(G, posG,
     
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 
+
+def plot_3Danimation(data, slider_legend):
+    
+    fig = pgo.Figure()
+    
+    for i in data:
+        fig.add_trace(i)
+        
+    fig.data[0].visible = True
+
+    steps = []
+    for i in range(len(fig.data)):
+        step = dict(
+            method="update",
+            label = slider_legend[i],
+            args=[{"visible": [False] * len(fig.data)},
+                  ])
+        step["args"][0]["visible"][i] = True 
+        steps.append(step)
+
+    sliders = [dict(
+        active=10,
+        currentvalue={"prefix": ""},
+        steps=steps
+    )]
+
+    fig.update_layout(
+        template="plotly_dark",
+        sliders=sliders,
+        autosize=False,
+            width=800,
+            height=800,
+        
+    )
+    
+    fig.show()
 
 
 

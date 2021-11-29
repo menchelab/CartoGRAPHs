@@ -489,7 +489,8 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac =
 
 
 
-def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 0.9, legendname = "Nodes"):
+
+def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 0.9, legendname = "Nodes", visible_bool = True):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -517,6 +518,7 @@ def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 
                         color = 'dimgrey'),
                 opacity = opac,
             ),
+        visible = visible_bool,
         name = legendname
         )
     

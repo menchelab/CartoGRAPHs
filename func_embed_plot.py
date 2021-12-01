@@ -23,7 +23,7 @@ from numpy import pi, cos, sin, arccos, arange
 import math 
 import matplotlib.pyplot as plt
 
-from func_visual_properties import * 
+from cartoGRAPHs.func_visual_properties import * 
 
 ########################################################################################
 
@@ -201,7 +201,7 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 1.2):
         
     genes = []
     for i in DM.index:
-        if str(i) in G.nodes() or int(i) in G.nodes():
+        if i in G.nodes(): #if str(i) in G.nodes() or int(i) in G.nodes():
             #genes.append(str(i))
             genes.append(i)
 
@@ -294,7 +294,8 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
         
     genes = []
     for i in DM.index:
-        if str(i) in G.nodes() or int(i) in G.nodes():
+        if i in G.nodes():
+        #if str(i) in G.nodes() or int(i) in G.nodes():
             genes.append(i)
 
     genes_rest = [] 
@@ -486,7 +487,6 @@ def get_trace_nodes_2D(posG, info_list, color_list, size, linewidth=0.25, opac =
         )
     
     return trace
-
 
 
 

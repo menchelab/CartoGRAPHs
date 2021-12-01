@@ -640,8 +640,10 @@ def draw_node_degree(G, scalef):
     l_size = {}
     for node in G.nodes():
         k = nx.degree(G, node)
-        R = math.log(k) * scalef + 2
-
+        if k > 0:
+            R = math.log(k) * scalef + 2
+        else: 
+            R = 0.1
         l_size[node] = R
         
     return l_size

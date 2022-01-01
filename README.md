@@ -17,7 +17,13 @@ networks, and demonstrate their power for elucidating structure to function
 relationships in large-scale biological networks.
 
 ---
-
+### Install using Pypi
+An alpha version can be installed via
+```
+pip install cartoGRAPHs
+```
+More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
+--- 
 ### **REPOSITORY STRUCTURE**
 The structue of the project Github repo is as described below:
 ```

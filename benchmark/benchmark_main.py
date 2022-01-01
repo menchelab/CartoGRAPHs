@@ -1047,8 +1047,7 @@ def pearson_corrcoef(dist_network, dist_layout):
 
 
 
-def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
-    
+def layout_nodevec_umap(G,dim,n_neighbors=20, spread=1.0, min_dist=0.0, metric='cosine'):
     
     walk_lngth = 50
     num_wlks = 10
@@ -1101,6 +1100,7 @@ def layout_nodevec_umap(G,dim,n_neighbors, spread, min_dist, metric):
         
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
+
         
         
 def minmaxscaling_posG(G,posG):

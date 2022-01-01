@@ -72,7 +72,7 @@ A diagrammatic overview of functions included within the framework:
 
 ---
 
-A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs](https://github.com/menchelab/cartoGRAPHs_app). 
+A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs_app](https://github.com/menchelab/cartoGRAPHs_app). 
 
 ---
 

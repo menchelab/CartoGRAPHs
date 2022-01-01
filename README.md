@@ -61,8 +61,8 @@ Folders / directories for input and output :
 
 A Quickstarter Notebook: "cartoGRAPHs_AQuickStarter.ipynb"
 A Notebook with more detailed steps including diverse examples and descriptions: "cartoGRAPHs_main.ipynb"
-Input files essential to run the scripts can be downloaded
-[here](https://drive.google.com/drive/folders/1gaMc3cQLFzzFQtYWey7J0uFaXOMuGnWe?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
+Input files and Benchmarking-related precalculations can be downloaded.
+[here](https://drive.google.com/drive/folders/1_E6reb4eUbctguFoT30inYhV9mvvKZMg?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
 
 ---
 
@@ -106,7 +106,7 @@ A web-based application was developed to visually inspect networks with differen
 ### **MODEL NETWORKS FOR BENCHMARKING**
 
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used.
-The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be downloaded [here](https://drive.google.com/drive/folders/1VFjPqTzy7JbWXCM_fYu2nAzo6DpeIrfH?usp=sharing). Please unzip and place the folder in the directory of the benchmarking scripts (i.e. in the "benchmark" folder). 
+The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be downloaded [here](https://drive.google.com/drive/folders/1_E6reb4eUbctguFoT30inYhV9mvvKZMg?usp=sharing). Please unzip and place the folder in the directory of the benchmarking scripts (i.e. in the "benchmark" folder). 
 
 ---
 

@@ -69,7 +69,7 @@ A web-based application was developed to inspect networks through a user interfa
 ---
 
 ### **NETWORK LAYOUTS**
-Four different Layouts can be produced. 
+Different Layouts can be produced. 
 
 + local layout (based on node pairwise adjacencies)
 + global layout (based on network propagation)

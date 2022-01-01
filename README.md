@@ -75,6 +75,7 @@ Four different Layouts can be produced.
 + global layout (based on network propagation)
 + importance layout (based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality)
 + functional layout (e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features)
++ combined layouts (providing a modulation between structural and functional features)
 
 ---
 

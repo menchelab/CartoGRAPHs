@@ -980,13 +980,14 @@ def get_trace_edges_from_nodelist3D(G, l_genes, posG, color, linew = 0.75, opac=
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-def plot_2D(data,path,fname,scheme='light'):
+def plot_2D(data,path,fname,scheme='light', plot_title = None, plot_title = None):
     '''
     Create a 2D plot from traces using plotly.
     Input: 
     - data = list of traces
     - filename = string
     - scheme = 'light' or 'dark'
+    - plot_title = string; optional title of plot
     
     Return plot in 2D and file, saved as png.
     '''
@@ -1024,8 +1025,8 @@ def plot_2D(data,path,fname,scheme='light'):
     else:
         print('Oops, something went wrong. Please check input parameters.')
 
-    
-    fig.update_xaxes(visible=False)
+    fig.update_layout(title_text = plot_title)
+    fig.upfig.update_layout(title_text = plot_title)date_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     fig.write_html(path+fname+'.html')
     
@@ -1033,7 +1034,7 @@ def plot_2D(data,path,fname,scheme='light'):
 
 
 
-def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
+def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True, plot_title=None):
     '''
     Create a 3D plot from traces using plotly.
     Input: 
@@ -1041,6 +1042,8 @@ def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
     - filename = string
     - scheme = 'light' or 'dark'
     - annotations = None or plotly annotations
+    - show_leg = boolean (true, false) to show legend of traces 
+    - plot_title = string; optional title of plot
     
     Return plot in 3D and file, saved as html.
     '''
@@ -1118,6 +1121,7 @@ def plot_3D(data,path,fname, scheme='light',annotat=None, show_leg=True):
     else: 
         print('Oops, something went wrong. Please check input parameters.')
     
+    fig.update_layout(title_text = plot_title)
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     fig.write_html(path+fname+'.html')
@@ -1133,7 +1137,10 @@ def plot_2Dfigure(G, posG,
                   d_legend  = None, 
                   path = '',
                   fname ='testplot',
-                  scheme = 'light', with_edges = True):
+                  scheme = 'light', 
+                  with_edges = True,
+                  plot_title = None
+                 ):
     
     if d_features == None:
         d_features = dict(zip(list(G.nodes()),list(G.nodes())))
@@ -1194,7 +1201,7 @@ def plot_2Dfigure(G, posG,
     else:
         print('Oops, something went wrong. Please check input parameters.')
 
-    
+    fig.update_layout(title_text = plot_title)
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     fig.write_html(path+fname+'.html')
@@ -1212,7 +1219,9 @@ def plot_3Dfigure(G, posG,
                   fname ='testplot',
                   scheme = 'light', 
                   with_edges = True,
-                  annotat=None):
+                  annotat=None,
+                  plot_title=None
+                  ):
     
     if d_features == None:
         d_features = dict(zip(list(G.nodes()),list(G.nodes())))
@@ -1314,6 +1323,7 @@ def plot_3Dfigure(G, posG,
     else: 
         print('Oops, something went wrong. Please check input parameters.')
     
+    fig.update_layout(title_text = plot_title)
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     fig.write_html(path+fname+'.html')

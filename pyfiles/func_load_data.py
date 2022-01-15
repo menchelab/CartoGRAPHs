@@ -83,18 +83,13 @@ def load_centralities(G,organism):
         Return dictionary with genes as keys and four centrality metrics as values.
         '''
         df_centralities = pd.read_csv('input/Features_centralities_Dataframe_'+organism+'.csv', index_col=0)
-        d_deghubs = dict(G.degree()) 
+        d_deghubs = dict(zip(G.nodes(), df_centralities['degs']))
         d_clos = dict(zip(G.nodes(), df_centralities['clos']))
         d_betw = dict(zip(G.nodes(), df_centralities['betw']))
         d_eigen = dict(zip(G.nodes(), df_centralities['eigen']))
 
         d_centralities = dict(zip(list(G.nodes),zip(d_deghubs.values(),d_clos.values(),d_betw.values(),d_eigen.values())))
 
-        #cent_features = []
-        #for i in d_centralities.items():
-        #    k=list(i)
-        #    cent_features.append(k)
-        
         return d_centralities
     
     
@@ -266,28 +261,19 @@ def load_datamatrix(G,organism,netlayout):
         return pd.read_pickle(path+'RWR_Dataframe_'+organism+'.pickle')
     
     elif netlayout == 'importance':
-        
-        d_centralities = load_centralities(G, organism)
-        df_centralities = pd.DataFrame(d_centralities).T
-
-        DM_centralities = pd.DataFrame(distance.squareform(distance.pdist(df_centralities, 'cosine')))
-        DM_centralities = round(DM_centralities,6)
-        DM_centralities.index = list(G.nodes())
-        DM_centralities.columns = list(G.nodes())
-        
-        return DM_centralities
+        return pd.read_pickle(path+'Matrix_centrality_Dataframe_'+organism+'_cosine.pickle')
     
     elif netlayout == 'funct-bio' and organism == 'human':
-        return pd.read_pickle('input/DistanceMatrix_goBP_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_BioProc_Dataframe_human.pickle')
+        return pd.read_pickle('input/Matrix_goBP_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_BioProc_Dataframe_human.pickle')
     
     elif netlayout == 'funct-mol' and organism == 'human':
-        return pd.read_pickle('input/DistanceMatrix_goMF_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_MolFunc_Dataframe_human.pickle')
+        return pd.read_pickle('input/Matrix_goMF_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_MolFunc_Dataframe_human.pickle')
     
     elif netlayout == 'funct-cel' and organism == 'human':
-        return pd.read_pickle('input/DistanceMatrix_goCC_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_GO_CellComp_Dataframe_human.pickle')
+        return pd.read_pickle('input/Matrix_goCC_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_GO_CellComp_Dataframe_human.pickle')
     
     elif netlayout == 'funct-dis' and organism == 'human':
-        return pd.read_pickle('input/DistanceMatrix_Disease_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_Disease_Dataframe_human.pickle')
+        return pd.read_pickle('input/Matrix_Disease_Dataframe_Human_cosine.pickle') #pd.read_pickle('input/Features_Disease_Dataframe_human.pickle')
     
     else: 
         print('Please type one of the following: "local", "global", "importance", "funct-dis/bio/cel/mol"')

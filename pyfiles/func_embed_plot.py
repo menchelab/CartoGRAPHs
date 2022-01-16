@@ -66,7 +66,7 @@ def embed_umap_2D(Matrix, n_neigh, spre, m_dist, metric='cosine', learn_rate = 1
         min_dist = m_dist,
         n_components = n_comp,
         metric = metric, 
-        random_state=42,
+        random_state=1,
         learning_rate = learn_rate, 
         n_epochs = n_ep)
     
@@ -980,7 +980,7 @@ def get_trace_edges_from_nodelist3D(G, l_genes, posG, color, linew = 0.75, opac=
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-def plot_2D(data,path,fname,scheme='light', plot_title = None, plot_title = None):
+def plot_2D(data,path,fname,scheme='light', plot_title = None):
     '''
     Create a 2D plot from traces using plotly.
     Input: 
@@ -999,7 +999,7 @@ def plot_2D(data,path,fname,scheme='light', plot_title = None, plot_title = None
        
     if scheme == 'light':
         fig.update_layout(template= 'plotly_white', 
-                          showlegend=True, #False, 
+                          showlegend=False, 
                           width=1200, height=1200,
                               scene=dict(
                                   xaxis_title='',
@@ -1012,7 +1012,7 @@ def plot_2D(data,path,fname,scheme='light', plot_title = None, plot_title = None
         
     elif scheme == 'dark':
         fig.update_layout(template= 'plotly_dark', 
-                          showlegend=True, #False, 
+                          showlegend=False, 
                           width=1200, height=1200,
                               scene=dict(
                                   xaxis_title='',
@@ -1026,7 +1026,7 @@ def plot_2D(data,path,fname,scheme='light', plot_title = None, plot_title = None
         print('Oops, something went wrong. Please check input parameters.')
 
     fig.update_layout(title_text = plot_title)
-    fig.upfig.update_layout(title_text = plot_title)date_xaxes(visible=False)
+    fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     fig.write_html(path+fname+'.html')
     

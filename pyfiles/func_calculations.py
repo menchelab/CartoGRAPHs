@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.preprocessing import normalize
 from sklearn import preprocessing
 
-#from shapely import geometry
+from shapely import geometry
 
 ########################################################################################
 

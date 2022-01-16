@@ -426,17 +426,15 @@ def layout_portrait_tsne(G, DM, dim, prplxty=50, density=12, l_rate=200, steps=2
 
 
 
-def layout_portrait_umap(G, DM, dim, n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
+def layout_portrait_umap(G, DM, dim, n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine',r_scale = 1.2):
     
     if dim == 2:
-        r_scale = 1.2
         umap2D = embed_umap_2D(DM, n_neighbors, spread, min_dist, metric)
         posG = get_posG_2D_norm(G, DM, umap2D,r_scale)
         
         return posG
     
     elif dim == 3:
-        r_scale = 1.2
         umap_3D = embed_umap_3D(DM, n_neighbors, spread, min_dist, metric)
         posG = get_posG_3D_norm(G, DM, umap_3D,r_scale)
 

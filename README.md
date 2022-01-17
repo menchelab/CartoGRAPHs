@@ -21,9 +21,10 @@ relationships in large-scale biological networks.
 
 ## **ABOUT CARTOGRAPHS**
 
-CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks in python. 
-Here you will find jupyter notebooks to use this package and our method of visualizing different network characteristics,
-using feature modulation and dimensionality reduction to generate interactive visualizations. 
+CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks using python. 
+Here you will find jupyter notebooks to use our method of visualizing different network characteristics using
+feature modulation and dimensionality reduction techniques.
+
 To get a first glance on the framework, we provide a Quickstarter Notebook with an examplary graph. Additionally 
 one can dive deeper into real world networks, with our other Notebooks focusing on the Protein Protein Interaction Network.
 
@@ -39,18 +40,27 @@ More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
 
 ---
 
+## **INPUT DATA**
+
+To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](insert zenodo link).
+The files are located in the "input" folder and should be unzipped at the location of the Notebook used. 
+The folder includes a PPI edgelist, Disease Ontology files, Gene Ontology files and Gene lists, 
+such as Essentiality, Rare Diseases, Early Developmental Genes. 
+Additionally one can find preprocessed Feature Matrices for diverse layouts, due to exceeding calculation time for large networks. 
+
+---
+
 ## **REPOSITORY STRUCTURE**
-The structue of the project Github repo is as described below:
-```
-menchelab/cartoGRAPHs
-  - NOTEBOOKS TO USE THE FRAMEWORK
-    - cartoGRAPHs_Main.ipynb ---> jupyter notebook to visualize networks, with one exemplary toy graph included 
-    - cartoGRAPHs_AQuickStarter.ipynb ---> jupyter notebook to get familiar with the framework
-    - cartoGRAPHs_ModulatingFeatures.ipynb ---> feature modulation step by step
-  - NOTEBOOKS TO REPRODUCE FIGURES SHOWN IN THE MANUSCRIPT "CartoGRAPHs: A Framework for Interpretable Network Visualizations". 
-    - cartoGRAPHs_organisms_ManuscriptFigure*.ipynb
-  - NOTEBOOKS TO REPRODUCE THE CALCULATIONS DONE IN THE BENCHMARKING PROCESSES
-    are to be found in the /benchmark-folder
+
+#### NOTEBOOKS TO USE THE FRAMEWORK 
+
++ **Quickstarter** : cartoGRAPHs_AQuickStarter.ipynb 
+The Quickstarter Notebook contains basic functions to get familiar with the framework and 
+test different layouts quickly using small network models. 
+
++ **More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb 
++ **Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
++ **A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
     
 Python files including functions to execute the notebooks and produce Network Layouts and Visualizations
 - cartoGRAPHs.py ---> contains the actual layout functions

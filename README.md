@@ -16,17 +16,30 @@ series of two and three-dimensional layouts, benchmark their efficiency for mode
 networks, and demonstrate their power for elucidating structure to function 
 relationships in large-scale biological networks.
 
----
-### Install using Pypi
 
-An alpha version can be installed via
+---
+
+## **ABOUT CARTOGRAPHS**
+
+CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks in python. 
+Here you will find jupyter notebooks to use this package and our method of visualizing different network characteristics,
+using feature modulation and dimensionality reduction to generate interactive visualizations. 
+To get a first glance on the framework, we provide a Quickstarter Notebook with an examplary graph. Additionally 
+one can dive deeper into real world networks, with our other Notebooks focusing on the Protein Protein Interaction Network.
+
+---
+
+## **INSTALLATION**
+
+A package version can be installed via
 ```
 pip install cartoGRAPHs
 ```
 More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
 
---- 
-### **REPOSITORY STRUCTURE**
+---
+
+## **REPOSITORY STRUCTURE**
 The structue of the project Github repo is as described below:
 ```
 menchelab/cartoGRAPHs

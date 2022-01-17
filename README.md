@@ -40,16 +40,6 @@ More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
 
 ---
 
-## **INPUT DATA**
-
-To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](insert zenodo link).
-The files are located in the "input" folder and should be unzipped at the location of the Notebooks. 
-The folder includes a PPI edgelist, Disease Ontology files, Gene Ontology files and Gene lists, 
-such as Essentiality, Rare Diseases, Early Developmental Genes. 
-Additionally one can find preprocessed Feature Matrices for diverse layouts, due to exceeding calculation time for large networks. 
-
----
-
 ## **REPOSITORY STRUCTURE**
 
 #### NOTEBOOKS TO USE THE FRAMEWORK 
@@ -61,58 +51,45 @@ test different layouts quickly using small network models.
 **More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb
 **Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
 **A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
-    
 
-- cartoGRAPHs.py ---> contains the actual layout functions
-- func_load_data.py ---> loading precalculated data, to be found in /input/
-- func_calculations.py ---> contains functions for calculations 
-- func_embed_plot.py ---> contains spatial embedding and visualization functions 
-- func_visual_properties.py ---> contains additional node- and edge visual property settings/functions
-- func_exportVR.py ---> contains export functions for 2D and 3D layouts to be imported into the VRnetzer Analytics Platform by S.Pirch et al., Nature 
-communications, 2021
 
-Folders / directories for input and output : 
+**Folder structure**
+```
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
 ├── benchmark ---> benchmark evaluations with network models
 ├── output_plots ---> folder for saving produced plots during notebook sessions
 ├── img ---> contains images other than layouts
 └── pyfiles ---> all python files to create layouts and visualizations 
+```
+
+**Python files**
+```
+- cartoGRAPHs.py > contains the actual layout functions
+- func_load_data.py > loading precalculated data, to be found in /input/
+- func_calculations.py > contains functions for calculations 
+- func_embed_plot.py > contains spatial embedding and visualization functions 
+- func_visual_properties.py > contains additional node- and edge visual property settings/functions
+- func_exportVR.py > contains export functions for 2D/3D layouts e.g. for a VR platform
+```
 
 ---
 
-**A diagrammatic overview of functions included:** 
+**A diagrammatic overview of the functions included in this framework:** 
 
 ![cartographs](img/Codestructure_diagram.png)
-
----
-
-We also developed a web-based application to inspect networks with different layouts through a user interface. 
-The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs_app](https://github.com/menchelab/cartoGRAPHs_app).
 
 ---
 
 ### **NETWORK LAYOUTS**
 The Network Layouts are themed based on different characteristics of a Network. Those can be of structural or functional nature. Additionally we came up with a method to modulate between both, structural and functional features (please find a "hands-on" example in the Notebook "cartoGRAPHs_FeatureModulation.ipynb"). 
 
-Here we shortly describe the characteristics of our included layouts: 
+An Overview on the layouts included within the framework: 
 
-**local layout**
-(based on node pairwise adjacencies)
-
-
-**global layout** 
-(based on network propagation)
-
-**importance layout**
-(based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality)
-
-**functional layout**
-(e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features)
-
-**combined layouts**
-(based on modulation between structural and functional features
-
-
++ **local layout** > based on node pairwise adjacencies
++ **global layout** > based on network propagation
++ **importance layout** > based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality
++ **functional layout** > e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features
++ **combined layouts** > based on modulation between structural and functional features
 
 ---
 
@@ -128,16 +105,20 @@ came up with four different Layout Categories, named after their natural appeara
 
 ---
 
-### **INTERDISCIPLINARY ENVIRONMENT**
+## **INPUT DATA**
 
-A web-based application was developed to visually inspect networks with different layouts and maps in three dimensions. The repository of the web application can be reached [here](https://github.com/chris-huetter/cartoGRAPHs_app).
+To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](insert zenodo link).
+The files are located in the "input" folder and should be unzipped at the location of the Notebooks. 
+The folder includes a PPI edgelist, Disease Ontology files, Gene Ontology files and Gene lists, 
+such as Essentiality, Rare Diseases, Early Developmental Genes. 
+Additionally one can find preprocessed Feature Matrices for diverse layouts, due to exceeding calculation time for large networks. 
 
 ---
 
 ### **MODEL NETWORKS FOR BENCHMARKING**
 
 To benchmark the framework, model networks with well-known architecture, such as Cayley Tree, Cubic Grid and Torus Lattice were used.
-The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be downloaded [here](https://drive.google.com/drive/folders/1_E6reb4eUbctguFoT30inYhV9mvvKZMg?usp=sharing). Please unzip and place the folder in the directory of the benchmarking scripts (i.e. in the "benchmark" folder). 
+The code to run and reproduce layouts with aforementioned model networks can be viewed in the folder "benchmark". The respective scripts are partitioned based on model network and precalculated files, for network distance comparison can be obtained from the Zenodo repository. Please unzip and place the "benchmark" folder in the directory of the benchmarking scripts for testing.
 
 ---
 
@@ -145,11 +126,12 @@ The code to run and reproduce layouts with aforementioned model networks can be 
 
 The following packages incl. versions were used: 
 ```
-python<=3.6
+python 3.8
 
 biopython==1.78
 ipykernel==5.3.4
-numpy==1.20.1
+numba==0.51.0
+numpy==1.20.0
 scipy==1.5.2
 matplotlib==2.2.3
 colormap==1.0.3
@@ -161,8 +143,14 @@ pymysql==1.0.2
 seaborn==0.11.1
 umap-learn==0.5.1
 scikit-learn==0.24.1
+pynndescent==0.5.4
 
 ```
+---
+
+### **EXPLORING NETWORKS THROUGH WEB APPLICATION**
+To explore the framework without any coding required, please check out our web application here: www.cartographs.xyz
+It is frequently updated, check out our github repository for more [here](https://github.com/menchelab/cartoGRAPHs_app)
 
 ---
 

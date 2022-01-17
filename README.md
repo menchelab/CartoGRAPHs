@@ -19,7 +19,7 @@ relationships in large-scale biological networks.
 
 ---
 
-## **ABOUT CARTOGRAPHS**
+### **ABOUT CARTOGRAPHS**
 
 CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks. 
 Here you will find Jupyter Notebooks to use our method of visualizing different network characteristics based on 
@@ -30,53 +30,13 @@ one can dive deeper into real world networks focusing on the Protein Protein Int
 
 ---
 
-## **INSTALLATION**
+### **INSTALLATION**
 
 A package version can be installed via
 ```
 pip install cartoGRAPHs
 ```
 More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
-
----
-
-## **REPOSITORY STRUCTURE**
-
-#### NOTEBOOKS TO USE THE FRAMEWORK 
-
-**Quickstarter** : cartoGRAPHs_AQuickStarter.ipynb 
-The Quickstarter Notebook contains basic functions to get familiar with the framework and 
-test different layouts quickly using small network models. 
-
-**More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb
-**Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
-**A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
-
-
-**Folder structure**
-```
-├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
-├── benchmark ---> benchmark evaluations with network models
-├── output_plots ---> folder for saving produced plots during notebook sessions
-├── img ---> contains images other than layouts
-└── pyfiles ---> all python files to create layouts and visualizations 
-```
-
-**Python files**
-```
-- cartoGRAPHs.py > contains the actual layout functions
-- func_load_data.py > loading precalculated data, to be found in /input/
-- func_calculations.py > contains functions for calculations 
-- func_embed_plot.py > contains spatial embedding and visualization functions 
-- func_visual_properties.py > contains additional node- and edge visual property settings/functions
-- func_exportVR.py > contains export functions for 2D/3D layouts e.g. for a VR platform
-```
-
----
-
-**A diagrammatic overview of the functions included in this framework:** 
-
-![cartographs](img/Codestructure_diagram.png)
 
 ---
 
@@ -98,14 +58,57 @@ An Overview on the layouts included within the framework:
 To experiment with a diversity of two- and three-dimensional visualizations, we 
 came up with four different Layout Categories, named after their natural appearance.
 
-**2D Network portrait**
-**3D Network portrait**
-**3D Topographic Network Map**
-**3D Geodesic Network Map**
++ **2D Network portrait**
++ **3D Network portrait**
++ **3D Topographic Network Map**
++ **3D Geodesic Network Map**
 
 ---
 
-## **INPUT DATA**
+### **HOW TO CREATE NETWORK VISUALIZATIONS**
+
+#### NOTEBOOKS TO USE THE FRAMEWORK 
+
+**Quickstarter** : cartoGRAPHs_AQuickStarter.ipynb 
+The Quickstarter Notebook contains basic functions to get familiar with the framework and 
+test different layouts quickly using small network models. 
+
+**More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb
+
+**Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
+
+**A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
+
+---
+
+**Folder structure**
+
+├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
+├── benchmark ---> benchmark evaluations with network models
+├── output_plots ---> folder for saving produced plots during notebook sessions
+├── img ---> contains images other than layouts
+└── pyfiles ---> all python files to create layouts and visualizations 
+
+---
+
+**Python files**
+
+- cartoGRAPHs.py > contains the actual layout functions
+- func_load_data.py > loading precalculated data, to be found in /input/
+- func_calculations.py > contains functions for calculations 
+- func_embed_plot.py > contains spatial embedding and visualization functions 
+- func_visual_properties.py > contains additional node- and edge visual property settings/functions
+- func_exportVR.py > contains export functions for 2D/3D layouts e.g. for a VR platform
+
+---
+
+**A diagrammatic overview of the functions included in this framework:** 
+
+![cartographs](img/Codestructure_diagram.png)
+
+---
+
+### **INPUT DATA**
 
 To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](insert zenodo link).
 The files are located in the "input" folder and should be unzipped at the location of the Notebooks. 

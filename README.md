@@ -150,13 +150,13 @@ pynndescent==0.5.4
 ```
 ---
 
-### **EXPLORING NETWORKS THROUGH WEB APPLICATION**
+### **EXPLORING NETWORKS THROUGH A WEB APPLICATION**
 To explore the framework without any coding required, please check out our web application here: www.cartographs.xyz
 It is frequently updated, check out our github repository for more [here](https://github.com/menchelab/cartoGRAPHs_app)
 
 ---
 
-### **SYSTEM REQUIREMENTS**
+### SYSTEM REQUIREMENTS
 All Visualizations with networks up to 20,000 nodes and ~300,000 links in the main jupyter notebook were carried out on a machine with a 2 GHz Quad-Core Intel Core i5 and 16GB or Memory. 
 Heavier computation, such as performed during layout benchmarking, was calculated on a cluster and stored in the benchmark/netdist_precalc folder. 
 

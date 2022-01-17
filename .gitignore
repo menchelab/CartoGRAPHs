@@ -3,7 +3,7 @@
 input/ 
 benchmark/netdist_precalc/
 archiv/ 
-output_plots/ 
+output_plots/
 
 # Mac files 
 *.DS_Store

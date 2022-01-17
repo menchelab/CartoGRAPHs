@@ -60,19 +60,17 @@ def embed_umap_2D(Matrix, n_neigh, spre, m_dist, metric='cosine', learn_rate = 1
     ''' 
     n_comp = 2 
     SEED = 42
-    #print('start embedding')
     U = umap.UMAP(
         n_neighbors = n_neigh,
         spread = spre,
         min_dist = m_dist,
         n_components = n_comp,
         metric = metric, 
-        random_state=SEED, #np.random.seed(SEED),
+        random_state=SEED,
         learning_rate = learn_rate, 
         n_epochs = n_ep)
-    #print('embedding at fit_transform')
     embed = U.fit_transform(Matrix)
-    #print('embedding done')
+
     return embed
 
 

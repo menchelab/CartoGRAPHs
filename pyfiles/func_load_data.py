@@ -242,6 +242,7 @@ def load_essentiality(G, organism):
             print('Please choose organism by typing "human" or "yeast"')
 
             
+            
 def load_datamatrix(G,organism,netlayout):
     '''
     Load precalculated Matrix with N genes and M features.
@@ -277,7 +278,3 @@ def load_datamatrix(G,organism,netlayout):
     
     else: 
         print('Please type one of the following: "local", "global", "importance", "funct-dis/bio/cel/mol"')
-
-        
-        
-        

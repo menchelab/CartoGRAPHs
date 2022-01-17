@@ -265,38 +265,35 @@ def layout_importance_umap(G,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric
 #
 #--------------------
 
-def layout_functional_tsne(G, Matrix,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine'):
+def layout_functional_tsne(G, Matrix,dim,prplxty=50, density=12, l_rate=200, steps=250, metric='cosine',r_scale = 1.2):
     
     if dim == 2:
-        r_scale = 1.2
         tsne2D = embed_tsne_2D(Matrix, prplxty, density, l_rate, steps, metric)
-        posG = get_posG_2D_norm(G, Matrix, tsne2D) #, r_scale)
+        posG = get_posG_2D_norm(G, Matrix, tsne2D, r_scale)
         
         return posG
     
     elif dim == 3: 
-        r_scale = 1.2
         tsne3D = embed_tsne_3D(Matrix, prplxty, density, l_rate, steps, metric)
-        posG = get_posG_3D_norm(G, Matrix, tsne3D) #, r_scale)
+        posG = get_posG_3D_norm(G, Matrix, tsne3D, r_scale)
 
         return posG
         
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
 
-        
-def layout_functional_umap(G, Matrix,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine'):
+
+def layout_functional_umap(G, Matrix,dim,n_neighbors=8, spread=1.0, min_dist=0.0, metric='cosine',r_scale = 1.2):
     
     if dim == 2:
-        r_scale = 1.2
         umap2D = embed_umap_2D(Matrix, n_neighbors, spread, min_dist, metric)
-        posG = get_posG_2D_norm(G, Matrix, umap2D) #r_scale
+        posG = get_posG_2D_norm(G, Matrix, umap2D,r_scale)
         
         return posG
     
     elif dim == 3: 
         umap_3D = embed_umap_3D(Matrix, n_neighbors, spread, min_dist, metric)
-        posG = get_posG_3D_norm(G, Matrix, umap_3D) #r_scale
+        posG = get_posG_3D_norm(G, Matrix, umap_3D,r_scale)
 
         return posG
         
@@ -442,4 +439,3 @@ def layout_portrait_umap(G, DM, dim, n_neighbors=8, spread=1.0, min_dist=0.0, me
         
     else:
         print('Please choose dimensions, by either setting dim=2 or dim=3.')
-        

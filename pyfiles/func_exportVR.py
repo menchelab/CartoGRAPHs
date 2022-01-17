@@ -99,39 +99,52 @@ def export_to_csv3D(path, layout_namespace, posG, colors = None):
 
 
 
-def export_to_csv3D_memes(path, labels, posG, colors):
-    '''
-    Generate a csv table for the Meme-miner project. (github/menchelab/meme-miner) 
-    Return dataframe with ID (from 0-len(G.nodes()) ,X,Y,Z, R,G,B,A, name of meme.
-    '''
-    
-    colors_hex2rgb = []
-    for j in colors: 
-        k = hex_to_rgb(j)
-        colors_hex2rgb.append(k)
-            
-    colors_r = []
-    colors_g = []
-    colors_b = []
-    colors_a = []
-    for i in colors_hex2rgb:
-        colors_r.append(int(i[0]))#*255)) # color values should be integers within 0-255
-        colors_g.append(int(i[1]))#*255))
-        colors_b.append(int(i[2]))#*255))
-        colors_a.append(100) # 0-100 shows normal colors in VR, 128-200 is glowing mode
-        
-    df_3D = pd.DataFrame(posG).T
-    df_3D.columns=['X','Y','Z']
-    df_3D['R'] = colors_r
-    df_3D['G'] = colors_g
-    df_3D['B'] = colors_b
-    df_3D['A'] = colors_a
+def import_vrnetzer_csv2D(G,file):
 
-    df_3D['labels'] = labels
-    #df_3D['ID'] = list(posG.keys())
+    df = pd.read_csv(file, header=None)
 
-    #cols = df_3D.columns.tolist()
-    #cols = cols[-1:] + cols[:-1]
-    #df_3D_final = df_3D[cols]
+    df.columns = ['id','x','y','z','r','g','b','a','namespace']
+
+    df_vrnetzer = df.set_index('id')
+    df_vrnetzer.index.name = None
+
+    ids = [str(i) for i in list(df['id'])]
+    x = list(df['x'])
+    y = list(df['y'])
+    z = list(df['z'])
+    posG = dict(zip(ids,zip(x,y))) #,z)))
+
+    r_list = list(df['r'])
+    g_list = list(df['g'])
+    b_list = list(df['b'])
+    a_list = list(df['a'])
+
+    colors = list(zip(r_list,g_list,b_list,a_list))
     
-    return df_3D.to_csv(r''+path+'Meme3D'+'.csv',index=False, header=False)
+    return posG,colors
+
+
+
+def import_vrnetzer_csv3D(G,file):
+
+    df = pd.read_csv(file, header=None)
+
+    df.columns = ['id','x','y','z','r','g','b','a','namespace']
+
+    df_vrnetzer = df.set_index('id')
+    df_vrnetzer.index.name = None
+
+    ids = [str(i) for i in list(df['id'])]
+    x = list(df['x'])
+    y = list(df['y'])
+    z = list(df['z'])
+    posG = dict(zip(ids,zip(x,y,z)))
+
+    r_list = list(df['r'])
+    g_list = list(df['g'])
+    b_list = list(df['b'])
+    a_list = list(df['a'])
+
+    colors = list(zip(r_list,g_list,b_list,a_list))
+    
+    return posG,colors

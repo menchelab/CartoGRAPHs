@@ -59,19 +59,20 @@ def embed_umap_2D(Matrix, n_neigh, spre, m_dist, metric='cosine', learn_rate = 1
     Return dict (keys: node IDs, values: x,y).
     ''' 
     n_comp = 2 
-
+    SEED = 42
+    #print('start embedding')
     U = umap.UMAP(
         n_neighbors = n_neigh,
         spread = spre,
         min_dist = m_dist,
         n_components = n_comp,
         metric = metric, 
-        random_state=1,
+        random_state=SEED, #np.random.seed(SEED),
         learning_rate = learn_rate, 
         n_epochs = n_ep)
-    
+    #print('embedding at fit_transform')
     embed = U.fit_transform(Matrix)
-    
+    #print('embedding done')
     return embed
 
 
@@ -177,7 +178,7 @@ def get_posG_3D(l_genes, embed):
     return posG
 
 
-def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 1.2):
+def get_posG_2D_norm(G, DM, embed, r_scalingfactor):
     '''
     Generate coordinates from embedding. 
     Input:
@@ -267,8 +268,9 @@ def get_posG_2D_norm(G, DM, embed, r_scalingfactor = 1.2):
         yy_norm_final.append(round(i,10))
 
     posG_complete_norm = dict(zip(list(G.nodes()),zip(xx_norm_final,yy_norm_final)))
-    
+
     return posG_complete_norm
+
 
 
 def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):

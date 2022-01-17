@@ -21,12 +21,12 @@ relationships in large-scale biological networks.
 
 ## **ABOUT CARTOGRAPHS**
 
-CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks using python. 
-Here you will find jupyter notebooks to use our method of visualizing different network characteristics using
-feature modulation and dimensionality reduction techniques.
+CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks. 
+Here you will find Jupyter Notebooks to use our method of visualizing different network characteristics based on 
+feature modulation and dimensionality reduction.
 
 To get a first glance on the framework, we provide a Quickstarter Notebook with an examplary graph. Additionally 
-one can dive deeper into real world networks, with our other Notebooks focusing on the Protein Protein Interaction Network.
+one can dive deeper into real world networks focusing on the Protein Protein Interaction Network.
 
 ---
 

@@ -1,5 +1,5 @@
-# cartoGRAPHs 
-##### Visual Network Exploration in two and three dimensions.
+# CARTOGRAPHS 
+Visual Network Exploration in two and three dimensions
 
 
 ![cartographs](img/cartographs_img02.png)
@@ -19,7 +19,7 @@ relationships in large-scale biological networks.
 
 ---
 
-### **ABOUT CARTOGRAPHS**
+### ABOUT CARTOGRAPHS
 
 CartoGRAPHs is a python package to generate two- and three-dimensional layouts of networks. 
 Here you will find Jupyter Notebooks to use our method of visualizing different network characteristics based on 
@@ -30,7 +30,7 @@ one can dive deeper into real world networks focusing on the Protein Protein Int
 
 ---
 
-### **INSTALLATION**
+### INSTALLATION
 
 A package version can be installed via
 ```
@@ -40,7 +40,8 @@ More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
 
 ---
 
-### **NETWORK LAYOUTS**
+### NETWORK LAYOUTS
+
 The Network Layouts are themed based on different characteristics of a Network. Those can be of structural or functional nature. Additionally we came up with a method to modulate between both, structural and functional features (please find a "hands-on" example in the Notebook "cartoGRAPHs_FeatureModulation.ipynb"). 
 
 An Overview on the layouts included within the framework: 
@@ -53,7 +54,7 @@ An Overview on the layouts included within the framework:
 
 ---
 
-### **NETWORK CATEGORIES**
+### NETWORK CATEGORIES
 
 To experiment with a diversity of two- and three-dimensional visualizations, we 
 came up with four different Layout Categories, named after their natural appearance.
@@ -65,33 +66,31 @@ came up with four different Layout Categories, named after their natural appeara
 
 ---
 
-### **HOW TO CREATE NETWORK VISUALIZATIONS**
+### HOW TO CREATE NETWORK VISUALIZATIONS
 
-#### NOTEBOOKS TO USE THE FRAMEWORK 
-
-**Quickstarter** : cartoGRAPHs_AQuickStarter.ipynb 
+**Quickstarter** | *cartoGRAPHs_AQuickStarter.ipynb*
 The Quickstarter Notebook contains basic functions to get familiar with the framework and 
 test different layouts quickly using small network models. 
 
-**More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb
+**More Detailed Example** | *cartoGRAPHs_ExemplaryNotebook.ipynb*
 
-**Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
+**Focus: Feature Modulation** | *cartoGRAPHs_FeatureModulation.ipynb*
 
-**A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
+**A Biological Network: Human PPI** | *cartoGRAPHs_ManuscriptFigure*.ipynb* 
 
 ---
 
-**Folder structure**
+FOLDER STRUCTURE 
 
+```
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
 ├── benchmark ---> benchmark evaluations with network models
 ├── output_plots ---> folder for saving produced plots during notebook sessions
 ├── img ---> contains images other than layouts
 └── pyfiles ---> all python files to create layouts and visualizations 
+```
 
----
-
-**Python files**
+PYTHON FILES (folder *pyfiles*)
 
 - cartoGRAPHs.py > contains the actual layout functions
 - func_load_data.py > loading precalculated data, to be found in /input/

@@ -43,7 +43,7 @@ More information here: https://pypi.org/project/cartoGRAPHs/0.0.3/
 ## **INPUT DATA**
 
 To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](insert zenodo link).
-The files are located in the "input" folder and should be unzipped at the location of the Notebook used. 
+The files are located in the "input" folder and should be unzipped at the location of the Notebooks. 
 The folder includes a PPI edgelist, Disease Ontology files, Gene Ontology files and Gene lists, 
 such as Essentiality, Rare Diseases, Early Developmental Genes. 
 Additionally one can find preprocessed Feature Matrices for diverse layouts, due to exceeding calculation time for large networks. 
@@ -54,15 +54,15 @@ Additionally one can find preprocessed Feature Matrices for diverse layouts, due
 
 #### NOTEBOOKS TO USE THE FRAMEWORK 
 
-+ **Quickstarter** : cartoGRAPHs_AQuickStarter.ipynb 
+**Quickstarter** : cartoGRAPHs_AQuickStarter.ipynb 
 The Quickstarter Notebook contains basic functions to get familiar with the framework and 
 test different layouts quickly using small network models. 
 
-+ **More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb 
-+ **Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
-+ **A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
+**More Detailed Example** : cartoGRAPHs_ExemplaryNotebook.ipynb
+**Focus: Feature Modulation** : cartoGRAPHs_FeatureModulation.ipynb 
+**A Biological Network: Human PPI** cartoGRAPHs_ManuscriptFigure*.ipynb 
     
-Python files including functions to execute the notebooks and produce Network Layouts and Visualizations
+
 - cartoGRAPHs.py ---> contains the actual layout functions
 - func_load_data.py ---> loading precalculated data, to be found in /input/
 - func_calculations.py ---> contains functions for calculations 
@@ -73,50 +73,58 @@ communications, 2021
 
 Folders / directories for input and output : 
 ├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
-├── benchmark ---> benchmark evaluations 
+├── benchmark ---> benchmark evaluations with network models
 ├── output_plots ---> folder for saving produced plots during notebook sessions
-└── img ---> contains images other than layouts
-```
+├── img ---> contains images other than layouts
+└── pyfiles ---> all python files to create layouts and visualizations 
 
 ---
 
-### **HOW TO USE THE FRAMEWORK**
-
-A Quickstarter Notebook: "cartoGRAPHs_AQuickStarter.ipynb"
-A Notebook with more detailed steps including diverse examples and descriptions: "cartoGRAPHs_main.ipynb"
-Input files and Benchmarking-related precalculations can be downloaded.
-[here](https://drive.google.com/drive/folders/1_E6reb4eUbctguFoT30inYhV9mvvKZMg?usp=sharing) and shall be unpacked in the location of the jupyter notebook. 
-
----
-
-A diagrammatic overview of functions included within the framework: 
+**A diagrammatic overview of functions included:** 
 
 ![cartographs](img/Codestructure_diagram.png)
 
 ---
 
-A web-based application was developed to inspect networks through a user interface. The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs_app](https://github.com/menchelab/cartoGRAPHs_app). 
+We also developed a web-based application to inspect networks with different layouts through a user interface. 
+The repository of the web application can be reached at [MENCHELAB/cartoGRAPHs_app](https://github.com/menchelab/cartoGRAPHs_app).
 
 ---
 
 ### **NETWORK LAYOUTS**
-Different Layouts can be produced. 
+The Network Layouts are themed based on different characteristics of a Network. Those can be of structural or functional nature. Additionally we came up with a method to modulate between both, structural and functional features (please find a "hands-on" example in the Notebook "cartoGRAPHs_FeatureModulation.ipynb"). 
 
-+ local layout (based on node pairwise adjacencies)
-+ global layout (based on network propagation)
-+ importance layout (based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality)
-+ functional layout (e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features)
-+ combined layouts (providing a modulation between structural and functional features)
+Here we shortly describe the characteristics of our included layouts: 
+
+**local layout**
+(based on node pairwise adjacencies)
+
+
+**global layout** 
+(based on network propagation)
+
+**importance layout**
+(based on network centrality metrics, such as degree, closeness, betweenness and eigenvector centrality)
+
+**functional layout**
+(e.g. based on a *NxM* matrix including *N* nodes in the network and *M* features)
+
+**combined layouts**
+(based on modulation between structural and functional features
+
+
 
 ---
 
 ### **NETWORK CATEGORIES**
 
-Four different Layout Categories are implemented. 
-+ 2D Network portrait
-+ 3D Network portrait
-+ 3D Topographic Network Map
-+ 3D Geodesic Network Map
+To experiment with a diversity of two- and three-dimensional visualizations, we 
+came up with four different Layout Categories, named after their natural appearance.
+
+**2D Network portrait**
+**3D Network portrait**
+**3D Topographic Network Map**
+**3D Geodesic Network Map**
 
 ---
 

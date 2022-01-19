@@ -83,11 +83,10 @@ test different layouts quickly using small network models.
 FOLDER STRUCTURE 
 
 ```
-├── input ---> all input data required to reproduce figures in jupyter notebook and python files (this folder is to be downloaded separately)
-├── benchmark ---> benchmark evaluations with network models
-├── output_plots ---> folder for saving produced plots during notebook sessions
-├── img ---> contains images other than layouts
-└── pyfiles ---> all python files to create layouts and visualizations 
+├── input ---> please download all input files from our zenodo repository and deposit the "input" folder into your directory of notebooks
+├── benchmark ---> benchmark evaluations with network models; input files can as well be downloaded through zenodo and should be placed into the "benchmark" folder 
+├── img ---> diagrams and images
+└── pyfiles ---> python files to create layouts and visualizations 
 ```
 
 PYTHON FILES (folder *pyfiles*)

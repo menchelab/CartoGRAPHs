@@ -109,7 +109,7 @@ PYTHON FILES (folder *pyfiles*)
 
 ### **INPUT DATA**
 
-To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](https://doi.org/10.5281/zenodo.5865940).
+To use the Jupyter Notebooks provided for the Human PPI, please download the input files from [Zenodo](https://doi.org/10.5281/zenodo.5879224).
 The files are located in the "input" folder and should be unzipped at the location of the Notebooks. 
 The folder includes a PPI edgelist, Disease Ontology files, Gene Ontology files and Gene lists, 
 such as Essentiality, Rare Diseases, Early Developmental Genes. 

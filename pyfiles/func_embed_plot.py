@@ -373,8 +373,7 @@ def get_posG_3D_norm(G, DM, embed, r_scalingfactor=1.05):
     return posG_3D_complete_umap_norm
 
 
-
-def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
+def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 1):
     '''
     Generate coordinates from embedding. 
     Input:
@@ -393,26 +392,20 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
     
     genes = []
     for i in DM.index:
-        if str(i) in G.nodes() or int(i) in G.nodes():
+        if i in G.nodes():
             genes.append(i)
-
+    
     genes_rest = [] 
     for i in G.nodes():
         if i not in genes:
             genes_rest.append(i)
-            
+    
     posG_3Dsphere = {}
     cc = 0
     for entz in genes:
         posG_3Dsphere[entz] = (x[cc],y[cc], z[cc])
         cc += 1
 
-    posG_3Dsphere_radius = {}
-    for node,rad in d_param.items():
-        for k,v in posG_3Dsphere.items():
-            if k == node:
-                posG_3Dsphere_radius[k] = (v[0]*rad, v[1]*rad, v[2]*rad)
- 
     # generate spherical coordinates for rest genes (without e.g. GO term or Disease Annotation)
     indices = arange(0, len(genes_rest))
     phi = arccos(1 - 2*indices/len(genes_rest))
@@ -424,11 +417,17 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
     rest_points = []
     for i,j,k in zip(x,y,z):
         rest_points.append((i,j,k))
-
+    
     posG_rest = dict(zip(genes_rest, rest_points))
-
-    posG_all = {**posG_3Dsphere_radius, **posG_rest}
-    posG_complete_sphere = {key:posG_all[key] for key in G.nodes()}
+    posG_all = {**posG_3Dsphere, **posG_rest}
+            
+    posG_3Dsphere_radius = {}
+    for node,rad in d_param.items():
+        for k,v in posG_all.items():
+            if node == k:
+                posG_3Dsphere_radius[node] = (v[0]*rad, v[1]*rad, v[2]*rad)
+ 
+    posG_complete_sphere = {key:posG_3Dsphere_radius[key] for key in G.nodes()}
 
     # normalize coordinates 
     x_list = []
@@ -446,6 +445,7 @@ def get_posG_sphere_norm(G, DM, sphere_mapper, d_param, radius_rest_genes = 20):
     posG_complete_sphere_norm = dict(zip(list(G.nodes()), zip(xx_norm,yy_norm,zz_norm)))
     
     return posG_complete_sphere_norm
+
 
 
 

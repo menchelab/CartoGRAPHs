@@ -629,7 +629,7 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
         return traces 
 
 
-def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.000001, opac = 0.9):
+def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.0, opac = 0.9):
     '''
     Get trace of nodes for plotting in 3D. 
     Input: 
@@ -637,7 +637,7 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
     - info = hover information for each node, e.g. a dictionary with node IDs and values = hover information
     - color = a dictionary of key = association name for each color (for legend) and value = hex color  
     - size = a dictionary with node Ids and values=sizes of nodes
-    - legend_names = list of values e.g. strings for each color 
+    - legend_names = a dictionary with colors as keys and legendname as values
     - linewidth = float; contour of nodes
     - opac = transparency of nodes
     
@@ -662,23 +662,29 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
                 sub[k] = v
             d_col_pos[i] = sub
     d_col_pos_ordered = dict(sorted(d_col_pos.items(),reverse=True))
-
+    #print(d_col_pos_ordered)
+    
     # creating traces 
     traces = []
     
     if legend_names is not None and len(legend_names) == len(set(color.values())): 
-        
+       
         for elem,(col, dct) in enumerate(d_col_pos_ordered.items()):
-           
             ids = list(dct.keys())
             coords = list(dct.values())
             
+            for cl,lg in legend_names.items():
+                if col == cl:
+                    legend_scattername = lg
+                
             l_info_sorted_to_ids = [(info[key]) for key in ids] #{key:info[key] for key in ids}            
             #l_info_sorted_to_ids = list(info_sorted_to_ids.values())
 
             l_size_sorted_to_ids = [(size[key]) for key in ids] #{key:size[key] for key in ids}
             #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
             
+            l_col_sorted_to_ids = [(color[key]) for key in ids]
+                                    
             trace = pgo.Scatter3d(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
                                   z=[i[2] for i in coords],
@@ -686,19 +692,21 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
                                   text = l_info_sorted_to_ids,
                                   hoverinfo = 'text',
                                        marker = dict(
-                            color = col,
+                            color = l_col_sorted_to_ids, # col,
                             size = l_size_sorted_to_ids,
                             symbol = 'circle',
                             line = dict(width = linewidth,
                                     color = 'dimgrey'),
                             opacity = opac,
                         ),
-                    name = "Group: "+str(list(legend_names.values())[elem])
+                    name = legend_scattername # str(list(d_col_pos_ordered.keys())[c])
                     )
+            
             traces.append(trace)
+            
         return traces 
     
-    else:      
+    else:
         for elem,(col, dct) in enumerate(d_col_pos_ordered.items()):
             
             ids = list(dct.keys())

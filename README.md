@@ -32,8 +32,18 @@ one can dive deeper into real world networks focusing on the Protein Protein Int
 
 ### INSTALLATION
 
-A package version can be installed via
+Install the package e.g. in a virtual environment: 
 ```
+# create a virtual environment 
+python3 -m venv name_of_env
+
+# activate it 
+source name_of_env/bin/activate 
+
+# install requirements packages
+python3 -m pip install -r requirements.txt
+
+# install cartoGRAPHs 
 pip install cartoGRAPHs
 ```
 More information here: https://pypi.org/project/cartoGRAPHs/1.0.1/

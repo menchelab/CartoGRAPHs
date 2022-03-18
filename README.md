@@ -54,6 +54,11 @@ python3 -m pip install -r requirements.txt
 python3 -m pip install cartoGRAPHs
 ```
 
++ to use environment with jupyter notebooks
+```
+ipython kernel install --user --name=name_of_env
+```
+
 More information here: https://pypi.org/project/cartoGRAPHs/1.0.1/
 
 ---

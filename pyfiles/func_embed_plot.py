@@ -176,7 +176,7 @@ def get_posG_3D(l_genes, embed):
     return posG
 
 
-def get_posG_2D_norm(G, DM, embed, r_scalingfactor):
+def get_posG_2D_norm(G, DM, embed, r_scalingfactor=1.05):
     '''
     Generate coordinates from embedding. 
     Input:

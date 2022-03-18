@@ -1,0 +1,3 @@
+#!/Users/chris/Desktop/Github/cartoGRAPHs/c_env/bin/python3
+from numba.pycc import main
+main()

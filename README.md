@@ -25,7 +25,7 @@ CartoGRAPHs is a python package to generate two- and three-dimensional layouts o
 Here you will find Jupyter Notebooks to use our method of visualizing different network characteristics based on 
 feature modulation and dimensionality reduction.
 
-To get a first glance on the framework, we provide a Quickstarter Notebook with an examplary graph. Additionally 
+To get a first glance on the framework, we provide a Quickstarter Notebook with an exemplary graph. Additionally 
 one can dive deeper into real world networks focusing on the Protein Protein Interaction Network.
 
 ---
@@ -36,7 +36,7 @@ A package version can be installed via
 ```
 pip install cartoGRAPHs
 ```
-More information here: https://pypi.org/project/cartoGRAPHs/1.0.0/
+More information here: https://pypi.org/project/cartoGRAPHs/1.0.1/
 
 ---
 

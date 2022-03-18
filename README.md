@@ -123,32 +123,6 @@ The code to run and reproduce layouts with aforementioned model networks can be 
 
 ---
 
-### **LIBRARIES / PACKAGE REQUIREMENTS**
-
-The following packages incl. versions were used: 
-```
-python 3.8
-
-biopython==1.78
-ipykernel==5.3.4
-numba==0.51.0
-numpy==1.20.0
-scipy==1.5.2
-matplotlib==2.2.3
-colormap==1.0.3
-pandas==1.0.1
-colormath==3.0.0
-networkx==2.3
-plotly==4.14.3
-pymysql==1.0.2
-seaborn==0.11.1
-umap-learn==0.5.1
-scikit-learn==0.24.1
-pynndescent==0.5.4
-
-```
----
-
 ### **EXPLORING NETWORKS THROUGH A WEB APPLICATION**
 To explore the framework without any coding required, please check out our web application here: www.cartographs.xyz
 It is frequently updated, check out our github repository for more [here](https://github.com/menchelab/cartoGRAPHs_app)

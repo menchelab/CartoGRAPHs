@@ -1,4 +1,0 @@
-#!/Users/chris/Desktop/Github/cartoGRAPHs/c_env/bin/python3
-"""Small script to execute the igraph command line interface"""
-from igraph.app.shell import main
-main()

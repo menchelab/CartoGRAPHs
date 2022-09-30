@@ -8,7 +8,7 @@ decorator==5.1.1
 html2image==2.0.1
 idna==3.3
 importlib-resources==5.4.0
-joblib==1.1.0
+joblib==1.2.0
 jsonschema==4.4.0
 jupyter-core==4.9.2
 kiwisolver==1.4.0

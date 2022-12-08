@@ -1,6 +1,6 @@
 attrs==21.4.0
 biopython==1.79
-certifi==2021.10.8
+certifi==2022.12.7
 charset-normalizer==2.0.12
 colormath==3.0.0
 cycler==0.11.0

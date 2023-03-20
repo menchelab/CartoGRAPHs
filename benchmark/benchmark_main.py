@@ -1112,3 +1112,137 @@ def minmaxscaling_posG(G,posG):
 
     return posG_norm 
 
+
+
+
+def get_trace_nodes_3D(posG, info_list, color, size, linewidth=0.000001, opac = 0.9, legendname = "Nodes", visible_bool = True):
+    '''
+    Get trace of nodes for plotting in 3D. 
+    Input: 
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - info_list = hover information for each node, e.g. a list sorted according to the initial graph/posG keys
+    - color = string; hex color
+    - opac = transparency of edges e.g. 0.2
+    
+    Return a trace for plotly graph objects plot. 
+    '''
+    
+    key_list=list(posG.keys())
+    trace = pgo.Scatter3d(x=[posG[key_list[i]][0] for i in range(len(key_list))],
+                           y=[posG[key_list[i]][1] for i in range(len(key_list))],
+                           z=[posG[key_list[i]][2] for i in range(len(key_list))],
+                           mode = 'markers',
+                           text = info_list,
+                           hoverinfo = 'text',
+                           #textposition='middle center',
+                           marker = dict(
+                color = color,
+                size = size,
+                symbol = 'circle',
+                line = dict(width = linewidth,
+                        color = 'dimgrey'),
+                opacity = opac,
+            ),
+        visible = visible_bool,
+        name = legendname
+        )
+    
+    return trace
+
+
+
+def get_trace_edges_3D(G, posG, color = '#C7C7C7', opac = 0.1, linewidth=0.25):
+    '''
+    Get trace of edges for plotting in 3D. 
+    Input: 
+    - G = Graph
+    - posG = dictionary with nodes as keys and coordinates as values.
+    - color = string; hex color
+    - opac = transparency of edges e.g. 0.2
+    
+    Return a trace for plotly graph objects plot. 
+    '''
+    
+    edge_x = []
+    edge_y = []
+    edge_z = []
+    for edge in G.edges():
+            x0, y0, z0 = posG[edge[0]]
+            x1, y1, z1 = posG[edge[1]]
+            edge_x.append(x0)
+            edge_x.append(x1)
+            edge_x.append(None)
+            edge_y.append(y0)
+            edge_y.append(y1)
+            edge_y.append(None)
+            edge_z.append(z0)
+            edge_z.append(z1)
+            edge_z.append(None)
+            
+    if len(edge_x) < 500: 
+        linewidth = 1.0
+        opac = 0.5
+        
+    elif len(edge_x) >= 500 and len(edge_x) < 2000:
+        linewidth = 1.0
+        opac = 0.35
+    
+    elif len(edge_x) >= 2000:
+        linewidth = 0.75
+        opac = 0.1
+        
+    trace_edges = pgo.Scatter3d(
+                                x = edge_x, 
+                                y = edge_y, 
+                                z = edge_z,
+                                mode = 'lines', hoverinfo='none',
+                                line = dict(width = linewidth, color = color),
+                                opacity = opac,
+                                name = "Links"
+                        )
+
+    return trace_edges
+
+
+
+def export_to_csv3D(path, layout_namespace, posG, colors = None):
+    '''
+    Generate csv for upload to VRnetzer plaform for 3D layouts. 
+    Return dataframe with ID,X,Y,Z,R,G,B,A,layout_namespace.
+    '''
+    
+    if colors is None: 
+        colors_hex2rgb = list((255,0,0) for i in list(posG.keys()))
+    
+    else: 
+        colors_hex2rgb = []
+        for j in colors: 
+            k = hex_to_rgb(j)
+            colors_hex2rgb.append(k)
+            
+    colors_r = []
+    colors_g = []
+    colors_b = []
+    colors_a = []
+    for i in colors_hex2rgb:
+        colors_r.append(int(i[0]))#*255)) # color values should be integers within 0-255
+        colors_g.append(int(i[1]))#*255))
+        colors_b.append(int(i[2]))#*255))
+        colors_a.append(100) # 0-100 shows normal colors in VR, 128-200 is glowing mode
+        
+    df_3D = pd.DataFrame(posG).T
+    df_3D.columns=['X','Y','Z']
+    df_3D['R'] = colors_r
+    df_3D['G'] = colors_g
+    df_3D['B'] = colors_b
+    df_3D['A'] = colors_a
+
+    df_3D[layout_namespace] = layout_namespace
+    df_3D['ID'] = list(posG.keys())
+
+    cols = df_3D.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df_3D_final = df_3D[cols]
+    
+    return df_3D_final.to_csv(r''+path+layout_namespace+'_layout.csv',index=False, header=False)
+

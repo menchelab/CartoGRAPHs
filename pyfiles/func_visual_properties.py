@@ -154,7 +154,7 @@ def color_nodes_from_dict(G, d_to_be_colored, palette):
     return d_node_color_sorted
 
 
-def color_nodes_from_list(G, l_nodes, col):
+def color_nodes_from_list(G, l_nodes, col,restcol='#696969'):
     '''
     Color nodes based on essentiality state.
     Input: 
@@ -173,7 +173,7 @@ def color_nodes_from_list(G, l_nodes, col):
     d_restnodes = {}
     for i in G.nodes():
         if i not in d_nodes.keys():
-            d_restnodes[i] = '#A0A0A0' #'#d3d3d3'
+            d_restnodes[i] = restcol
 
     d_all_nodes = {**d_nodes, **d_restnodes}
     d_all_nodes_sorted = {key:d_all_nodes[key] for key in G.nodes()}   

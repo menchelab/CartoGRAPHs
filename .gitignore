@@ -6,6 +6,8 @@ archiv/
 output_plots/
 c_env/
 *env/
+*env*/
+env*/
 
 # Mac files 
 *.DS_Store

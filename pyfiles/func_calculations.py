@@ -8,15 +8,17 @@
 
 import numpy as np 
 import networkx as nx 
-
-from Bio import Entrez
-import pymysql as mysql
 import pandas as pd 
-
 from sklearn.preprocessing import normalize
-from sklearn import preprocessing
 
-from shapely import geometry
+
+# -----------------------------------
+# DELETE
+# -----------------------------------
+#from Bio import Entrez
+#import pymysql as mysql
+#from sklearn import preprocessing
+#from shapely import geometry
 
 ########################################################################################
 
@@ -138,73 +140,75 @@ def rotate_z(x, y, z, theta):
 
 
 
-########################################################################################
-# 
-# G E N E   I D / S Y M B O L   F U N C T I O N S  
-#
-########################################################################################
+# NOT IN USE 
+
+# ########################################################################################
+# # 
+# # G E N E   I D / S Y M B O L   F U N C T I O N S  
+# #
+# ########################################################################################
 
 
-# GENE entrezID <-> Gene Symbol 
-def genent2sym():
-    '''
-    Return two dictionaries.
-    First with gene entrezid > symbol. Second with symbol > entrezid. 
-    '''
+# # GENE entrezID <-> Gene Symbol 
+# def genent2sym():
+#     '''
+#     Return two dictionaries.
+#     First with gene entrezid > symbol. Second with symbol > entrezid. 
+#     '''
     
-    db = mysql.connect("menchelabdb.int.cemm.at","readonly","ra4Roh7ohdee","GenesGO")    
+#     db = mysql.connect("menchelabdb.int.cemm.at","readonly","ra4Roh7ohdee","GenesGO")    
 
-    # prepare a cursor object using cursor() method
-    cursor = db.cursor()
+#     # prepare a cursor object using cursor() method
+#     cursor = db.cursor()
 
-    sql = """   SELECT
-                    Approved_Symbol,
-                    Entrez_Gene_ID_NCBI 
-                FROM GenesGO.hgnc_complete
-                WHERE Entrez_Gene_ID_NCBI != ''
-          """ 
+#     sql = """   SELECT
+#                     Approved_Symbol,
+#                     Entrez_Gene_ID_NCBI 
+#                 FROM GenesGO.hgnc_complete
+#                 WHERE Entrez_Gene_ID_NCBI != ''
+#           """ 
 
-    cursor.execute(sql)
-    data = cursor.fetchall()    
-#     try: 
-#         # execute SQL query using execute() method.
-#         cursor.execute(sql)
-#         data = cursor.fetchall()
-#     except:
-#         print('SQL error')
-    db.close()
+#     cursor.execute(sql)
+#     data = cursor.fetchall()    
+# #     try: 
+# #         # execute SQL query using execute() method.
+# #         cursor.execute(sql)
+# #         data = cursor.fetchall()
+# #     except:
+# #         print('SQL error')
+#     db.close()
 
-#     t0 = time.time()
-    d_sym_ent = {}
-    d_ent_sym = {}
+# #     t0 = time.time()
+#     d_sym_ent = {}
+#     d_ent_sym = {}
 
-    for x in data:
-        sym = x[0]
-        ent = x[1]
-        d_sym_ent[sym] = ent
-        d_ent_sym[ent] = sym
-#     print(time.time()-t0)
+#     for x in data:
+#         sym = x[0]
+#         ent = x[1]
+#         d_sym_ent[sym] = ent
+#         d_ent_sym[ent] = sym
+# #     print(time.time()-t0)
     
-    return d_ent_sym, d_sym_ent
+#     return d_ent_sym, d_sym_ent
 
 
 
-# Gene entrezID <-> Gene Symbol 
-def convert_symbol_to_entrez(gene_list,name_species):   #name_species must be the official entrez name in string format
-    '''
-    Get gene list and name of species and
-    Return a dict of Gene Symbol and EntrezID
-    '''
+# # Gene entrezID <-> Gene Symbol 
+# def convert_symbol_to_entrez(gene_list,name_species):   #name_species must be the official entrez name in string format
+#     '''
+#     Get gene list and name of species and
+#     Return a dict of Gene Symbol and EntrezID
+#     '''
     
-    sym_to_entrez_dict={}    #create a dictionary symbol to entrez
-    for gene in gene_list:
-        #retrieve gene ID
-        handle = Entrez.esearch(db="gene", term=name_species+ "[Orgn] AND " + gene + "[Gene]")
-        record = Entrez.read(handle)
+#     sym_to_entrez_dict={}    #create a dictionary symbol to entrez
+#     for gene in gene_list:
+#         #retrieve gene ID
+#         handle = Entrez.esearch(db="gene", term=name_species+ "[Orgn] AND " + gene + "[Gene]")
+#         record = Entrez.read(handle)
 
-        if len(record["IdList"]) > 0:
-            sym_to_entrez_dict[gene]=record["IdList"][0]
-        else:
-            pass
-    return sym_to_entrez_dict
+#         if len(record["IdList"]) > 0:
+#             sym_to_entrez_dict[gene]=record["IdList"][0]
+#         else:
+#             pass
+#     return sym_to_entrez_dict
 

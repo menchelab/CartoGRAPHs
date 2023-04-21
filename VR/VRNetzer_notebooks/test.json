@@ -1,0 +1,989 @@
+{
+    "directed": false,
+    "multigraph": false,
+    "graph": {
+        "name": "Zachary's Karate Club"
+    },
+    "nodes": [
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.332185777350608,
+                0.4519221960222338,
+                0.1266742586196379
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 0"
+            ],
+            "id": 0
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.2551656330479857,
+                0.2794523959778579,
+                -0.11633914224134055
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 1"
+            ],
+            "id": 1
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                -0.02255714295243447,
+                0.1389811727654385,
+                -0.119494360108943
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 2"
+            ],
+            "id": 2
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.050461128889924545,
+                0.5449589169098373,
+                -0.00503955618417209
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 3"
+            ],
+            "id": 3
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.739044708347668,
+                0.7104115615725712,
+                0.3227386175603935
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 4"
+            ],
+            "id": 4
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.6266422265135962,
+                0.7107067663095313,
+                0.6170702636551199
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 5"
+            ],
+            "id": 5
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.5830827629777436,
+                0.8527293571382093,
+                0.5385194091972548
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 6"
+            ],
+            "id": 6
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.11086743365367105,
+                0.47552982301378494,
+                -0.21398527333108114
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 7"
+            ],
+            "id": 7
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                -0.011481109094740028,
+                -0.14876955388953556,
+                -0.021828274595538197
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 8"
+            ],
+            "id": 8
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.14434465370940192,
+                -0.29733060948071455,
+                -0.6780202716825304
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 9"
+            ],
+            "id": 9
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.8274839967255693,
+                0.5871394227559088,
+                0.49625060750255134
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 10"
+            ],
+            "id": 10
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.5047433853880352,
+                0.993495762032541,
+                0.06951426744905712
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 11"
+            ],
+            "id": 11
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                -0.02629801346707702,
+                0.9765766569093408,
+                0.06802723839190446
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 12"
+            ],
+            "id": 12
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.0632306888100854,
+                0.13813669477085377,
+                0.01523299058028543
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 13"
+            ],
+            "id": 13
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.011267014188487768,
+                -0.895947729539139,
+                0.03073750865242652
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 14"
+            ],
+            "id": 14
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.25943857602146164,
+                -0.8222233798530882,
+                0.08765995640618313
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 15"
+            ],
+            "id": 15
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.7666645227495612,
+                0.9999999999999999,
+                0.8604032367983105
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 16"
+            ],
+            "id": 16
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.8110041036996355,
+                0.5220814801747311,
+                -0.1570180666544905
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 17"
+            ],
+            "id": 17
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.1707028966854555,
+                -0.9178627521007972,
+                -0.5165004038132863
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 18"
+            ],
+            "id": 18
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.45689012721490935,
+                -0.006477278545412276,
+                -0.0497523890714522
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 19"
+            ],
+            "id": 19
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.4570819276442866,
+                -0.8846187514863831,
+                0.2929221503976504
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 20"
+            ],
+            "id": 20
+        },
+        {
+            "club": "Mr. Hi",
+            "pos": [
+                0.5132007668164386,
+                0.6626064290368465,
+                -0.31239405291106653
+            ],
+            "cluster": "Mr. Hi",
+            "nodecolor": "#e41a1c",
+            "annotation": [
+                "cluster: Mr. Hi",
+                "node: 21"
+            ],
+            "id": 21
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.2353001774358393,
+                -0.9311872264650205,
+                -0.22858962364895233
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 22"
+            ],
+            "id": 22
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.589237230296524,
+                -0.47715232862098517,
+                -0.02989901963710467
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 23"
+            ],
+            "id": 23
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.9262596005298431,
+                -0.08079956662907013,
+                0.011094719584620908
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 24"
+            ],
+            "id": 24
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.7153115918231895,
+                -0.24117003281034574,
+                0.13714907856144795
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 25"
+            ],
+            "id": 25
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.6958106217060516,
+                -0.9140716660830063,
+                -0.3540414585057227
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 26"
+            ],
+            "id": 26
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.5704208004062453,
+                -0.20370688164702355,
+                -0.13673411350181186
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 27"
+            ],
+            "id": 27
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.4016804154881942,
+                -0.014802332175677375,
+                -0.33474817166799087
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 28"
+            ],
+            "id": 28
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.5834214726447433,
+                -0.7546914674682443,
+                -0.16535100526220625
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 29"
+            ],
+            "id": 29
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                0.08067435411863054,
+                -0.32902568574504915,
+                -0.11787347054942633
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 30"
+            ],
+            "id": 30
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.3917231086914625,
+                -0.13189681171408088,
+                0.049811204517657595
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 31"
+            ],
+            "id": 31
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.26236109453994927,
+                -0.5395823063492973,
+                -0.019268125907405637
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 32"
+            ],
+            "id": 32
+        },
+        {
+            "club": "Officer",
+            "pos": [
+                -0.24664416897868074,
+                -0.45341227478682594,
+                -0.14692872859997957
+            ],
+            "cluster": "Officer",
+            "nodecolor": "#377eb8",
+            "annotation": [
+                "cluster: Officer",
+                "node: 33"
+            ],
+            "id": 33
+        }
+    ],
+    "links": [
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 1
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 2
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 3
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 4
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 5
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 6
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 7
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 8
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 10
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 11
+        },
+        {
+            "weight": 1,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 12
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 13
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 17
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 19
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 21
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 0,
+            "target": 31
+        },
+        {
+            "weight": 6,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 2
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 3
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 7
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 13
+        },
+        {
+            "weight": 1,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 17
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 19
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 21
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 1,
+            "target": 30
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 3
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 7
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 8
+        },
+        {
+            "weight": 1,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 9
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 13
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 27
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 28
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 2,
+            "target": 32
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 3,
+            "target": 7
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 3,
+            "target": 12
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 3,
+            "target": 13
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 4,
+            "target": 6
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 4,
+            "target": 10
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 5,
+            "target": 6
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 5,
+            "target": 10
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 5,
+            "target": 16
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 6,
+            "target": 16
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 8,
+            "target": 30
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 8,
+            "target": 32
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 8,
+            "target": 33
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 9,
+            "target": 33
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 13,
+            "target": 33
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 14,
+            "target": 32
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 14,
+            "target": 33
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 15,
+            "target": 32
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 15,
+            "target": 33
+        },
+        {
+            "weight": 1,
+            "linkcolor": "#909090",
+            "source": 18,
+            "target": 32
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 18,
+            "target": 33
+        },
+        {
+            "weight": 1,
+            "linkcolor": "#909090",
+            "source": 19,
+            "target": 33
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 20,
+            "target": 32
+        },
+        {
+            "weight": 1,
+            "linkcolor": "#909090",
+            "source": 20,
+            "target": 33
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 22,
+            "target": 32
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 22,
+            "target": 33
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 23,
+            "target": 25
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 23,
+            "target": 27
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 23,
+            "target": 29
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 23,
+            "target": 32
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 23,
+            "target": 33
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 24,
+            "target": 25
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 24,
+            "target": 27
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 24,
+            "target": 31
+        },
+        {
+            "weight": 7,
+            "linkcolor": "#909090",
+            "source": 25,
+            "target": 31
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 26,
+            "target": 29
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 26,
+            "target": 33
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 27,
+            "target": 33
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 28,
+            "target": 31
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 28,
+            "target": 33
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 29,
+            "target": 32
+        },
+        {
+            "weight": 2,
+            "linkcolor": "#909090",
+            "source": 29,
+            "target": 33
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 30,
+            "target": 32
+        },
+        {
+            "weight": 3,
+            "linkcolor": "#909090",
+            "source": 30,
+            "target": 33
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 31,
+            "target": 32
+        },
+        {
+            "weight": 4,
+            "linkcolor": "#909090",
+            "source": 31,
+            "target": 33
+        },
+        {
+            "weight": 5,
+            "linkcolor": "#909090",
+            "source": 32,
+            "target": 33
+        }
+    ]
+}

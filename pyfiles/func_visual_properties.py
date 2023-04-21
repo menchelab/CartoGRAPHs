@@ -10,7 +10,7 @@ import colorsys
 
 import seaborn as sns
 import matplotlib as mpl
-import math 
+from shapely import geometry
 
 import numpy as np 
 import networkx as nx
@@ -182,6 +182,7 @@ def color_nodes_from_list(G, l_nodes, col,restcol='#696969'):
 
 
 
+
 def color_edges_from_nodelist(G, l_nodes, color_main, color_rest): # former: def color_disease_outgoingedges(G, l_majorcolor_nodes, color)
     '''
     Color (highlight) edges from specific node list.
@@ -272,6 +273,55 @@ def color_edges_from_nodelist_specific_or(G, l_nodes, color):
     for e in edge_lst:
         d_col_edges[e]=color
     return d_col_edges
+
+
+
+
+def color_edges_from_nodelist_both(G, l_nodes, color_main, color_rest):
+    
+    edge_lst = [(u,v)for u,v in G.edges(l_nodes) if u in l_nodes and v in l_nodes]
+    #edge_dir2 = [(v,u)for v,u in G.edges(l_nodes) if v in l_nodes and u in l_nodes]
+    #edge_lst = edge_dir1+edge_dir2
+    
+    d_col_edges = {}
+    for e in edge_lst:
+        d_col_edges[e]=color_main
+    
+    d_grey_edges = {}
+    for edge in G.edges():
+        if edge not in d_col_edges.keys(): 
+            d_grey_edges[edge] = color_rest
+
+    d_edges_all = {**d_col_edges, **d_grey_edges}
+    d_edges_all_sorted = {key:d_edges_all[key] for key in G.edges()}
+
+    edge_color = list(d_edges_all_sorted.values())
+    
+    return  d_edges_all
+
+
+def get_edges_between_nodes(G, l_nodes): 
+    
+    edge_dir1 = [(u,v)for u,v in G.edges(l_nodes) if u in l_nodes and v in l_nodes]
+    edge_dir2 = [(v,u)for v,u in G.edges(l_nodes) if v in l_nodes and u in l_nodes]
+    edge_lst = edge_dir1+edge_dir2
+    
+    return  edge_lst
+
+
+def color_nodes_from_subset(l_nodes, col):
+
+    d_nodes = {}
+    for node in l_nodes:
+        d_nodes[node] = col
+
+    return d_nodes
+
+
+
+# -------------------------------------------------------------------------------------
+# C L U S T E R I N Gs
+# -------------------------------------------------------------------------------------
 
 
 def colors_spectralclustering(G, posG, DM=None, n_clus=20, n_comp=10, pal ='gist_rainbow'):
@@ -636,12 +686,12 @@ def draw_node_degree(G, scalef):
     Calculate the node degree from graph positions (dict).
     Return list of radii for each node (2D). 
     '''
-    
+
     l_size = {}
     for node in G.nodes():
         k = nx.degree(G, node)
         if k > 0:
-            R = math.log(k) * scalef + 2
+            R = k*scalef +0.25 #math.log(k) * scalef + 0.25
         else: 
             R = 0.1
         l_size[node] = R

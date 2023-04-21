@@ -6,25 +6,34 @@
 # 
 ########################################################################################
 
-import os
-import networkx as nx
-import numpy as np
-import pandas as pd
+# -----------------------------------
+# DELETE
+# -----------------------------------
+#import os
+#import networkx as nx
+#import numpy as np
+#import pandas as pd
+#import umap.umap_ as umap
 
-import umap.umap_ as umap
 
-#print('DEBUG:in cartographs')
+# -----------------------------------
+# TOGGLE BEFORE PACKAGE UPLOAD
+# -----------------------------------
+from func_load_data import *
+#from cartoGRAPHs.func_load_data import *
 
-from cartoGRAPHs.func_load_data import *
-from cartoGRAPHs.func_visual_properties import *
-from cartoGRAPHs.func_calculations import * 
+from func_visual_properties import *
+#from cartoGRAPHs.func_visual_properties import *
 
-from cartoGRAPHs.func_embed_plot import * 
-from cartoGRAPHs.func_embed_plot import *
+from func_calculations import * 
+#from cartoGRAPHs.func_calculations import * 
 
-from cartoGRAPHs.func_exportVR import * 
+from func_embed_plot import * 
+#from cartoGRAPHs.func_embed_plot import *
 
-#print('DEBUG:in cartographs - import done')
+from func_exportVR import * 
+#from cartoGRAPHs.func_exportVR import * 
+
 
 ########################################################################################
 

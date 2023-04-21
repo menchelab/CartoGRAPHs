@@ -8,22 +8,25 @@
 
 import plotly
 import plotly.graph_objs as pgo
-import pandas as pd 
+# import pandas as pd 
 
-import umap.umap_ as umap
+#import umap.umap_ as umap
+import tensorflow as tf
+import umap.parametric_umap as umap
 
 from sklearn.manifold import TSNE
-from sklearn.manifold import MDS
 from sklearn import preprocessing
 
-import networkx as nx
-import numpy as np 
+# import networkx as nx
+# import numpy as np 
 from numpy import pi, cos, sin, arccos, arange
-
 import math 
-import matplotlib.pyplot as plt
 
-from cartoGRAPHs.func_visual_properties import * 
+# import math 
+# import matplotlib.pyplot as plt
+
+from cartoGRAPHs import *
+#from cartoGRAPHs.func_visual_properties import * 
 
 ########################################################################################
 
@@ -541,7 +544,7 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
     
     Return a trace for plotly graph objects plot including a legend. 
     '''
-    # dividing traces based on unique colors > for legend
+        # dividing traces based on unique colors > for legend
     color_dict = {}
     for i in set(color.values()):
         sublist = []
@@ -575,6 +578,15 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
 
             l_size_sorted_to_ids = [(size[key]) for key in ids] #{key:size[key] for key in ids}
             #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
+           
+            legendnames_sorted = []
+            for ccc in d_col_pos_ordered.keys():
+                for cl, nm in legend_names.items():
+                    if ccc == cl:
+                        legendnames_sorted.append((cl,nm)) # with Color values
+                        #legendnames_sorted.append(nm) # without Color values
+                        
+            legendnames_sorted 
             
             trace = pgo.Scatter(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
@@ -589,7 +601,7 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
                                     color = 'dimgrey'),
                             opacity = opac,
                         ),
-                    name = "Group: "+str(list(legend_names.values())[elem])
+                    name = "Group: "+str(list(legendnames_sorted)[elem]) #legend_names.values())[elem])
                     )
             traces.append(trace)
         return traces 
@@ -629,6 +641,8 @@ def get_trace_nodes_2D_legend(posG, info, color, size, legend_names = None, line
         return traces 
 
 
+
+
 def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, linewidth=0.0, opac = 0.9):
     '''
     Get trace of nodes for plotting in 3D. 
@@ -662,7 +676,6 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
                 sub[k] = v
             d_col_pos[i] = sub
     d_col_pos_ordered = dict(sorted(d_col_pos.items(),reverse=True))
-    #print(d_col_pos_ordered)
     
     # creating traces 
     traces = []
@@ -673,10 +686,13 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
             ids = list(dct.keys())
             coords = list(dct.values())
             
-            for cl,lg in legend_names.items():
-                if col == cl:
-                    legend_scattername = lg
-                
+            legendnames_sorted = []
+            for ccc in d_col_pos_ordered.keys():
+                for cl, nm in legend_names.items():
+                    if ccc == cl:
+                        legendnames_sorted.append((elem,nm)) # with Color values
+                        #legendnames_sorted.append(nm) # without Color values
+                                        
             l_info_sorted_to_ids = [(info[key]) for key in ids] #{key:info[key] for key in ids}            
             #l_info_sorted_to_ids = list(info_sorted_to_ids.values())
 
@@ -684,7 +700,7 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
             #l_size_sorted_to_ids = list(size_sorted_to_ids.values())
             
             l_col_sorted_to_ids = [(color[key]) for key in ids]
-                                    
+
             trace = pgo.Scatter3d(x=[i[0] for i in coords],
                                   y=[i[1] for i in coords],
                                   z=[i[2] for i in coords],
@@ -699,7 +715,7 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
                                     color = 'dimgrey'),
                             opacity = opac,
                         ),
-                    name = legend_scattername # str(list(d_col_pos_ordered.keys())[c])
+                    name = "Group: "+str(list(legendnames_sorted)[elem]) #legend_names.values())[elem])
                     )
             
             traces.append(trace)
@@ -736,7 +752,8 @@ def get_trace_nodes_3D_legend(posG, info, color, size, legend_names = None, line
                     )
             traces.append(trace)
         return traces 
-    
+
+
 
 
 def get_trace_edges_2D(G, posG, color = '#C7C7C7', opac = 0.1, linewidth = 0.25):
@@ -836,9 +853,8 @@ def get_trace_edges_3D(G, posG, color = '#C7C7C7', opac = 0.1, linewidth=0.25):
                                 mode = 'lines', hoverinfo='none',
                                 line = dict(width = linewidth, color = color),
                                 opacity = opac,
-                                name = "Links"
+                                name = "Connections"
                         )
-
     return trace_edges
 
 
@@ -1339,6 +1355,7 @@ def plot_3Dfigure(G, posG,
     return plotly.offline.plot(fig, filename = path+fname+'.html', auto_open=True)
 
 
+
 def plot_3Danimation(data, slider_legend):
     
     fig = pgo.Figure()
@@ -1360,7 +1377,7 @@ def plot_3Danimation(data, slider_legend):
 
     sliders = [dict(
         active=10,
-        currentvalue={"prefix": ""},
+        currentvalue={"prefix": f""},
         steps=steps
     )]
 
@@ -1374,6 +1391,95 @@ def plot_3Danimation(data, slider_legend):
     )
     
     fig.show()
+
+
+# Additional Functions: 
+
+def return_3Dfigure(G, posG, 
+                  d_features = None, 
+                  d_colors = None, 
+                  d_size = None, 
+                  d_legend  = None, 
+                  scheme = 'light', 
+                  with_edges = True,
+                  plot_title=None, 
+                  plot_titlex=None,
+                  legend_title=None,
+                  annotation=None,
+                  legendx=None,
+                  legendy=None
+                  ):
+    
+    if d_features == None:
+        d_features = dict(zip(list(G.nodes()),list(G.nodes())))
+    else:
+        pass
+    
+    if d_colors == None:
+        col_pal = 'YlOrRd'
+        d_degree = dict(nx.degree(G))
+        d_colors = color_nodes_from_dict(G, d_degree, palette = col_pal)
+    else: 
+        pass 
+    
+    if d_size == None:
+        scale_factor = 0.75
+        d_size = dict(draw_node_degree(G, scale_factor))
+    else:
+        pass
+    
+    if with_edges == True:
+        umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
+        umap_edges = get_trace_edges_3D(G, posG)
+        data = [umap_edges, *umap_nodes]
+    else: 
+        umap_nodes = get_trace_nodes_3D_legend(posG, d_features, d_colors, d_size, d_legend) 
+        data = [*umap_nodes]
+    
+    fig = pgo.Figure()
+    
+    for i in data:
+        fig.add_trace(i)
+
+    if scheme == 'dark':    
+        fig.update_layout(template='plotly_dark', 
+                          showlegend=True, width=1200, height=1200,
+                                  scene=dict(
+                                      xaxis_title='',
+                                      yaxis_title='',
+                                      zaxis_title='',
+                                      xaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                      yaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                      zaxis=dict(nticks=0,tickfont=dict(
+                                            color='black')),
+                                    dragmode="turntable"
+                                ))  
+        
+    elif scheme == 'light':
+        fig.update_layout(template='plotly_white', 
+                          showlegend=True, width=1200, height=1200,
+                          scene=dict(
+                              xaxis_title='',
+                              yaxis_title='',
+                              zaxis_title='',
+                              xaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              yaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),
+                              zaxis=dict(nticks=0,tickfont=dict(
+                                    color='white')),    
+                            dragmode="turntable"
+                        ))    
+    else: 
+        print('Oops, something went wrong. Please check input parameters.')
+    
+    fig.update_layout(title_text = plot_title, title_x=plot_titlex, legend_title=legend_title, legend=dict(x=legendx,y=legendy)) #,yanchor="middle",xanchor="left"))
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)    
+    return fig
+
 
 
 

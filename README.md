@@ -59,7 +59,7 @@ python3 -m pip install cartoGRAPHs
 ipython kernel install --user --name=name_of_env
 ```
 
-More information here: https://pypi.org/project/cartoGRAPHs/1.0.1/
+More information here: https://pypi.org/project/cartoGRAPHs/2.0.0/
 
 ---
 

@@ -4,10 +4,7 @@ input/
 benchmark/
 archiv/ 
 output_plots/
-c_env/
-*env/
-*env*/
-env*/
+newenv/
 
 # Mac files 
 *.DS_Store

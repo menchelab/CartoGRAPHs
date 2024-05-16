@@ -28,7 +28,7 @@ INSTALL_REQUIRES = [
         'shapely',
         'colormath',
         'numba',
-        'tensorflow', 
+        #'tensorflow', 
         'pynndescent==0.5.8'
 ]
 

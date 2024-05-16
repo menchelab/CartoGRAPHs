@@ -8,7 +8,8 @@
 
 import plotly
 import plotly.graph_objs as pgo
-import umap.parametric_umap as umap
+import umap as umap 
+#import umap.parametric_umap as umap
 from sklearn.manifold import TSNE
 from sklearn import preprocessing
 from numpy import pi, cos, sin, arccos, arange

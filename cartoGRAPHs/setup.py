@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
 
-VERSION = '2.0.0'
+VERSION = '2.0.1'
 PACKAGE_NAME = 'cartoGRAPHs'
 AUTHOR = 'Chris H.'
 AUTHOR_EMAIL = 'chris@menchelab.com'

@@ -12,5 +12,5 @@ scipy
 seaborn 
 shapely
 umap-learn
-tensorflow
+#tensorflow
 pynndescent==0.5.8

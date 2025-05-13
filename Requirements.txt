@@ -4,7 +4,7 @@ kiwisolver
 matplotlib
 networkx
 numba 
-numpy 
+numpy==1.20.3
 pandas
 plotly
 scikit-learn
